@@ -4,16 +4,22 @@ project(lhecsw)
 
 #set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake $ENV{DD4hep_DIR}/cmake)
+include(lhecswBuildUtils)
+include_directories(${PROJECT_SOURCE_DIR})
+
+set(lhecswlibs)
+
+lhecsw_add_directory(Geometry)
 
 find_package(DD4hep REQUIRED)
 include(${DD4hep_DIR}/cmake/DD4hep.cmake)
 include(${DD4hep_DIR}/cmake/DD4hepBuild.cmake)
+
 dd4hep_configure_output()
-
 dd4hep_set_compiler_flags()
-
 dd4hep_add_plugin(lhecsw SOURCES src/*.cc
   USES DD4hep::DDCore DD4hep::DDRec ROOT::Core ROOT::Geom ROOT::GenVector ROOT::MathCore)
+target_link_libraries(lhecsw PRIVATE ${lhecswlibs})
 
 install(TARGETS lhecsw LIBRARY DESTINATION lib)
 #install(DIRECTORY compact DESTINATION examples/ClientTests)

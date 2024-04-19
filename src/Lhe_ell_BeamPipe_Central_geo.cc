@@ -17,12 +17,13 @@
 #include <DD4hep/DetType.h>
 #include <DD4hep/Printout.h>
 #include <DDRec/DetectorData.h>
-#include <DDRec/Surface.h>
 #include <XML/Utilities.h>
 
 #include <cmath>
 #include <map>
 #include <string>
+
+#include "Geometry/include/SimpleCylinder.h"
 
 //using dd4hep::rec::Vector3D;
 //using dd4hep::rec::VolCylinder;
@@ -33,58 +34,6 @@ namespace units = dd4hep;
 using namespace std;
 using namespace dd4hep;
 using namespace dd4hep::detail;
-
-/// helper class for a simple cylinder surface parallel to z with a given length - used as IP layer
-class SimpleCylinderImpl : public dd4hep::rec::VolCylinderImpl {
-  double _half_length;
-
-public:
-  /// standard c'tor with all necessary arguments - origin is (0,0,0) if not given.
-  SimpleCylinderImpl(
-      Volume vol, rec::SurfaceType type, double thickness_inner, double thickness_outer, rec::Vector3D origin)
-      : rec::VolCylinderImpl(vol, type, thickness_inner, thickness_outer, origin), _half_length(0) {}
-  void setHalfLength(double half_length) { _half_length = half_length; }
-  void setID(dd4hep::rec::long64 id) { _id = id; }
-  // overwrite to include points inside the inner radius of the barrel
-  bool insideBounds(const rec::Vector3D& point, double epsilon) const {
-    return (std::abs(point.rho() - origin().rho()) < epsilon && std::abs(point.z()) < _half_length);
-  }
-
-  virtual std::vector<std::pair<rec::Vector3D, rec::Vector3D> > getLines(unsigned nMax = 100) {
-    std::vector<std::pair<rec::Vector3D, rec::Vector3D> > lines;
-
-    lines.reserve(nMax);
-
-    rec::Vector3D zv(0., 0., _half_length);
-    double r = _o.rho();
-
-    unsigned n = nMax / 4;
-    double dPhi = 2. * ROOT::Math::Pi() / double(n);
-
-    for (unsigned i = 0; i < n; ++i) {
-      rec::Vector3D rv0(r * sin(i * dPhi), r * cos(i * dPhi), 0.);
-      rec::Vector3D rv1(r * sin((i + 1) * dPhi), r * cos((i + 1) * dPhi), 0.);
-
-      rec::Vector3D pl0 = zv + rv0;
-      rec::Vector3D pl1 = zv + rv1;
-      rec::Vector3D pl2 = -zv + rv1;
-      rec::Vector3D pl3 = -zv + rv0;
-
-      lines.push_back(std::make_pair(pl0, pl1));
-      lines.push_back(std::make_pair(pl1, pl2));
-      lines.push_back(std::make_pair(pl2, pl3));
-      lines.push_back(std::make_pair(pl3, pl0));
-    }
-    return lines;
-  }
-};
-
-class SimpleCylinder : public rec::VolSurface {
-public:
-  SimpleCylinder(Volume vol, rec::SurfaceType type, double thickness_inner, double thickness_outer, rec::Vector3D origin)
-      : rec::VolSurface(new SimpleCylinderImpl(vol, type, thickness_inner, thickness_outer, origin)) {}
-  SimpleCylinderImpl* operator->() { return static_cast<SimpleCylinderImpl*>(_surf); }
-};
 
 static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector sens) {
   printout(dd4hep::DEBUG, "Lhe_Beampipe", "Creating Beampipe");
