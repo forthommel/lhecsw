@@ -23,20 +23,12 @@
 
 #include <exception>
 
+#include "Common/include/GeometryUtils.h"
+
 using namespace std;
 using namespace dd4hep;
 using namespace dd4hep::detail;
 using namespace dd4hep::rec;
-
-/*************************************************************
- function to calculate path in a given theta
-**************************************************************/
-static double computeDpt(double ra, double rb, double theta) {
-  double dpt_sin = std::pow(ra * std::sin(theta), 2.0);
-  double dpt_cos = std::pow(rb * std::cos(theta), 2.0);
-  double dp = std::sqrt(dpt_sin + dpt_cos);
-  return dp;
-}
 
 static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector sens) {
   xml_det_t x_det = e;
@@ -176,7 +168,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
         theta = thetaMin;
       else
         theta += deltaTheta;
-      cell += computeDpt(a, b, theta);
+      cell += utils::computeDpt(a, b, theta);
     }
 
     // number of modules along semi-ellipse path
@@ -205,7 +197,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
         }
         nextPoint++;
       }
-      run += computeDpt(a, b, theta);
+      run += utils::computeDpt(a, b, theta);
     }
 
     /*************************************************************

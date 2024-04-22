@@ -19,8 +19,9 @@ add_subdirectory(Geometry)
 dd4hep_configure_output()
 dd4hep_set_compiler_flags()
 dd4hep_add_plugin(lhecsw SOURCES src/*.cc
-  USES DD4hep::DDCore DD4hep::DDRec ROOT::Core ROOT::Geom ROOT::GenVector ROOT::MathCore)
-target_link_libraries(lhecsw PRIVATE ${lhecswlibs})
+  USES DD4hep::DDCore DD4hep::DDRec
+       ROOT::Core ROOT::Geom ROOT::GenVector ROOT::MathCore
+       ${lhecswlibs})
 
 install(TARGETS lhecsw LIBRARY DESTINATION lib)
 #install(DIRECTORY compact DESTINATION examples/ClientTests)

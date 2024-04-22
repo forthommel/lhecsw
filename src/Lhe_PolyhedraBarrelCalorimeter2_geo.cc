@@ -17,39 +17,11 @@
 #include <DD4hep/DetFactoryHelper.h>
 #include <XML/Layering.h>
 
+#include "Common/include/GeometryUtils.h"
+
 using namespace std;
 using namespace dd4hep;
 using namespace dd4hep::detail;
-
-static void placeStaves(DetElement& parent,
-                        DetElement& stave,
-                        double rmin,
-                        int numsides,
-                        double total_thickness,
-                        Volume envelopeVolume,
-                        double innerAngle,
-                        Volume sectVolume) {
-  double innerRotation = innerAngle;
-  double offsetRotation = -innerRotation / 2;
-  double sectCenterRadius = rmin + total_thickness / 2;
-  double rotX = M_PI / 2;
-  double rotY = -offsetRotation;
-  double posX = -sectCenterRadius * std::sin(rotY);
-  double posY = sectCenterRadius * std::cos(rotY);
-
-  for (int module = 1; module <= numsides; ++module) {
-    DetElement det = module > 1 ? stave.clone(_toString(module, "stave%d")) : stave;
-    Transform3D trafo(RotationZYX(0, rotY, rotX), Translation3D(-posX, -posY, 0));
-    PlacedVolume pv = envelopeVolume.placeVolume(sectVolume, trafo);
-    // Not a valid volID: pv.addPhysVolID("stave", 0);
-    pv.addPhysVolID("module", module);
-    det.setPlacement(pv);
-    parent.add(det);
-    rotY -= innerRotation;
-    posX = -sectCenterRadius * std::sin(rotY);
-    posY = sectCenterRadius * std::cos(rotY);
-  }
-}
 
 static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector sens) {
   xml_det_t x_det = e;
@@ -174,7 +146,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     stave.setVisAttributes(description, staves.visStr(), staveOuterVol);
   }
   // Place the staves.
-  placeStaves(sdet, stave, rmin, numSides, totalThickness, envelopeVol, innerAngle, staveOuterVol);
+  utils::placeStaves(sdet, stave, rmin, numSides, totalThickness, envelopeVol, innerAngle, staveOuterVol);
   // Set envelope volume attributes.
   envelopeVol.setAttributes(description, x_det.regionStr(), x_det.limitsStr(), x_det.visStr());
 
