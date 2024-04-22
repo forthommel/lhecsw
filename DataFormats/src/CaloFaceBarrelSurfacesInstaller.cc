@@ -11,38 +11,21 @@
 //
 //==========================================================================
 
-#include <string>
-
-namespace {
-  struct UserData {
-    float length;
-    float radius;
-    float phi0;
-    int symmetry;
-    int systemID;
-    std::string encoding;
-  };
-}  // namespace
-
-// Framework include files
-#define SURFACEINSTALLER_DATA UserData
-#define DD4HEP_USE_SURFACEINSTALL_HELPER DD4hep_CaloFaceBarrelSurfacePlugin
 #include <DD4hep/Printout.h>
-#include <DD4hep/SurfaceInstaller.h>
 #include <DDRec/DetectorData.h>
 #include <DDRec/Surface.h>
 #include <DDSegmentation/BitField64.h>
 
+#include "DataFormats/include/CaloFaceBarrelSurfaces.h"
 #include "Geometry/include/CaloBarrelPlane.h"
 
 namespace {
   template <>
-  void Installer<UserData>::handle_arguments(int argc, char** argv) {
+  void Installer<CaloFaceBarrelSurfaces>::handle_arguments(int argc, char** argv) {
     for (int i = 0; i < argc; ++i) {
-      char* ptr = ::strchr(argv[i], '=');
-      if (ptr) {
+      if (char* ptr = ::strchr(argv[i], '='); ptr) {
         std::string name(argv[i], ptr);
-        double value = dd4hep::_toDouble(++ptr);
+        const auto value = dd4hep::_toDouble(++ptr);
 
         printout(dd4hep::DEBUG, "DD4hep_CaloFaceBarrelSurfacePlugin", "argument[%d] = %s = %f", i, name.c_str(), value);
 
@@ -58,16 +41,15 @@ namespace {
           data.systemID = value;
         else if (name == "encoding")
           data.encoding = ptr;
-        else {
+        else
           printout(dd4hep::WARNING, "DD4hep_CaloFaceBarrelSurfacePlugin", "unknown parameter:  %s ", name.c_str());
-        }
       }
     }
   }
 
   /// Install measurement surfaces
-  template <typename UserData>
-  void Installer<UserData>::install(dd4hep::DetElement component, dd4hep::PlacedVolume pv) {
+  template <>
+  void Installer<CaloFaceBarrelSurfaces>::install(dd4hep::DetElement component, dd4hep::PlacedVolume pv) {
     dd4hep::Volume comp_vol = pv.volume();
 
     double length = data.length;
@@ -90,7 +72,7 @@ namespace {
 
     bf["system"] = data.systemID;
 
-    double alpha = (symmetry ? 2. * M_PI / symmetry : 0.);
+    const auto alpha = symmetry ? 2. * M_PI / symmetry : 0.;
 
     for (unsigned i = 0; i < symmetry; ++i) {
       bf["module"] = i;
@@ -111,5 +93,4 @@ namespace {
     // stop scanning the hierarchy any further
     stopScanning();
   }
-
 }  // namespace

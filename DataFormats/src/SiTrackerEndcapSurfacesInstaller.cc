@@ -14,9 +14,8 @@
 // Specialized generic detector constructor
 //
 //==========================================================================
-// Framework include files
-#define DD4HEP_USE_SURFACEINSTALL_HELPER Lhe_SiTrackerEndcapSurfacePlugin
-#include <DD4hep/SurfaceInstaller.h>
+
+#include "DataFormats/include/SiTrackerEndcapSurfaces.h"
 
 /// Install measurement surfaces
 template <typename UserData>

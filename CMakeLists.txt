@@ -13,6 +13,7 @@ include(${DD4hep_DIR}/cmake/DD4hep.cmake)
 include(${DD4hep_DIR}/cmake/DD4hepBuild.cmake)
 
 add_subdirectory(Common)
+add_subdirectory(DataFormats)
 add_subdirectory(Generator)
 add_subdirectory(Geometry)
 

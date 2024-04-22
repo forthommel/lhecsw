@@ -11,38 +11,21 @@
 //
 //==========================================================================
 
-#include <string>
-
-namespace {
-  struct UserData {
-    float zpos;
-    float radius;
-    float phi0;
-    int symmetry;
-    int systemID;
-    std::string encoding;
-  };
-}  // namespace
-
-// Framework include files
-#define SURFACEINSTALLER_DATA UserData
-#define DD4HEP_USE_SURFACEINSTALL_HELPER DD4hep_CaloFaceEndcapSurfacePlugin
 #include <DD4hep/Printout.h>
-#include <DD4hep/SurfaceInstaller.h>
 #include <DDRec/DetectorData.h>
 #include <DDRec/Surface.h>
 #include <DDSegmentation/BitField64.h>
 
+#include "DataFormats/include/CaloFaceEndcapSurfaces.h"
 #include "Geometry/include/CaloEndcapPlane.h"
 
 namespace {
   template <>
-  void Installer<UserData>::handle_arguments(int argc, char** argv) {
+  void Installer<CaloFaceEndcapSurfaces>::handle_arguments(int argc, char** argv) {
     for (int i = 0; i < argc; ++i) {
-      char* ptr = ::strchr(argv[i], '=');
-      if (ptr) {
-        std::string name(argv[i], ptr);
-        double value = dd4hep::_toDouble(++ptr);
+      if (char* ptr = ::strchr(argv[i], '='); ptr) {
+        const std::string name(argv[i], ptr);
+        const auto value = dd4hep::_toDouble(++ptr);
 
         printout(dd4hep::DEBUG, "DD4hep_CaloFaceEndcapSurfacePlugin", "argument[%d] = %s = %f", i, name.c_str(), value);
 
@@ -58,16 +41,15 @@ namespace {
           data.systemID = value;
         else if (name == "encoding")
           data.encoding = ptr;
-        else {
+        else
           printout(dd4hep::WARNING, "DD4hep_CaloFaceEndcapSurfacePlugin", "unknown parameter:  %s ", name.c_str());
-        }
       }
     }
   }
 
   /// Install measurement surfaces
-  template <typename UserData>
-  void Installer<UserData>::install(dd4hep::DetElement component, dd4hep::PlacedVolume pv) {
+  template <>
+  void Installer<CaloFaceEndcapSurfaces>::install(dd4hep::DetElement component, dd4hep::PlacedVolume pv) {
     dd4hep::Volume comp_vol = pv.volume();
 
     double zpos = data.zpos;
@@ -113,5 +95,4 @@ namespace {
     // stop scanning the hierarchy any further
     stopScanning();
   }
-
 }  // namespace

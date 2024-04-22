@@ -14,9 +14,8 @@
 // Specialized generic detector constructor
 //
 //==========================================================================
-// Framework include files
-#define DD4HEP_USE_SURFACEINSTALL_HELPER Lhe_PolyhedraEndcapCalorimeterSurfacePlugin
-#include <DD4hep/SurfaceInstaller.h>
+
+#include "DataFormats/include/PolyhedraEndcapCalorimeter2Surfaces.h"
 
 /// Install measurement surfaces
 template <typename UserData>

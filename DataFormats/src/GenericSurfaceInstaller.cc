@@ -11,6 +11,8 @@
 //              by M. Frank. Originally part of the lcgeo package
 //==========================================================================
 
+#include "DataFormats/include/GenericSurface.h"
+
 /** \addtogroup SurfacePlugin
  * @{
  * \package dd4hep_GenericSurfaceInstallerPlugin
@@ -57,24 +59,8 @@
  */
 
 namespace {
-  struct UserData {
-    int dimension;
-    double uvector[3];
-    double vvector[3];
-    double nvector[3];
-    double ovector[3];
-  };
-
-}  // namespace
-
-// Framework include files
-#define SURFACEINSTALLER_DATA UserData
-#define DD4HEP_USE_SURFACEINSTALL_HELPER DD4hep_GenericSurfaceInstallerPlugin
-#include <DD4hep/SurfaceInstaller.h>
-
-namespace {
   template <>
-  void Installer<UserData>::handle_arguments(int argc, char** argv) {
+  void Installer<GenericSurface>::handle_arguments(int argc, char** argv) {
     //Initialize defaults to zero
     data.dimension = 0;
     data.uvector[0] = 0.;
@@ -135,8 +121,8 @@ namespace {
   }
 
   /// Install measurement surfaces
-  template <typename UserData>
-  void Installer<UserData>::install(dd4hep::DetElement component, dd4hep::PlacedVolume pv) {
+  template <typename GenericSurface>
+  void Installer<GenericSurface>::install(dd4hep::DetElement component, dd4hep::PlacedVolume pv) {
     dd4hep::Volume comp_vol = pv.volume();
     if (comp_vol.isSensitive()) {
       dd4hep::Volume mod_vol = parentVolume(component);
