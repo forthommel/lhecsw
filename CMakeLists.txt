@@ -8,6 +8,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake $ENV{DD4hep_DIR}/cmake)
 include(lhecswBuildUtils)
 include_directories(${PROJECT_SOURCE_DIR})
 
+lhecsw_add_directory(Generator LIBS DD4hep::DDG4)
 lhecsw_add_directory(Geometry)
 
 find_package(DD4hep REQUIRED)
