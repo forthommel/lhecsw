@@ -4,6 +4,8 @@
 #include <DDG4/Geant4InputAction.h>
 #include <TFile.h>
 
+#include <BDSOutputROOTEventSampler.hh>
+
 class TTree;
 
 class BDSIMParticleGun : public dd4hep::sim::Geant4EventReader {
@@ -18,7 +20,8 @@ public:
 
 private:
   std::unique_ptr<TFile> file_;
-  TTree* tree_{nullptr};  // NOT owning
+  TTree* tree_{nullptr};                                // NOT owning
+  BDSOutputROOTEventSampler<float>* sampler_{nullptr};  // NOT owning
 };
 
 #endif
