@@ -8,7 +8,7 @@ class TTree;
 
 class BDSIMParticleGun : public dd4hep::sim::Geant4EventReader {
 public:
-  explicit BDSIMParticleGun(const std::string& filename, const std::string& treename);
+  explicit BDSIMParticleGun(const std::string& file_tree_name);
 
   dd4hep::sim::Geant4EventReader::EventReaderStatus moveToEvent(int event_number) override;
   dd4hep::sim::Geant4EventReader::EventReaderStatus readParticles(
