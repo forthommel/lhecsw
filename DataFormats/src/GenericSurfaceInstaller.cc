@@ -11,6 +11,8 @@
 //              by M. Frank. Originally part of the lcgeo package
 //==========================================================================
 
+#include <DD4hep/Printout.h>
+
 #include "DataFormats/include/GenericSurface.h"
 
 /** \addtogroup SurfacePlugin
@@ -77,13 +79,10 @@ namespace {
     data.ovector[2] = 0.;
 
     for (int i = 0; i < argc; ++i) {
-      double value = -1;
-      char* ptr = ::strchr(argv[i], '=');
-      if (ptr) {
+      if (char* ptr = ::strchr(argv[i], '='); ptr) {
         std::string name(argv[i], ptr);
-        value = dd4hep::_toDouble(++ptr);
-        std::cout << "DD4hep_GenericSurfaceInstallerPlugin: argument[" << i << "] = " << name << " = " << value
-                  << std::endl;
+        const auto value = dd4hep::_toDouble(++ptr);
+        dd4hep::printout(dd4hep::DEBUG, "DD4hep_GenericSurfaceInstallerPlugin", "argument[%d] = %s", i, name.data());
         if (name == "dimension")
           data.dimension = value;
         if (name == "u_x")
@@ -113,11 +112,21 @@ namespace {
       }
     }
 
-    std::cout << "DD4hep_GenericSurfaceInstallerPlugin: vectors: ";
-    std::cout << "u( " << data.uvector[0] << " , " << data.uvector[1] << " , " << data.uvector[2] << ") ";
-    std::cout << "v( " << data.vvector[0] << " , " << data.vvector[1] << " , " << data.vvector[2] << ") ";
-    std::cout << "n( " << data.nvector[0] << " , " << data.nvector[1] << " , " << data.nvector[2] << ") ";
-    std::cout << "o( " << data.ovector[0] << " , " << data.ovector[1] << " , " << data.ovector[2] << ") " << std::endl;
+    dd4hep::printout(dd4hep::DEBUG,
+                     "DD4hep_GenericSurfaceInstallerPlugin",
+                     "vectors: u(%g, %g, %g) v(%g, %g, %g) n(%g, %g, %g) o(%g, %g, %g)",
+                     data.uvector[0],
+                     data.uvector[1],
+                     data.uvector[2],
+                     data.vvector[0],
+                     data.vvector[1],
+                     data.vvector[2],
+                     data.nvector[0],
+                     data.nvector[1],
+                     data.nvector[2],
+                     data.ovector[0],
+                     data.ovector[1],
+                     data.ovector[2]);
   }
 
   /// Install measurement surfaces
@@ -144,16 +153,13 @@ namespace {
         } else if (data.nvector[1] != 0 && data.nvector[0] == 0 && data.nvector[2] == 0) {
           half_module_thickness = mod_shape->GetDY();
           sensitive_z_position = data.nvector[1] > 0 ? trans[1] : -trans[1];
-
         } else if (data.nvector[2] != 0 && data.nvector[0] == 0 && data.nvector[1] == 0) {
           half_module_thickness = mod_shape->GetDZ();
           sensitive_z_position = data.nvector[2] > 0 ? trans[2] : -trans[2];
-
-        } else {
+        } else
           throw std::runtime_error(
               "**** dd4hep_GenericSurfaceInstallerPlugin: normal vector unsupported! It has to be "
               "perpenidcular to one of the box sides, i.e. only one non-zero component.");
-        }
 
         double inner_thickness = half_module_thickness + sensitive_z_position;
         double outer_thickness = half_module_thickness - sensitive_z_position;
@@ -166,13 +172,12 @@ namespace {
         Vector3D o(data.ovector[0], data.ovector[1], data.ovector[2]);
         Type type(Type::Sensitive);
 
-        if (data.dimension == 1) {
+        if (data.dimension == 1)
           type.setProperty(Type::Measurement1D, true);
-        } else if (data.dimension != 2) {
+        else if (data.dimension != 2)
           throw std::runtime_error(
               "**** dd4hep_GenericSurfaceInstallerPlugin: no or wrong "
               "'dimension' argument given - has to be 1 or 2");
-        }
         VolPlane surf(comp_vol, type, inner_thickness, outer_thickness, u, v, n, o);
         addSurface(component, surf);
       }

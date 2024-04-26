@@ -62,7 +62,13 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     DetElement layer(sdet, _toString(n, "layer%d"), x_layer.id());
     Volume l_vol(l_name, l_tub, air);
 
-    cout << l_name << " " << rmin << " " << r << " " << z << endl;
+    dd4hep::printout(dd4hep::DEBUG,
+                     "MultiLayerTracker::create_detector",
+                     "Layer '%s': rmin=%g, r=%g, z=%g",
+                     l_name.data(),
+                     rmin,
+                     r,
+                     z);
     l_vol.setVisAttributes(description, x_layer.visStr());
 
     double z_offset = x_layer.hasAttr(_U(z_offset)) ? x_layer.z_offset() : 0.0;

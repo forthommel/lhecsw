@@ -15,6 +15,8 @@
 //
 //==========================================================================
 
+#include <DD4hep/Printout.h>
+
 #include "DataFormats/include/SiTrackerBarrelSurfaces.h"
 
 namespace {
@@ -26,8 +28,8 @@ namespace {
         const auto value = dd4hep::_toDouble(++ptr);
         if (name == "dimension")
           data.dimension = value;
-        std::cout << "DD4hep_SiTrackerBarrelSurfacePlugin: argument[" << i << "] = " << name << " = " << value
-                  << std::endl;
+        dd4hep::printout(
+            dd4hep::DEBUG, "DD4hep_SiTrackerBarrelSurfacePlugin", "argument[%d] = %s = %g", i, name.data(), value);
       }
     }
   }

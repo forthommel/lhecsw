@@ -17,6 +17,7 @@
 //
 //==========================================================================
 #include <DD4hep/DetFactoryHelper.h>
+#include <DD4hep/Printout.h>
 #include <XML/Layering.h>
 
 using namespace std;
@@ -63,7 +64,13 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
       pv.addPhysVolID("slice", im);
     }
     l_tub.setDimensions(rmin, r, z);
-    //cout << l_name << " " << rmin << " " << r << " " << z << endl;
+    dd4hep::printout(dd4hep::DEBUG,
+                     "MultiLayerTracker::create_detector",
+                     "Layer '%s': rmin=%g, r=%g, z=%g",
+                     l_name.data(),
+                     rmin,
+                     r,
+                     z);
     l_vol.setVisAttributes(description, x_layer.visStr());
 
     double z_offset = x_layer.hasAttr(_U(z_offset)) ? x_layer.z_offset() : 0.0;
