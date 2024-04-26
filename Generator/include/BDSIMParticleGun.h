@@ -11,14 +11,18 @@ class TTree;
 class BDSIMParticleGun : public dd4hep::sim::Geant4EventReader {
 public:
   explicit BDSIMParticleGun(const std::string& file_tree_name);
+  virtual ~BDSIMParticleGun() = default;
 
-  dd4hep::sim::Geant4EventReader::EventReaderStatus moveToEvent(int event_number) override;
-  dd4hep::sim::Geant4EventReader::EventReaderStatus readParticles(
-      int event_number,
-      dd4hep::sim::Geant4InputAction::Vertices& vertices,
-      dd4hep::sim::Geant4InputAction::Particles& particles) override;
+  using Particles = dd4hep::sim::Geant4InputAction::Particles;
+  using Vertices = dd4hep::sim::Geant4InputAction::Vertices;
+
+  EventReaderStatus moveToEvent(int event_number) override;
+  EventReaderStatus readParticles(int event_number, Vertices& vertices, Particles& particles) override;
+  EventReaderStatus skipEvent() override { return EVENT_READER_OK; }
 
 private:
+  int event_number_{-1};
+  unsigned long long max_events_{0ull};
   std::unique_ptr<TFile> file_;
   TTree* tree_{nullptr};                                // NOT owning
   BDSOutputROOTEventSampler<float>* sampler_{nullptr};  // NOT owning
