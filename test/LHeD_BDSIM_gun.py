@@ -27,14 +27,17 @@ def run():
     #geant4.setupCshUI(ui='Qt')
     geant4.setupUI(ui=None)
 
-    print('h1h1h1')
-    gen = DDG4.GeneratorAction(kernel, "Geant4InputAction/bdsim")
-    gen.Input = 'BDSIMParticleGun|~/work/dev/bdsim_studies/test_lstar23.root'
-    print('h0h0h0')
-    geant4.buildInputStage([gen], output_level=Output.DEBUG)
-    print('hahaha')
+    prt = DDG4.EventAction(kernel, 'Geant4ParticlePrint/ParticlePrint')
+    prt.OutputLevel = Output.WARNING
+    prt.OutputType = 3  # Print both: table and tree
+    kernel.eventAction().adopt(prt)
 
-    geant4.setupROOTOutput('output', 'output.root')
+    geant4.setupROOTOutput('RootOutput', 'output.root')
+
+    gen = DDG4.GeneratorAction(kernel, "Geant4InputAction/Input")
+    gen.Input = 'BDSIMParticleGun|~/work/dev/bdsim_studies/test_lstar23.root'
+    gen.OutputLevel = Output.DEBUG
+    geant4.buildInputStage([gen], output_level=Output.DEBUG)
 
     # Now build the physics list:
     geant4.setupPhysics('QGSP_BERT')
@@ -45,11 +48,6 @@ def run():
     kernel.configure()
     kernel.initialize()
     kernel.NumEvents = 10
-
-    prt = DDG4.EventAction(kernel, 'Geant4ParticlePrint/ParticlePrint')
-    prt.OutputLevel = Output.WARNING
-    prt.OutputType = 3  # Print both: table and tree
-    kernel.eventAction().adopt(prt)
 
     kernel.run()
 
