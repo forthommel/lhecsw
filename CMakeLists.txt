@@ -4,8 +4,12 @@ project(lhecsw)
 set(lhecswlibs)
 
 set(CMAKE_CXX_STANDARD 20)
-#set(CMAKE_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)  # release build by default
+endif()
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake $ENV{DD4hep_DIR}/cmake)
+set(CMAKE_CXX_FLAGS_RELEASE "-Wall -Wextra -O2 -pedantic")
+
 include(lhecswBuildUtils)
 include_directories(${PROJECT_SOURCE_DIR})
 
