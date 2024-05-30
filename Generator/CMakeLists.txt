@@ -1,6 +1,6 @@
 find_package(Geant4)
 find_package(Boost COMPONENTS system)
-find_library(BDSIM bdsimRootEvent)
+find_package(BDSIM)
 
 file(GLOB sources src/*.cc)
 set(libraries DD4hep::DDG4)
