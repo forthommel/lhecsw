@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(lhecsw)
 set(lhecswlibs)
 
+set(CMAKE_CXX_STANDARD 20)
 #set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake $ENV{DD4hep_DIR}/cmake)
 include(lhecswBuildUtils)
