@@ -39,8 +39,8 @@ void Installer<UserData>::install(dd4hep::DetElement component, dd4hep::PlacedVo
                      "PolyhedraEndcapCalorimeter2Surfaces::install",
                      " Module:    %s\n"
                      " Component: %s\ndz: %g Si-pos: %g Mod-thickness: %g Comp-thickness: %g",
-                     mod_shape.toString(),
-                     comp_shape.toString(),
+                     mod_shape.toString().data(),
+                     comp_shape.toString().data(),
                      m.GetTranslation()[2],
                      si_position,
                      half_mod_thickness,
