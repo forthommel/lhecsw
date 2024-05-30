@@ -27,13 +27,6 @@ using namespace std::string_literals;
 using EventReaderStatus = dd4hep::sim::Geant4EventReader::EventReaderStatus;
 using PropertyMask = dd4hep::detail::ReferenceBitMask<int>;
 
-std::string patch_scorer_name(const std::string& scorer_name) {
-  auto out = scorer_name;
-  if (out[out.size() - 1] != '.')  // patch for BDSIM output
-    out += ".";
-  return out;
-}
-
 BDSIMParticleGun::BDSIMParticleGun(const std::string& filename)
     : dd4hep::sim::Geant4EventReader(filename), filename_(filename) {
   m_directAccess = true;
@@ -134,6 +127,13 @@ EventReaderStatus BDSIMParticleGun::readParticles(int event_number, Vertices& ve
 EventReaderStatus BDSIMParticleGun::setParameters(std::map<std::string, std::string>& parameters) {
   _getParameterValue(parameters, "TreeName", tree_name_, "Event"s);
   _getParameterValue(parameters, "ScorerName", scorer_name_, "BEND_0"s);
+
+  const auto patch_scorer_name = [](const std::string& scorer_name) -> std::string {
+    if (scorer_name[scorer_name.size() - 1] == '.')
+      return scorer_name;
+    return scorer_name + ".";  // patch for BDSIM output
+  };
+
   tree_ = file_->Get<TTree>(tree_name_.data());
   if (const auto ret = tree_->SetBranchAddress(patch_scorer_name(scorer_name_).data(), &sampler_); ret < TTree::kMatch)
     dd4hep::except("BDSIMParticleGun::BDSIMParticleGun",
