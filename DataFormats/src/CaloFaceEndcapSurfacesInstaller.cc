@@ -19,80 +19,64 @@
 #include "DataFormats/include/CaloFaceEndcapSurfaces.h"
 #include "Geometry/include/CaloEndcapPlane.h"
 
-namespace {
-  template <>
-  void Installer<CaloFaceEndcapSurfaces>::handle_arguments(int argc, char** argv) {
-    for (int i = 0; i < argc; ++i) {
-      if (char* ptr = ::strchr(argv[i], '='); ptr) {
-        const std::string name(argv[i], ptr);
-        const auto value = dd4hep::_toDouble(++ptr);
+template <>
+void Installer<CaloFaceEndcapSurfaces>::handle_arguments(int argc, char** argv) {
+  for (int i = 0; i < argc; ++i) {
+    if (char* ptr = ::strchr(argv[i], '='); ptr) {
+      const std::string name(argv[i], ptr);
+      const auto value = dd4hep::_toDouble(++ptr);
 
-        printout(dd4hep::DEBUG, "DD4hep_CaloFaceEndcapSurfacePlugin", "argument[%d] = %s = %f", i, name.c_str(), value);
+      printout(dd4hep::DEBUG, "DD4hep_CaloFaceEndcapSurfacePlugin", "argument[%d] = %s = %f", i, name.c_str(), value);
 
-        if (name == "zpos")
-          data.zpos = value;
-        else if (name == "radius")
-          data.radius = value;
-        else if (name == "phi0")
-          data.phi0 = value;
-        else if (name == "symmetry")
-          data.symmetry = value;
-        else if (name == "systemID")
-          data.systemID = value;
-        else if (name == "encoding")
-          data.encoding = ptr;
-        else
-          printout(dd4hep::WARNING, "DD4hep_CaloFaceEndcapSurfacePlugin", "unknown parameter:  %s ", name.c_str());
-      }
+      if (name == "zpos")
+        data.zpos = value;
+      else if (name == "radius")
+        data.radius = value;
+      else if (name == "phi0")
+        data.phi0 = value;
+      else if (name == "symmetry")
+        data.symmetry = value;
+      else if (name == "systemID")
+        data.systemID = value;
+      else if (name == "encoding")
+        data.encoding = ptr;
+      else
+        printout(dd4hep::WARNING, "DD4hep_CaloFaceEndcapSurfacePlugin", "unknown parameter:  %s ", name.c_str());
     }
   }
+}
 
-  /// Install measurement surfaces
-  template <>
-  void Installer<CaloFaceEndcapSurfaces>::install(dd4hep::DetElement component, dd4hep::PlacedVolume pv) {
-    dd4hep::Volume comp_vol = pv.volume();
+/// Install measurement surfaces
+template <>
+void Installer<CaloFaceEndcapSurfaces>::install(dd4hep::DetElement component, dd4hep::PlacedVolume pv) {
+  dd4hep::Volume comp_vol = pv.volume();
 
-    double zpos = data.zpos;
-    double symmetry = data.symmetry;
-    double radius = data.radius;
-    double phi0 = data.phi0;
+  const auto radius = data.symmetry ? data.radius / std::cos(M_PI / data.symmetry) : data.radius;
+  const auto inner_thickness = 1.e-6, outer_thickness = 1.e-6;
 
-    if (symmetry)
-      radius /= cos(M_PI / symmetry);
+  printout(
+      dd4hep::INFO, "DD4hep_CaloFaceEndcapSurfacePlugin", "install tracking surfaces for :  %s ", component.name());
 
-    double inner_thickness = 1e-6;
-    double outer_thickness = 1e-6;
+  dd4hep::DDSegmentation::BitField64 bf("system:5,side:-2,layer:9,module:8,sensor:8");
+  //dd4hep::DDSegmentation::BitField64 bf( data.encoding ) ;
 
-    printout(
-        dd4hep::INFO, "DD4hep_CaloFaceEndcapSurfacePlugin", "install tracking surfaces for :  %s ", component.name());
+  bf["system"] = data.systemID;
+  bf["side"] = 1;
 
-    dd4hep::DDSegmentation::BitField64 bf("system:5,side:-2,layer:9,module:8,sensor:8");
-    //dd4hep::DDSegmentation::BitField64 bf( data.encoding ) ;
+  // shift position of origin of helper plane to pick up Air instead of vacuum
+  const dd4hep::rec::Vector3D u(1., 0., 0.), v(0., 1., 0.), n(0., 0., 1.), o(0., 0.5 * radius, data.zpos);
 
-    bf["system"] = data.systemID;
-    bf["side"] = 1;
+  CaloEndcapPlane surf_pz(comp_vol, Type(Type::Helper, Type::Sensitive), inner_thickness, outer_thickness, u, v, n, o);
+  surf_pz->setData(radius, data.phi0, data.symmetry);
+  surf_pz->setID(bf.getValue());
+  addSurface(component, surf_pz);
 
-    // shift position of origin of helper plane to pick up Air instead of vacuum
-    dd4hep::rec::Vector3D u(1., 0., 0.), v(0., 1., 0.), n(0., 0., 1.), o(0., 0.5 * radius, zpos);
+  CaloEndcapPlane surf_nz(
+      comp_vol, Type(Type::Helper, Type::Sensitive), inner_thickness, outer_thickness, u, v, n, -1 * o);
+  bf["side"] = -1;
+  surf_nz->setData(radius, data.phi0, data.symmetry);
+  surf_nz->setID(bf.getValue());
+  addSurface(component, surf_nz);
 
-    CaloEndcapPlane surf_pz(
-        comp_vol, Type(Type::Helper, Type::Sensitive), inner_thickness, outer_thickness, u, v, n, o);
-
-    surf_pz->setData(radius, phi0, symmetry);
-    surf_pz->setID(bf.getValue());
-
-    addSurface(component, surf_pz);
-
-    CaloEndcapPlane surf_nz(
-        comp_vol, Type(Type::Helper, Type::Sensitive), inner_thickness, outer_thickness, u, v, n, -1 * o);
-
-    bf["side"] = -1;
-    surf_nz->setData(radius, phi0, symmetry);
-    surf_nz->setID(bf.getValue());
-
-    addSurface(component, surf_nz);
-
-    // stop scanning the hierarchy any further
-    stopScanning();
-  }
-}  // namespace
+  stopScanning();  // stop scanning the hierarchy any further
+}

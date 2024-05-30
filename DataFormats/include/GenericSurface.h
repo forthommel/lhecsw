@@ -22,7 +22,6 @@ namespace {
     double nvector[3];
     double ovector[3];
   };
-
 }  // namespace
 
 // Framework include files

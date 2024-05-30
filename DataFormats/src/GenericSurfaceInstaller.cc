@@ -65,18 +65,10 @@ namespace {
   void Installer<GenericSurface>::handle_arguments(int argc, char** argv) {
     //Initialize defaults to zero
     data.dimension = 0;
-    data.uvector[0] = 0.;
-    data.uvector[1] = 0.;
-    data.uvector[2] = 0.;
-    data.vvector[0] = 0.;
-    data.vvector[1] = 0.;
-    data.vvector[2] = 0.;
-    data.nvector[0] = 0.;
-    data.nvector[1] = 0.;
-    data.nvector[2] = 0.;
-    data.ovector[0] = 0.;
-    data.ovector[1] = 0.;
-    data.ovector[2] = 0.;
+    std::fill_n(data.uvector, 3, 0.);
+    std::fill_n(data.vvector, 3, 0.);
+    std::fill_n(data.nvector, 3, 0.);
+    std::fill_n(data.ovector, 3, 0.);
 
     for (int i = 0; i < argc; ++i) {
       if (char* ptr = ::strchr(argv[i], '='); ptr) {
@@ -144,9 +136,7 @@ namespace {
 
       } else if (!handleUsingCache(component, comp_vol)) {
         const double* trans = placementTranslation(component);
-        double half_module_thickness = 0.;
-        double sensitive_z_position = 0.;
-
+        double half_module_thickness = 0., sensitive_z_position = 0.;
         if (data.nvector[0] != 0 && data.nvector[1] == 0 && data.nvector[2] == 0) {
           half_module_thickness = mod_shape->GetDX();
           sensitive_z_position = data.nvector[0] > 0 ? trans[0] : -trans[0];
@@ -159,17 +149,16 @@ namespace {
         } else
           throw std::runtime_error(
               "**** dd4hep_GenericSurfaceInstallerPlugin: normal vector unsupported! It has to be "
-              "perpenidcular to one of the box sides, i.e. only one non-zero component.");
+              "perpendicular to one of the box sides, i.e. only one non-zero component.");
 
-        double inner_thickness = half_module_thickness + sensitive_z_position;
-        double outer_thickness = half_module_thickness - sensitive_z_position;
+        const auto inner_thickness = half_module_thickness + sensitive_z_position,
+                   outer_thickness = half_module_thickness - sensitive_z_position;
 
         //Surface is placed at the center of the volume, no need to shift origin
         //Make sure u,v,n form a right-handed coordinate system, v along the final z
-        Vector3D u(data.uvector[0], data.uvector[1], data.uvector[2]);
-        Vector3D v(data.vvector[0], data.vvector[1], data.vvector[2]);
-        Vector3D n(data.nvector[0], data.nvector[1], data.nvector[2]);
-        Vector3D o(data.ovector[0], data.ovector[1], data.ovector[2]);
+        const Vector3D u(data.uvector[0], data.uvector[1], data.uvector[2]),
+            v(data.vvector[0], data.vvector[1], data.vvector[2]), n(data.nvector[0], data.nvector[1], data.nvector[2]),
+            o(data.ovector[0], data.ovector[1], data.ovector[2]);
         Type type(Type::Sensitive);
 
         if (data.dimension == 1)
