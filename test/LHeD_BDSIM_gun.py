@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 def run():
     import os
     import DDG4
-    import g4units
     from DDG4 import OutputLevel as Output
 
     kernel = DDG4.Kernel()
@@ -35,7 +34,7 @@ def run():
     geant4.setupROOTOutput('RootOutput', 'output.root')
 
     gen = DDG4.GeneratorAction(kernel, "Geant4InputAction/Input")
-    gen.Input = 'BDSIMParticleGun|~/work/dev/bdsim_studies/test_lstar23.root'
+    gen.Input = 'BDSIMParticleGun|~lforthom/public/forPeter/BDSIM_10evts_lstar23.root'
     gen.OutputLevel = Output.DEBUG
     geant4.buildInputStage([gen], output_level=Output.DEBUG)
 
