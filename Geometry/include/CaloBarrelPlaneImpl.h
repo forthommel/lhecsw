@@ -43,6 +43,4 @@ private:
   double _length, _width;
 };
 
-typedef dd4hep::rec::VolSurfaceHandle<CaloBarrelPlaneImpl> CaloBarrelPlane;
-
 #endif
