@@ -18,18 +18,18 @@
 
 #include <DDG4/Factories.h>
 #include <DDG4/Geant4InputAction.h>
-#include <TFile.h>
-#include <TTree.h>
 
-#include "Generator/Pythia8Interfaceinclude/Pythia8EventGenerator.h"
+#include "Common/include/StringUtils.h"
+#include "Generator/Pythia8Interface/include/Pythia8EventGenerator.h"
 
 using EventReaderStatus = dd4hep::sim::Geant4EventReader::EventReaderStatus;
 using PropertyMask = dd4hep::detail::ReferenceBitMask<int>;
 
 Pythia8EventGenerator::Pythia8EventGenerator(const std::string& filename)
-    : dd4hep::sim::Geant4EventReader(filename), pythia_(new Pythia8::Pythia), filename_(filename) {
-  m_directAccess = true;
-}
+    : dd4hep::sim::Geant4EventReader(filename),
+      pythia_(new Pythia8::Pythia),
+      hepmc_(new HepMC3::Pythia8ToHepMC3),
+      filename_(filename) {}
 
 EventReaderStatus Pythia8EventGenerator::moveToEvent(int) { return EVENT_READER_OK; }
 
@@ -41,49 +41,75 @@ EventReaderStatus Pythia8EventGenerator::readParticles(int, Vertices& vertices, 
         dd4hep::DEBUG, "Pythia8EventGenerator::readParticles", "Error occurred when running Pythia::next.");
     return EVENT_READER_ERROR;
   }
-  Vertex *vtx_beam1{nullptr}, *vtx_beam2{nullptr};
-  for (int i = 0; i < pythia_->event.size(); ++i) {
-    const auto& pypart = pythia_->event.at(i);
-    auto part = dd4hep::sim::Geant4ParticleHandle(new Particle(i));
-    part->status = pypart.status();
-    part->genStatus = pypart.status();
-    part->pdgID = pypart.id();
-    part->charge = pypart.charge();
-    part->colorFlow[0] = pypart.col();
-    part->colorFlow[1] = pypart.acol();
-    part->vsx = part->vex = pypart.xProd() * dd4hep::cm;
-    part->vsy = part->vey = pypart.yProd() * dd4hep::cm;
-    part->vsz = part->vez = pypart.zProd() * dd4hep::cm;
-    part->time = part->properTime = pypart.tProd() * dd4hep::s;
-    part->psx = part->pex = pypart.px() * dd4hep::GeV;
-    part->psy = part->pey = pypart.py() * dd4hep::GeV;
-    part->psz = part->pez = pypart.pz() * dd4hep::GeV;
-    part->mass = pypart.mCalc() * dd4hep::GeV;
+  auto* hepmc_evt = new HepMC3::GenEvent;
+  if (!hepmc_->fill_next_event(*pythia_, hepmc_evt) || !hepmc_evt)
+    dd4hep::except("Pythia8EventGenerator::readParticles", "Failed to convert Pythia 8 event into an HepMC3 event.");
+
+  const auto normalise_id = [](int id) -> int { return id - 1; };
+
+  for (const auto& hm_part : hepmc_evt->particles()) {
+    const auto id_norm = normalise_id(hm_part->id());
+    if (id_norm == 0)  // two-beam system
+      continue;
+    auto part = dd4hep::sim::Geant4ParticleHandle(new Particle(id_norm));
+    part->status = part->genStatus = hm_part->status();
+    part->pdgID = hm_part->pid();
+    part->charge = pythia_->particleData.charge(hm_part->pid());
+    //part->colorFlow[0] = pypart.col();
+    //part->colorFlow[1] = pypart.acol();
+    if (const auto& prod_vtx = hm_part->production_vertex(); prod_vtx) {
+      const auto& prod_vtx_pos = prod_vtx->position();
+      part->vsx = part->vex = prod_vtx_pos.x() * dd4hep::cm;
+      part->vsy = part->vey = prod_vtx_pos.y() * dd4hep::cm;
+      part->vsz = part->vez = prod_vtx_pos.z() * dd4hep::cm;
+      part->time = part->properTime = prod_vtx_pos.t() * dd4hep::s;
+    }
+    if (const auto& end_vtx = hm_part->end_vertex(); end_vtx) {
+      const auto& end_vtx_pos = end_vtx->position();
+      part->vex = end_vtx_pos.x() * dd4hep::cm;
+      part->vey = end_vtx_pos.y() * dd4hep::cm;
+      part->vez = end_vtx_pos.z() * dd4hep::cm;
+    }
+    const auto& mom = hm_part->momentum();
+    part->psx = part->pex = mom.px() * dd4hep::GeV;
+    part->psy = part->pey = mom.py() * dd4hep::GeV;
+    part->psz = part->pez = mom.pz() * dd4hep::GeV;
+    part->mass = mom.m() * dd4hep::GeV;
     dd4hep::printout(dd4hep::INFO,
                      "Pythia8EventGenerator::readParticles",
-                     "Added particle #%d with PDG id=%d, charge=%de, status=%d/%d, momentum=(%g, %g, %g)",
+                     "Added particle #%d with PDG id=%d, charge=%de, colour=%d/%d, status=%d/%d, momentum=(%g, %g, "
+                     "%g)/(%g, %g, %g), mass=%g, time=%g/%g",
                      part->id,
                      part->pdgID,
                      part->charge,
+                     part->colorFlow[0],
+                     part->colorFlow[1],
                      part->status,
                      part->genStatus,
                      part->psx,
                      part->psy,
-                     part->psz);
+                     part->psz,
+                     part->pex,
+                     part->pey,
+                     part->pez,
+                     part->mass,
+                     part->time,
+                     part->properTime);
     particles.emplace_back(part);
-    const auto moth1 = pypart.mother1(), moth2 = pypart.mother2();
-    Vertex* vtx{nullptr};
-    if (moth1 == 0 && moth2 == 0) {  // primary (beam) particles
-      if (i == 0) {
-        vtx_beam1 = vertices.emplace_back();
-        vtx = vtx_beam1;
-      } else if (i == 1) {
-        vtx_beam2 = vertices.emplace_back();
-        vtx = vtx_beam2;
-      } else
-        dd4hep::except(
-            "Pythia8EventGenerator::readParticles", "Invalid parentage for non-beam particle (%d, %d).", moth1, moth2);
-    }
+  }
+  for (const auto& hm_vtx : hepmc_evt->vertices()) {
+    if (!hm_vtx)
+      dd4hep::except("Pythia8EventGenerator::readParticles", "Invalid vertex retrieved from HepMC3-converted event.");
+    auto* vtx = vertices.emplace_back(new Vertex);
+    const auto& pos = hm_vtx->position();
+    vtx->x = pos.x() * dd4hep::cm;
+    vtx->y = pos.y() * dd4hep::cm;
+    vtx->z = pos.z() * dd4hep::cm;
+    vtx->time = pos.t() * dd4hep::s;
+    for (const auto& pin : hm_vtx->particles_in())
+      vtx->in.insert(normalise_id(pin->id()));
+    for (const auto& pout : hm_vtx->particles_out())
+      vtx->out.insert(normalise_id(pout->id()));
   }
   return EVENT_READER_OK;
 }
@@ -93,15 +119,29 @@ EventReaderStatus Pythia8EventGenerator::setParameters(std::map<std::string, std
   _getParameterValue(parameters, "Commands", pre_commands, pre_commands);
   _getParameterValue(parameters, "PostCommands", post_commands, post_commands);
 
+  if (!filename_.empty()) {
+    const auto tokens = utils::split(filename_, '|', true);
+    if (tokens.size() > 1 && !pythia_->readFile(tokens.at(1))) {
+      dd4hep::except("Pythia8EventGenerator::setParameters",
+                     "Failed to load input Pythia commands file '" + tokens.at(1) + "'.");
+      return EVENT_READER_ERROR;
+    }
+  }
   for (const auto& cmd : pre_commands)  // steer the pre-initialisation parameters
-    pythia_->readString(cmd);
+    if (!pythia_->readString(cmd)) {
+      dd4hep::except("Pythia8EventGenerator::setParameters", "Failed to parse input Pythia command '" + cmd + "'.");
+      return EVENT_READER_ERROR;
+    }
 
   if (!pythia_->init()) {  // Pythia initialisation
-    dd4hep::except("Pythia8EventGenerator::Pythia8EventGenerator", "Failed to load parse configuration commands.");
+    dd4hep::except("Pythia8EventGenerator::setParameters", "Failed to load parse configuration commands.");
     return EVENT_READER_ERROR;
   }
   for (const auto& cmd : post_commands)  // steer the post-initialisation parameters
-    pythia_->readString(cmd);
+    if (!pythia_->readString(cmd)) {
+      dd4hep::except("Pythia8EventGenerator::setParameters", "Failed to parse input Pythia command '" + cmd + "'.");
+      return EVENT_READER_ERROR;
+    }
 
   return EVENT_READER_OK;
 }
