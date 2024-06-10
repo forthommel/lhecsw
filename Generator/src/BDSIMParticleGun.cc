@@ -48,7 +48,7 @@ EventReaderStatus BDSIMParticleGun::moveToEvent(int event_number) {
       return EVENT_READER_ERROR;
     default: {  // successful readout of event
       dd4hep::printout(
-          dd4hep::INFO, "BDSIMParticleGun::moveToEvent", "Successfully moved to event number %d.", event_number);
+          dd4hep::DEBUG, "BDSIMParticleGun::moveToEvent", "Successfully moved to event number %d.", event_number);
       m_currEvent = event_number;
       return EVENT_READER_OK;
     }
@@ -59,25 +59,21 @@ EventReaderStatus BDSIMParticleGun::readParticles(int event_number, Vertices& ve
   if (m_currEvent != event_number)
     if (const auto ret = moveToEvent(event_number); ret != EVENT_READER_OK)
       dd4hep::except("BDSIMParticleGun::readParticles", "Failed to retrieve event number %d!", event_number);
-  //vertices.clear();
-  //particles.clear();
-  auto* prim_part = new Particle(-1);
-  PropertyMask prim_status(prim_part->status);
-  prim_status.set(dd4hep::sim::G4PARTICLE_GEN_BEAM);
-  prim_part->genStatus = dd4hep::sim::G4PARTICLE_GEN_BEAM & dd4hep::sim::G4PARTICLE_GEN_STATUS_MASK;
-  prim_part->pdgID = 11;
-  prim_part->charge = -1;
+  vertices.clear();
+  particles.clear();
   for (int i = 0; i < sampler_->n; ++i) {
     dd4hep::sim::Geant4ParticleHandle part(new Particle(i));
     part->id = sampler_->trackID.at(i);
     part->pdgID = sampler_->partID.at(i);
-
     PropertyMask status(part->status);
     status.set(dd4hep::sim::G4PARTICLE_GEN_STABLE);
-    part->status = 1;
-    part->genStatus = 1 & dd4hep::sim::G4PARTICLE_GEN_STATUS_MASK;
+    if (const auto parent = sampler_->parentID.at(i); parent == 0)  // beam particle
+      status.set(dd4hep::sim::G4PARTICLE_GEN_BEAM);
+    else  // secondary emission
+      part->parents.insert(parent);
     part->time = part->properTime = 0.;
-    if ((int)sampler_->charge.size() > i)  // sometimes not filled
+    auto* vtx = vertices.emplace_back(new Vertex);  // add the vertex
+    if ((int)sampler_->charge.size() > i)           // sometimes not filled
       part->charge = sampler_->charge.at(i);
     else {  //FIXME should retrieve this from Geant4/elsewhere...
       const auto pdgid = std::abs(part->pdgID);
@@ -99,7 +95,13 @@ EventReaderStatus BDSIMParticleGun::readParticles(int event_number, Vertices& ve
     part->vsx = part->vex = sampler_->x.at(i) * dd4hep::mm;
     part->vsy = part->vey = sampler_->y.at(i) * dd4hep::mm;
     part->vsz = part->vez = sampler_->z * dd4hep::mm;
-    dd4hep::printout(dd4hep::INFO,
+    vtx->x = part->vsx;
+    vtx->y = part->vsy;
+    vtx->z = part->vsz;
+    vtx->time = part->time;
+    vtx->in.insert(part->id);
+    vtx->out.insert(part->id);
+    dd4hep::printout(dd4hep::DEBUG,
                      "BDSIMParticleGun::readParticles",
                      "Added particle #%d with PDG id=%d, charge=%de, status=%d/%d, momentum=(%g, %g, %g)",
                      part->id,
@@ -110,15 +112,6 @@ EventReaderStatus BDSIMParticleGun::readParticles(int event_number, Vertices& ve
                      part->psx,
                      part->psy,
                      part->psz);
-    if (part->parents.empty()) {  // add the vertex
-      auto* vtx = new Vertex;
-      vertices.emplace_back(vtx);
-      vtx->x = part->vsx;
-      vtx->y = part->vsy;
-      vtx->z = part->vsz;
-      vtx->time = part->time;
-      vtx->out.insert(part->id);
-    }
     particles.emplace_back(part);
   }
   return EVENT_READER_OK;
@@ -140,7 +133,7 @@ EventReaderStatus BDSIMParticleGun::setParameters(std::map<std::string, std::str
                    "Failed to load '%s' scorer branch! Return value: %d.",
                    scorer_name_.data(),
                    ret);
-  dd4hep::printout(dd4hep::INFO,
+  dd4hep::printout(dd4hep::DEBUG,
                    "BDSIMParticleGun::BDSIMParticleGun",
                    "Loaded '%s' scorer in '%s' tree from '%s' file.",
                    scorer_name_.data(),
