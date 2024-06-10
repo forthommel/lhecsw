@@ -15,9 +15,9 @@ class LHeD:
     self.kernel.UI = ""
     self.noPhysics()
 
-  def loadGeometry(self):
+  def loadGeometry(self, path='compact.xml'):
     import os
-    self.kernel.loadGeometry(str("file:" + os.environ.get('THIS', '..') + "/../Geometry/data/compact/compact_Lhe_dip_sol_ell.xml"))
+    self.kernel.loadGeometry("file:" + os.environ.get('lhecsw', '..') + f"/Geometry/data/compact/{path}")
     return self
 
   # Example to show how to configure G4 magnetic field tracking

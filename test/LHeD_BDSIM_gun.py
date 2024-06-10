@@ -17,14 +17,20 @@ def run():
     import os
     import DDG4
     from DDG4 import OutputLevel as Output
+    import LHeD
 
-    kernel = DDG4.Kernel()
-    kernel.loadGeometry(str("file:" + os.environ.get('THIS', '..') + "/../Geometry/data/compact/compact.xml"))
     DDG4.Core.setPrintFormat(str("%-32s %6s %s"))
-    geant4 = DDG4.Geant4(kernel)
+
+    lhed = LHeD.LHeD()
+    geant4 = lhed.geant4
+    kernel = lhed.kernel
+
+    lhed.loadGeometry()
+    geant4.printDetectors()
     # Configure UI
-    #geant4.setupCshUI(ui='Qt')
-    geant4.setupUI(ui=None)
+    geant4.setupUI(vis=False)
+    lhed.setupField(quiet=False)
+    DDG4.importConstants(kernel.detectorDescription(), debug=False)
 
     prt = DDG4.EventAction(kernel, 'Geant4ParticlePrint/ParticlePrint')
     prt.OutputLevel = Output.WARNING
@@ -33,23 +39,28 @@ def run():
 
     geant4.setupROOTOutput('RootOutput', 'output.root')
 
-    gen = DDG4.GeneratorAction(kernel, "Geant4InputAction/Input")
+    gen = DDG4.GeneratorAction(kernel, 'Geant4InputAction/Input')
     gen.Input = 'BDSIMParticleGun|~lforthom/public/forPeter/BDSIM_10evts_lstar23.root'
     gen.OutputLevel = Output.DEBUG
     geant4.buildInputStage([gen], output_level=Output.DEBUG)
 
+    part = DDG4.GeneratorAction(kernel, 'Geant4ParticleHandler/ParticleHandler')
+    kernel.generatorAction().adopt(part)
+    part.enableUI()
+
+    lhed.setupDetectors()
     # Now build the physics list:
-    geant4.setupPhysics('QGSP_BERT')
+    lhed.setupPhysics('QGSP_BERT')
+    lhed.test_config()
 
-    scan = DDG4.SteppingAction(kernel, 'Geant4MaterialScanner/MaterialScan')
-    kernel.steppingAction().adopt(scan)
+    #scan = DDG4.SteppingAction(kernel, 'Geant4MaterialScanner/MaterialScan')
+    #kernel.steppingAction().adopt(scan)
 
-    kernel.configure()
-    kernel.initialize()
+    #kernel.configure()
+    #kernel.initialize()
     kernel.NumEvents = 10
 
     kernel.run()
-
     kernel.terminate()
     logger.info('End of run. Terminating .......')
     logger.info('TEST_PASSED')
