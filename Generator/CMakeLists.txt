@@ -14,9 +14,8 @@ find_path(BDSIM_INCLUDE_DIR BDSOutputROOTEventSampler.hh
           HINTS ${BDSIM_DIRS}
           PATH_SUFFIXES include include/bdsim)
 
-
 if(BDSIM_LIBRARY AND BDSIM_INCLUDE_DIR)  # link BDSIM includes directory
-  file(GLOB bdsim_src src/BDSIMParticleGun.cc)
+  file(GLOB bdsim_src src/BDSIM*.cc)
   list(APPEND sources ${bdsim_src})
   list(APPEND libraries ${Boost_LIBRARIES} ${BDSIM_LIBRARY})
   list(APPEND includes ${Geant4_INCLUDE_DIRS} ${BDSIM_INCLUDE_DIR})
