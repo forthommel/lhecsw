@@ -82,36 +82,40 @@ EventReaderStatus BDSIMParticleGun::readParticles(int event_number, Vertices& ve
       else if (pdgid == 2212)
         part->charge = part->pdgID / pdgid;
     }
-    const auto ptot = sampler_->p.at(i) * dd4hep::GeV;
+    const auto ptot = sampler_->p.at(i) / dd4hep::MeV;
     if ((int)sampler_->mass.size() > i)  // sometimes not filled
       part->mass = sampler_->mass.at(i);
     else {  // compute from energy/momentum conservation
-      const auto energy = sampler_->energy.at(i) * dd4hep::GeV;
+      const auto energy = sampler_->energy.at(i) / dd4hep::MeV;
       part->mass = std::sqrt(energy * energy - ptot * ptot);
     }
     part->psx = part->pex = ptot * sampler_->xp.at(i);
     part->psy = part->pey = ptot * sampler_->yp.at(i);
     part->psz = part->pez = ptot * sampler_->zp.at(i);
-    part->vsx = part->vex = sampler_->x.at(i) * dd4hep::mm;
-    part->vsy = part->vey = sampler_->y.at(i) * dd4hep::mm;
-    part->vsz = part->vez = sampler_->z * dd4hep::mm;
+    part->vsx = part->vex = sampler_->x.at(i) / dd4hep::m;
+    part->vsy = part->vey = sampler_->y.at(i) / dd4hep::m;
+    part->vsz = part->vez = sampler_->z / dd4hep::m;
     vtx->x = part->vsx;
     vtx->y = part->vsy;
     vtx->z = part->vsz;
     vtx->time = part->time;
     vtx->in.insert(part->id);
     vtx->out.insert(part->id);
-    dd4hep::printout(dd4hep::DEBUG,
-                     "BDSIMParticleGun::readParticles",
-                     "Added particle #%d with PDG id=%d, charge=%de, status=%d/%d, momentum=(%g, %g, %g)",
-                     part->id,
-                     part->pdgID,
-                     part->charge,
-                     part->status,
-                     part->genStatus,
-                     part->psx,
-                     part->psy,
-                     part->psz);
+    dd4hep::printout(
+        dd4hep::INFO,
+        "BDSIMParticleGun::readParticles",
+        "Added particle #%d with PDG id=%d, charge=%de, status=%d/%d, vertex=(%g, %g, %g), momentum=(%g, %g, %g)",
+        part->id,
+        part->pdgID,
+        part->charge,
+        part->status,
+        part->genStatus,
+        part->vsx,
+        part->vsy,
+        part->vsz,
+        part->psx,
+        part->psy,
+        part->psz);
     particles.emplace_back(part);
   }
   return EVENT_READER_OK;
