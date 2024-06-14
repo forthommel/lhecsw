@@ -34,10 +34,10 @@ def run():
     lhed.setupField(quiet=False)
     DDG4.importConstants(kernel.detectorDescription(), debug=False)
 
-    prt = DDG4.EventAction(kernel, 'Geant4ParticlePrint/ParticlePrint')
-    prt.OutputLevel = Output.WARNING
-    prt.OutputType = 3  # Print both: table and tree
-    kernel.eventAction().adopt(prt)
+    #prt = DDG4.EventAction(kernel, 'Geant4ParticlePrint/ParticlePrint')
+    #prt.OutputLevel = Output.WARNING
+    #prt.OutputType = 3  # Print both: table and tree
+    #kernel.eventAction().adopt(prt)
 
     geant4.setupROOTOutput('RootOutput', 'output.root')
 
@@ -58,9 +58,9 @@ def run():
     geant4.buildInputStage([gen], output_level=Output.DEBUG)
 
     # Merge all existing interaction records
-    merger = DDG4.GeneratorAction(kernel, 'Geant4InteractionMerger/InteractionMerger')
-    merger.enableUI()
-    kernel.generatorAction().adopt(merger)
+    #merger = DDG4.GeneratorAction(kernel, 'Geant4InteractionMerger/InteractionMerger')
+    #merger.enableUI()
+    #kernel.generatorAction().adopt(merger)
 
     part = DDG4.GeneratorAction(kernel, 'Geant4ParticleHandler/ParticleHandler')
     kernel.generatorAction().adopt(part)

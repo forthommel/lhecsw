@@ -52,33 +52,41 @@ EventReaderStatus Pythia8EventGenerator::readParticles(int, Vertices& vertices, 
     if (id_norm == 0)  // two-beam system
       continue;
     auto part = dd4hep::sim::Geant4ParticleHandle(new Particle(id_norm));
-    part->status = part->genStatus = hm_part->status();
+    if (const auto flow1 = hm_part->attribute_as_string("flow1"), flow2 = hm_part->attribute_as_string("flow2");
+        !flow1.empty() || !flow2.empty()) {
+      part->colorFlow[0] = std::stoi(flow1);
+      part->colorFlow[1] = std::stoi(flow2);
+    }
+    PropertyMask status(part->status);
+    if (hm_part->status() == 1)
+      status.set(dd4hep::sim::G4PARTICLE_GEN_STABLE);
+    else
+      status.set(dd4hep::sim::G4PARTICLE_GEN_OTHER);
+    part->genStatus = hm_part->status();
     part->pdgID = hm_part->pid();
     part->charge = pythia_->particleData.charge(hm_part->pid());
-    //part->colorFlow[0] = pypart.col();
-    //part->colorFlow[1] = pypart.acol();
     if (const auto& prod_vtx = hm_part->production_vertex(); prod_vtx) {
       const auto& prod_vtx_pos = prod_vtx->position();
-      part->vsx = part->vex = prod_vtx_pos.x() * dd4hep::cm;
-      part->vsy = part->vey = prod_vtx_pos.y() * dd4hep::cm;
-      part->vsz = part->vez = prod_vtx_pos.z() * dd4hep::cm;
-      part->time = part->properTime = prod_vtx_pos.t() * dd4hep::s;
+      part->vsx = part->vex = prod_vtx_pos.x() / dd4hep::cm;
+      part->vsy = part->vey = prod_vtx_pos.y() / dd4hep::cm;
+      part->vsz = part->vez = prod_vtx_pos.z() / dd4hep::cm;
+      part->time = part->properTime = prod_vtx_pos.t() / dd4hep::s;
     }
     if (const auto& end_vtx = hm_part->end_vertex(); end_vtx) {
       const auto& end_vtx_pos = end_vtx->position();
-      part->vex = end_vtx_pos.x() * dd4hep::cm;
-      part->vey = end_vtx_pos.y() * dd4hep::cm;
-      part->vez = end_vtx_pos.z() * dd4hep::cm;
+      part->vex = end_vtx_pos.x() / dd4hep::cm;
+      part->vey = end_vtx_pos.y() / dd4hep::cm;
+      part->vez = end_vtx_pos.z() / dd4hep::cm;
     }
     const auto& mom = hm_part->momentum();
-    part->psx = part->pex = mom.px() * dd4hep::GeV;
-    part->psy = part->pey = mom.py() * dd4hep::GeV;
-    part->psz = part->pez = mom.pz() * dd4hep::GeV;
-    part->mass = mom.m() * dd4hep::GeV;
+    part->psx = part->pex = mom.px() / dd4hep::MeV;
+    part->psy = part->pey = mom.py() / dd4hep::MeV;
+    part->psz = part->pez = mom.pz() / dd4hep::MeV;
+    part->mass = mom.m() / dd4hep::MeV;
     dd4hep::printout(dd4hep::INFO,
                      "Pythia8EventGenerator::readParticles",
                      "Added particle #%d with PDG id=%d, charge=%de, colour=%d/%d, status=%d/%d, momentum=(%g, %g, "
-                     "%g)/(%g, %g, %g), mass=%g, time=%g/%g",
+                     "%g), mass=%g, time=%g/%g",
                      part->id,
                      part->pdgID,
                      part->charge,
@@ -89,9 +97,6 @@ EventReaderStatus Pythia8EventGenerator::readParticles(int, Vertices& vertices, 
                      part->psx,
                      part->psy,
                      part->psz,
-                     part->pex,
-                     part->pey,
-                     part->pez,
                      part->mass,
                      part->time,
                      part->properTime);
@@ -100,11 +105,13 @@ EventReaderStatus Pythia8EventGenerator::readParticles(int, Vertices& vertices, 
   for (const auto& hm_vtx : hepmc_evt->vertices()) {
     if (!hm_vtx)
       dd4hep::except("Pythia8EventGenerator::readParticles", "Invalid vertex retrieved from HepMC3-converted event.");
+    if (hm_vtx->id() == -1)
+      continue;
     auto* vtx = vertices.emplace_back(new Vertex);
     const auto& pos = hm_vtx->position();
-    vtx->x = pos.x() * dd4hep::cm;
-    vtx->y = pos.y() * dd4hep::cm;
-    vtx->z = pos.z() * dd4hep::cm;
+    vtx->x = pos.x() / dd4hep::cm;
+    vtx->y = pos.y() / dd4hep::cm;
+    vtx->z = pos.z() / dd4hep::cm;
     vtx->time = pos.t() * dd4hep::s;
     for (const auto& pin : hm_vtx->particles_in())
       vtx->in.insert(normalise_id(pin->id()));
