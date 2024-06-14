@@ -11,6 +11,6 @@ if(NOT HepMC3_FOUND)
 endif()
 
 lhecsw_build(Generator_Pythia8Interface
-    SOURCES src/Pythia8*.cc}
+    SOURCES src/Pythia8*.cc
     LIBRARIES DD4hep::DDG4 ${Pythia8_LIBRARIES} ${HEPMC3_LIBRARIES}
     HEADERS ${Pythia8_INCLUDE_DIRS} ${HEPMC3_INCLUDE_DIRS})
