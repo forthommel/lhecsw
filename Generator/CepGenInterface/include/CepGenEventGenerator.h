@@ -33,4 +33,5 @@ public:
 
 private:
   const std::unique_ptr<cepgen::Generator> cepgen_;
+  std::shared_ptr<HepMC3::GenCrossSection> xsec_;
 };
