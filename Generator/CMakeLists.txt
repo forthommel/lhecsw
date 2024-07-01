@@ -1,1 +1,2 @@
 add_subdirectory(BDSIMInterface)
+add_subdirectory(CepGenInterface)
