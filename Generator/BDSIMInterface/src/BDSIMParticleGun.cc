@@ -21,7 +21,7 @@
 #include <TFile.h>
 #include <TTree.h>
 
-#include "Generator/include/BDSIMParticleGun.h"
+#include "Generator/BDSIMInterface/include/BDSIMParticleGun.h"
 
 using namespace std::string_literals;
 using EventReaderStatus = dd4hep::sim::Geant4EventReader::EventReaderStatus;
@@ -92,9 +92,9 @@ EventReaderStatus BDSIMParticleGun::readParticles(int event_number, Vertices& ve
     part->psx = part->pex = ptot * sampler_->xp.at(i);
     part->psy = part->pey = ptot * sampler_->yp.at(i);
     part->psz = part->pez = ptot * sampler_->zp.at(i);
-    part->vsx = part->vex = sampler_->x.at(i) / dd4hep::m;
-    part->vsy = part->vey = sampler_->y.at(i) / dd4hep::m;
-    part->vsz = part->vez = sampler_->z / dd4hep::m;
+    part->vsx = part->vex = sampler_->x.at(i) / dd4hep::mm;
+    part->vsy = part->vey = sampler_->y.at(i) / dd4hep::mm;
+    part->vsz = part->vez = sampler_->z / dd4hep::mm;
     vtx->x = part->vsx;
     vtx->y = part->vsy;
     vtx->z = part->vsz;
