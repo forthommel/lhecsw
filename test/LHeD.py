@@ -8,16 +8,22 @@ logger = logging.getLogger(__name__)
 
 
 class LHeD:
-  def __init__(self, tracker='Geant4TrackerCombineAction'):
+  def __init__(self, tracker='Geant4TrackerCombineAction', no_physics=True):
     self.kernel = DDG4.Kernel()
     self.description = self.kernel.detectorDescription()
     self.geant4 = DDG4.Geant4(self.kernel, tracker=tracker)
     self.kernel.UI = ""
-    self.noPhysics()
+    if no_physics:
+      self.noPhysics()
 
-  def loadGeometry(self, path='compact.xml'):
-    import os
-    self.kernel.loadGeometry("file:" + os.environ.get('lhecsw', '..') + f"/Geometry/data/compact/{path}")
+  def loadGeometry(self, path='LHeD.xml', file=None):
+    from os import environ
+    install_dir = environ.get('lhecsw', '..')
+    if file is None:
+      self.kernel.loadGeometry(f"file:{install_dir}/Geometry/data/compact/{path}")
+    else:
+      ui = DDG4.DD4hepUI(self.description)
+      ui.importROOT(file)
     return self
 
   # Example to show how to configure G4 magnetic field tracking
@@ -25,7 +31,7 @@ class LHeD:
     return self.geant4.setupTrackingField(prt=True)
 
   # Example to show how to setup random generator
-  def setupRandom(self, name, type=None, seed=None, quiet=True):   # noqa: A002
+  def setupRandom(self, name, type=None, seed=None, quiet=True):
     rndm = DDG4.Action(self.kernel, 'Geant4Random/' + name)
     if seed:
       rndm.Seed = seed
@@ -62,18 +68,23 @@ class LHeD:
   def setupDetectors(self):
     logger.info("#  First the tracking detectors")
     seq, act = self.geant4.setupTracker('SiVertexBarrel')
-    seq, act = self.geant4.setupTracker('SiTrackerForward')
+    seq, act = self.geant4.setupTracker('SiVertexBarrel2')
     seq, act = self.geant4.setupTracker('SiTrackerBarrel')
+    seq, act = self.geant4.setupTracker('SiTrackerOBarrel')
+    seq, act = self.geant4.setupTracker('SiTrackerForward')
     seq, act = self.geant4.setupTracker('SiTrackerBackward')
     logger.info("#  Now setup the calorimeters")
-    seq, act = self.geant4.setupCalorimeter('EcalBarrel')
-    seq, act = self.geant4.setupCalorimeter('EcalEndcap_fwd')
-    seq, act = self.geant4.setupCalorimeter('EcalEndcap_bwd')
+    seq, act = self.geant4.setupCalorimeter('EcalBarreli')
+    seq, act = self.geant4.setupCalorimeter('EcalBarrelm')
+    seq, act = self.geant4.setupCalorimeter('EcalBarrelo')
+    seq, act = self.geant4.setupCalorimeter('EcalPlug_fwd')
+    seq, act = self.geant4.setupCalorimeter('EcalPlug_bwd')
     seq, act = self.geant4.setupCalorimeter('HcalBarrel')
     seq, act = self.geant4.setupCalorimeter('HcalEndcap_fwd')
     seq, act = self.geant4.setupCalorimeter('HcalEndcap_bwd')
     seq, act = self.geant4.setupCalorimeter('HcalPlug_fwd')
     seq, act = self.geant4.setupCalorimeter('HcalPlug_bwd')
+    logger.info("#  Now setup the muon chambers")
     seq, act = self.geant4.setupCalorimeter('MuonBarrel')
     seq, act = self.geant4.setupCalorimeter('MuonEndcap_fwd1')
     seq, act = self.geant4.setupCalorimeter('MuonEndcap_fwd2')
@@ -81,16 +92,18 @@ class LHeD:
     seq, act = self.geant4.setupCalorimeter('MuonEndcap_bwd2')
     return self
 
+  # Test the configuration
   def test_config(self, have_geo=True):
     self.kernel.configure()
     if have_geo:
       self.kernel.initialize()
+    return self
 
   # Test runner
-  def test_run(self, have_geo=True, have_physics=False):
+  def test_run(self, have_geo=True, have_physics=False, num_events=2):
     self.test_config(have_geo)
     if have_geo:
-      self.kernel.NumEvents = 0
+      self.kernel.NumEvents = num_events
       self.kernel.run()
     self.kernel.terminate()
     logger.info('+++++ All Done....\n\nTEST_PASSED')
