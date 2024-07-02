@@ -22,11 +22,7 @@ add_subdirectory(Geometry)
 
 dd4hep_add_plugin(lhecsw
                   SOURCES src/*.cc
-                  USES DD4hep::DDCore DD4hep::DDRec
-                       ROOT::Core ROOT::Geom ROOT::GenVector ROOT::MathCore
-                       ${lhecswlibs})
-
-message(STATUS ${lhecswlibs})
+                  USES DD4hep::DDCore DD4hep::DDRec ROOT::Core ROOT::Geom ROOT::GenVector ROOT::MathCore ${lhecswlibs})
 
 install(TARGETS lhecsw LIBRARY DESTINATION lib)
-dd4hep_configure_scripts(lhecsw DEFAULT_SETUP WITH_TESTS)
+configure_file(cmake/lhecenv.in lhecenv @ONLY)

@@ -1,0 +1,22 @@
+#!/bin/sh
+## Environment preparation script for LHeC offline software
+# 2024, Laurent Forthomme
+
+if [ ! ${DD4hep_DIR} ]; then
+    export DD4hep_DIR=/home/laurent/work/dev/DD4hep;
+fi;
+source ${DD4hep_DIR}/bin/thisdd4hep.sh
+
+SOURCE=${BASH_ARGV[0]}
+if [ "x$SOURCE" = "x" ]; then
+    SOURCE=${(%):-%N} # for zsh
+fi
+
+dd4hep_add_path PATH @CMAKE_CURRENT_BINARY_DIR@/bin;
+dd4hep_add_path PYTHONPATH @CMAKE_CURRENT_BINARY_DIR@/@DD4HEP_PYTHON_INSTALL_DIR@;
+dd4hep_add_path ROOT_INCLUDE_PATH @CMAKE_CURRENT_BINARY_DIR@/include;
+
+dd4hep_add_library_path @CMAKE_CURRENT_BINARY_DIR@/lib;
+
+export lhecsw=@PROJECT_SOURCE_DIR@
+export PYTHONPATH=$lhecsw/python:$PYTHONPATH
