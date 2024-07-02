@@ -11,14 +11,14 @@
 //
 //==========================================================================
 
-#ifndef DataFormats_CaloFaceBarrelSurfaces_h
-#define DataFormats_CaloFaceBarrelSurfaces_h
+#ifndef DataFormats_Simulation_CaloFaceEndcapSurfaces_h
+#define DataFormats_Simulation_CaloFaceEndcapSurfaces_h
 
 #include <string>
 
 namespace {
-  struct CaloFaceBarrelSurfaces {
-    float length;
+  struct CaloFaceEndcapSurfaces {
+    float zpos;
     float radius;
     float phi0;
     int symmetry;
@@ -28,8 +28,8 @@ namespace {
 }  // namespace
 
 // Framework include files
-#define SURFACEINSTALLER_DATA CaloFaceBarrelSurfaces
-#define DD4HEP_USE_SURFACEINSTALL_HELPER DD4hep_CaloFaceBarrelSurfacePlugin
+#define SURFACEINSTALLER_DATA CaloFaceEndcapSurfaces
+#define DD4HEP_USE_SURFACEINSTALL_HELPER DD4hep_CaloFaceEndcapSurfacePlugin
 #include <DD4hep/SurfaceInstaller.h>
 
 #endif

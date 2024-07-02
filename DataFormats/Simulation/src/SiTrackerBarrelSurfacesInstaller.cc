@@ -17,7 +17,7 @@
 
 #include <DD4hep/Printout.h>
 
-#include "DataFormats/include/SiTrackerBarrelSurfaces.h"
+#include "DataFormats/Simulation/include/SiTrackerBarrelSurfaces.h"
 
 template <>
 void Installer<SiTrackerBarrelSurfaces>::handle_arguments(int argc, char** argv) {

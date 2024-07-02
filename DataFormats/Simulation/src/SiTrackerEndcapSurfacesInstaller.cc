@@ -15,7 +15,7 @@
 //
 //==========================================================================
 
-#include "DataFormats/include/SiTrackerEndcapSurfaces.h"
+#include "DataFormats/Simulation/include/SiTrackerEndcapSurfaces.h"
 
 /// Install measurement surfaces
 template <typename T>

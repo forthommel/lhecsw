@@ -15,8 +15,8 @@
 //
 //==========================================================================
 
-#ifndef DataFormats_SiTrackerBarrelSurfaces_h
-#define DataFormats_SiTrackerBarrelSurfaces_h
+#ifndef DataFormats_Simulation_SiTrackerBarrelSurfaces_h
+#define DataFormats_Simulation_SiTrackerBarrelSurfaces_h
 
 namespace {
   struct SiTrackerBarrelSurfaces {

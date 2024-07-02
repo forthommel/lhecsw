@@ -15,11 +15,11 @@
 //
 //==========================================================================
 
-#ifndef DataFormats_PolyhedraEndcapCalorimeter2Surfaces_h
-#define DataFormats_PolyhedraEndcapCalorimeter2Surfaces_h
+#ifndef DataFormats_Simulation_SiTrackerEndcapSurfaces_h
+#define DataFormats_Simulation_SiTrackerEndcapSurfaces_h
 
 // Framework include files
-#define DD4HEP_USE_SURFACEINSTALL_HELPER Lhe_PolyhedraEndcapCalorimeterSurfacePlugin
+#define DD4HEP_USE_SURFACEINSTALL_HELPER Lhe_SiTrackerEndcapSurfacePlugin
 #include <DD4hep/SurfaceInstaller.h>
 
 #endif

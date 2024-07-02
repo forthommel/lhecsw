@@ -1,5 +1,5 @@
 //==========================================================================
-//  Surface installer plugin for generic sliced detector drivers
+//  AIDA Detector description implementation
 //--------------------------------------------------------------------------
 // Copyright (C) Organisation europeenne pour la Recherche nucleaire (CERN)
 // All rights reserved.
@@ -7,26 +7,29 @@
 // For the licensing terms see $DD4hepINSTALL/LICENSE.
 // For the list of contributors see $DD4hepINSTALL/doc/CREDITS.
 //
-// Author     : N. Nikiforou, adapted from dd4hep/SiTrackerBarrel_surfaces.cpp
-//              by M. Frank. Originally part of the lcgeo package
+// Author     : F.Gaede DESY
+//
 //==========================================================================
 
-#ifndef DataFormats_GenericSurface_h
-#define DataFormats_GenericSurface_h
+#ifndef DataFormats_Simulation_CaloFaceBarrelSurfaces_h
+#define DataFormats_Simulation_CaloFaceBarrelSurfaces_h
+
+#include <string>
 
 namespace {
-  struct GenericSurface {
-    int dimension;
-    double uvector[3];
-    double vvector[3];
-    double nvector[3];
-    double ovector[3];
+  struct CaloFaceBarrelSurfaces {
+    float length;
+    float radius;
+    float phi0;
+    int symmetry;
+    int systemID;
+    std::string encoding;
   };
 }  // namespace
 
 // Framework include files
-#define SURFACEINSTALLER_DATA GenericSurface
-#define DD4HEP_USE_SURFACEINSTALL_HELPER DD4hep_GenericSurfaceInstallerPlugin
+#define SURFACEINSTALLER_DATA CaloFaceBarrelSurfaces
+#define DD4HEP_USE_SURFACEINSTALL_HELPER DD4hep_CaloFaceBarrelSurfacePlugin
 #include <DD4hep/SurfaceInstaller.h>
 
 #endif

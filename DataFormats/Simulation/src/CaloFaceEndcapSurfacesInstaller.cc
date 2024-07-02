@@ -16,7 +16,7 @@
 #include <DDRec/Surface.h>
 #include <DDSegmentation/BitField64.h>
 
-#include "DataFormats/include/CaloFaceEndcapSurfaces.h"
+#include "DataFormats/Simulation/include/CaloFaceEndcapSurfaces.h"
 #include "Geometry/include/CaloEndcapPlane.h"
 
 template <>

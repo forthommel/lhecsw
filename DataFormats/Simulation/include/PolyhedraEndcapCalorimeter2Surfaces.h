@@ -7,29 +7,19 @@
 // For the licensing terms see $DD4hepINSTALL/LICENSE.
 // For the list of contributors see $DD4hepINSTALL/doc/CREDITS.
 //
-// Author     : F.Gaede DESY
+// Author     : M.Frank
+//
+//==========================================================================
+//
+// Specialized generic detector constructor
 //
 //==========================================================================
 
-#ifndef DataFormats_CaloFaceEndcapSurfaces_h
-#define DataFormats_CaloFaceEndcapSurfaces_h
-
-#include <string>
-
-namespace {
-  struct CaloFaceEndcapSurfaces {
-    float zpos;
-    float radius;
-    float phi0;
-    int symmetry;
-    int systemID;
-    std::string encoding;
-  };
-}  // namespace
+#ifndef DataFormats_Simulation_PolyhedraEndcapCalorimeter2Surfaces_h
+#define DataFormats_Simulation_PolyhedraEndcapCalorimeter2Surfaces_h
 
 // Framework include files
-#define SURFACEINSTALLER_DATA CaloFaceEndcapSurfaces
-#define DD4HEP_USE_SURFACEINSTALL_HELPER DD4hep_CaloFaceEndcapSurfacePlugin
+#define DD4HEP_USE_SURFACEINSTALL_HELPER Lhe_PolyhedraEndcapCalorimeterSurfacePlugin
 #include <DD4hep/SurfaceInstaller.h>
 
 #endif

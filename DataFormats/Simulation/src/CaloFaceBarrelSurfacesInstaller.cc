@@ -16,7 +16,7 @@
 #include <DDRec/Surface.h>
 #include <DDSegmentation/BitField64.h>
 
-#include "DataFormats/include/CaloFaceBarrelSurfaces.h"
+#include "DataFormats/Simulation/include/CaloFaceBarrelSurfaces.h"
 #include "Geometry/include/CaloBarrelPlane.h"
 
 template <>
