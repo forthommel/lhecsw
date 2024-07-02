@@ -23,6 +23,8 @@
 #include <Pythia8/Pythia.h>
 #include <Pythia8Plugins/HepMC3.h>
 
+#include "Generator/Common/include/HepMC3EventConverter.h"
+
 class Pythia8EventGenerator : public dd4hep::sim::Geant4EventReader {
 public:
   explicit Pythia8EventGenerator(const std::string&);
@@ -40,6 +42,7 @@ private:
   const std::unique_ptr<Pythia8::Pythia> pythia_;
   const std::unique_ptr<HepMC3::Pythia8ToHepMC3> hepmc_;
   const std::string filename_;
+  HepMC3EventConverter hepmc_converter_;
 };
 
 #endif
