@@ -25,4 +25,4 @@ dd4hep_add_plugin(lhecsw
                   USES DD4hep::DDCore DD4hep::DDRec ROOT::Core ROOT::Geom ROOT::GenVector ROOT::MathCore ${lhecswlibs})
 
 install(TARGETS lhecsw LIBRARY DESTINATION lib)
-configure_file(cmake/lhecenv.in lhecenv @ONLY)
+configure_file(cmake/lhecenv.in source-lhecenv.sh @ONLY)
