@@ -18,6 +18,8 @@
 
 #include <CepGen/Generator.h>
 
+#include "Generator/Common/include/HepMC3EventConverter.h"
+
 class CepGenEventGenerator : public dd4hep::sim::Geant4EventReader {
 public:
   explicit CepGenEventGenerator(const std::string&);
@@ -34,4 +36,5 @@ public:
 private:
   const std::unique_ptr<cepgen::Generator> cepgen_;
   std::shared_ptr<HepMC3::GenCrossSection> xsec_;
+  HepMC3EventConverter hepmc_converter_;
 };

@@ -21,6 +21,8 @@
 
 #include <DDG4/Geant4InputAction.h>
 
+#include <functional>
+
 namespace HepMC3 {
   class GenEvent;
 }
@@ -30,7 +32,12 @@ using Vertices = dd4hep::sim::Geant4InputAction::Vertices;
 
 class HepMC3EventConverter {
 public:
-  static bool convert(const HepMC3::GenEvent*, Vertices&, Particles&);
+  bool convert(const HepMC3::GenEvent&, Vertices&, Particles&) const;
+
+  struct ParticleProperties {
+    int charge{0};
+  };
+  std::function<ParticleProperties(int)> particle_properties_getter{nullptr};
 };
 
 #endif

@@ -25,13 +25,13 @@
 
 using PropertyMask = dd4hep::detail::ReferenceBitMask<int>;
 
-bool HepMC3EventConverter::convert(const HepMC3::GenEvent* hepmc_evt, Vertices& vertices, Particles& particles) {
+bool HepMC3EventConverter::convert(const HepMC3::GenEvent& hepmc_evt, Vertices& vertices, Particles& particles) const {
   vertices.clear();
   particles.clear();
 
   const auto normalise_id = [](int id) -> int { return id - 1; };
 
-  for (const auto& hm_part : hepmc_evt->particles()) {
+  for (const auto& hm_part : hepmc_evt.particles()) {
     const auto id_norm = normalise_id(hm_part->id());
     if (id_norm == 0)  // two-beam system
       continue;
@@ -48,7 +48,8 @@ bool HepMC3EventConverter::convert(const HepMC3::GenEvent* hepmc_evt, Vertices& 
       status.set(dd4hep::sim::G4PARTICLE_GEN_OTHER);
     part->genStatus = hm_part->status();
     part->pdgID = hm_part->pid();
-    //part->charge = pythia_->particleData.charge(hm_part->pid()); //FIXME
+    if (particle_properties_getter)
+      part->charge = particle_properties_getter(hm_part->pid()).charge;
     if (const auto& prod_vtx = hm_part->production_vertex(); prod_vtx) {
       const auto& prod_vtx_pos = prod_vtx->position();
       part->vsx = part->vex = prod_vtx_pos.x() / dd4hep::cm;
@@ -86,7 +87,7 @@ bool HepMC3EventConverter::convert(const HepMC3::GenEvent* hepmc_evt, Vertices& 
                      part->properTime);
     particles.emplace_back(part);
   }
-  for (const auto& hm_vtx : hepmc_evt->vertices()) {
+  for (const auto& hm_vtx : hepmc_evt.vertices()) {
     if (!hm_vtx)
       dd4hep::except("HepMC3EventConverter::convert", "Invalid vertex retrieved from HepMC3-converted event.");
     if (hm_vtx->id() == -1)
