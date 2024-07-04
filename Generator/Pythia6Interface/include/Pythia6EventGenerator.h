@@ -20,6 +20,7 @@
 #define Generator_Pythia6Interface_Pythia6EventGenerator_h
 
 #include <DDG4/Geant4InputAction.h>
+#include <HepMC3/HEPEVT_Wrapper_Runtime.h>
 
 #include "Generator/Common/include/HepMC3EventConverter.h"
 
@@ -38,6 +39,7 @@ public:
 
 private:
   const std::string filename_;
+  HepMC3::HEPEVT_Wrapper_Runtime hepevt_wrapper_;
   HepMC3EventConverter hepmc_converter_;
 };
 

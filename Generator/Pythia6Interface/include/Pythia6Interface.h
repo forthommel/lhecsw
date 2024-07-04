@@ -23,6 +23,7 @@ extern "C" {
 extern int pychge_(int&);
 extern void pyexec_();
 extern void pygive_(const char*, int);
+extern void pyhepc_(int&);
 extern void pyinit_(const char*, const char*, const char*, double*, int, int, int);
 }
 
@@ -30,6 +31,7 @@ namespace pythia6 {
   inline int pychge(int pdgid) { return pychge_(pdgid); }
   inline void pyexec() { pyexec_(); }
   inline void pygive(const std::string& str) { pygive_(str.data(), str.length()); }
+  inline void pyhepc(int mconv) { pyhepc_(mconv); }
   inline void pyinit(const std::string& frame, const std::string& beam, const std::string& target, double win) {
     pyinit_(frame.data(), beam.data(), target.data(), &win, frame.length(), beam.length(), target.length());
   }
