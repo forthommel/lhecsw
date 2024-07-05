@@ -27,14 +27,15 @@
 using EventReaderStatus = dd4hep::sim::Geant4EventReader::EventReaderStatus;
 using PropertyMask = dd4hep::detail::ReferenceBitMask<int>;
 
+static constexpr size_t max_particles_pythia = 4000;
 extern "C" {
-extern HepMC3::HEPEVT_Templated<4000, double> hepevt_;
+extern HepMC3::HEPEVT_Templated<max_particles_pythia, double> hepevt_;
 }
 
 Pythia6EventGenerator::Pythia6EventGenerator(const std::string& filename)
     : dd4hep::sim::Geant4EventReader(filename), filename_(filename) {
   hepevt_wrapper_.set_hepevt_address((char*)&hepevt_);
-  hepevt_wrapper_.set_max_number_entries(hepevt_.nevhep);
+  hepevt_wrapper_.set_max_number_entries(max_particles_pythia);
   hepevt_wrapper_.zero_everything();
   hepmc_converter_.particle_properties_getter = [=](int pdgid) {
     HepMC3EventConverter::ParticleProperties props;
@@ -48,6 +49,13 @@ EventReaderStatus Pythia6EventGenerator::moveToEvent(int) { return EVENT_READER_
 EventReaderStatus Pythia6EventGenerator::readParticles(int, Vertices& vertices, Particles& particles) {
   pythia6::pyexec();
   dd4hep::printout(dd4hep::DEBUG, __PRETTY_FUNCTION__, "Finished running the PYEXEC event generation subroutine.");
+  if (pythia6::pypars().msti.at(53 - 1) == 1)
+    dd4hep::except(__PRETTY_FUNCTION__, "No processes with non-vanishing cross sections were found in the PYINIT call");
+  dd4hep::printout(dd4hep::DEBUG,
+                   __PRETTY_FUNCTION__,
+                   "Generated cross section for the process: %g mb.",
+                   pythia6::pypars().pari.at(1 - 1));
+
   pythia6::pyhepc(1);
   dd4hep::printout(dd4hep::DEBUG, __PRETTY_FUNCTION__, "Finished running the PYHEPC conversion subroutine.");
   {

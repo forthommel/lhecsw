@@ -48,7 +48,13 @@ def run():
         Commands = [
             'P(1,3) = 7000d0',  # proton beam
             'P(2,3) = -50d0',   # electron target
+            'MSEL = 0',
+            'MSTI(19) = 1',
             'MSTP(11) = 1',     # photon-inside-electron
+            'MSTP(12) = 1',
+            'MSTP(14) = 30',
+            'MSTP(51) = 10100', # CTEQ6.1 structure functions
+            'MSTP(52) = 2',
             'MSUB(58) = 1',     # gamma gamma -> l+ l-
             #'CKIN(3) = 50d0',
         ],

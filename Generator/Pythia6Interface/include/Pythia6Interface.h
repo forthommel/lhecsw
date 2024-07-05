@@ -19,22 +19,22 @@
 #ifndef Generator_Pythia6Interface_Pythia6Interface_h
 #define Generator_Pythia6Interface_Pythia6Interface_h
 
-extern "C" {
-extern int pychge_(int&);
-extern void pyexec_();
-extern void pygive_(const char*, int);
-extern void pyhepc_(int&);
-extern void pyinit_(const char*, const char*, const char*, double*, int, int, int);
-}
+#include <array>
+#include <string>
 
 namespace pythia6 {
-  inline int pychge(int pdgid) { return pychge_(pdgid); }
-  inline void pyexec() { pyexec_(); }
-  inline void pygive(const std::string& str) { pygive_(str.data(), str.length()); }
-  inline void pyhepc(int mconv) { pyhepc_(mconv); }
-  inline void pyinit(const std::string& frame, const std::string& beam, const std::string& target, double win) {
-    pyinit_(frame.data(), beam.data(), target.data(), &win, frame.length(), beam.length(), target.length());
-  }
+  struct pypars_t {
+    std::array<int, 200> mstp;
+    std::array<double, 200> parp;
+    std::array<int, 200> msti;
+    std::array<double, 200> pari;
+  };
+  int pychge(int pdgid);
+  void pyexec();
+  void pygive(const std::string& str);
+  void pyhepc(int mconv);
+  void pyinit(const std::string& frame, const std::string& beam, const std::string& target, double win);
+  pypars_t& pypars();
 }  // namespace pythia6
 
 #endif
