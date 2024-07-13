@@ -50,7 +50,7 @@ def run():
             'kinematics/beam2id:11',
             'kinematics/beam1pz:7000.0',
             'kinematics/beam2pz:50.0',
-            'kinematics/ptmin:10.0',
+            'kinematics/ptmin:5.0',
         ],
     )
     geant4.buildInputStage([gen], output_level=Output.DEBUG)
