@@ -18,6 +18,8 @@
 
 #include <DD4hep/Printout.h>
 
+#include <chrono>
+
 #include "Generator/Pythia6Interface/include/Pythia6Interface.h"
 
 extern "C" {
@@ -31,6 +33,18 @@ extern pythia6::pypars_t pypars_;
 /// Override the PYSTOP subrouting to allow throwing exceptions
 void pystop_(int& mcod) {
   dd4hep::except("pythia6::PYSTOP", "Error with code %d occurred. Aborting the process execution.", mcod);
+}
+void pytime_(std::array<int, 6>& idati) {
+  const auto now = std::chrono::system_clock::now();
+  const auto dp = std::chrono::floor<std::chrono::days>(now);
+  const auto ymd = std::chrono::year_month_day(dp);
+  const auto time = std::chrono::hh_mm_ss(std::chrono::floor<std::chrono::seconds>(now - dp));
+  idati[0] = (int)ymd.year();
+  idati[1] = (unsigned)ymd.month();
+  idati[2] = (unsigned)ymd.day();
+  idati[3] = time.hours().count();
+  idati[4] = time.minutes().count();
+  idati[5] = time.seconds().count();
 }
 }
 
