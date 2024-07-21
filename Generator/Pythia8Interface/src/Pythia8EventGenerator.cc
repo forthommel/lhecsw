@@ -30,7 +30,7 @@ Pythia8EventGenerator::Pythia8EventGenerator(const std::string& filename)
       pythia_(new Pythia8::Pythia),
       hepmc_(new HepMC3::Pythia8ToHepMC3),
       filename_(filename) {
-  hepmc_converter_.particle_properties_getter = [=](int pdgid) {
+  hepmc_converter_.particle_properties_getter = [this](int pdgid) {
     HepMC3EventConverter::ParticleProperties props;
     props.charge = pythia_->particleData.charge(pdgid);
     return props;

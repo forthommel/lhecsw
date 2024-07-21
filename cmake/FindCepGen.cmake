@@ -1,17 +1,18 @@
 find_package(PkgConfig)
 pkg_check_modules(PC_CepGen QUIET CepGen)
 
+set(CepGen_DIRS $ENV{CEPGEN_PATH} ${PC_CepGen_INCLUDE_DIRS} ${CEPGEN_PATH} ${Cepgen_DIR})
 find_path(CepGen_INCLUDE_DIR
     NAMES CepGen/Generator.h
-    PATHS ${PC_CepGen_INCLUDE_DIRS} ${CEPGEN_PATH} $ENV{CEPGEN_PATH}
+    PATHS ${CepGen_DIRS}
     PATH_SUFFIXES include)
 find_path(CepGen_DATA_DIR
     NAMES mstw_sf_scan_nnlo.dat
-    PATHS ${PC_CepGen_INCLUDE_DIRS} ${CEPGEN_PATH} $ENV{CEPGEN_PATH}
-    PATH_SUFFIXES share External)
+    PATHS ${CepGen_DIRS}
+    PATH_SUFFIXES share/CepGen External)
 find_library(CepGen_LIBRARY
     NAMES CepGen
-    PATHS ${PC_CepGEN_LIBRARY_DIRS} ${CEPGEN_PATH} $ENV{CEPGEN_PATH}
+    PATHS ${CepGen_DIRS}
     PATH_SUFFIXES lib64 lib build)
 
 include(FindPackageHandleStandardArgs)

@@ -9,6 +9,11 @@ set(lhecswlibs)
 include(lhecswEnvironmentCheck)
 include(lhecswBuildUtils)
 
+find_package(podio REQUIRED)
+find_package(Gaudi REQUIRED)
+find_package(EDM4HEP REQUIRED)
+find_package(k4FWCore REQUIRED)
+
 find_package(DD4hep REQUIRED)
 include(${DD4hep_DIR}/cmake/DD4hep.cmake)
 include(${DD4hep_DIR}/cmake/DD4hepBuild.cmake)
@@ -19,6 +24,7 @@ add_subdirectory(Common)
 add_subdirectory(DataFormats)
 add_subdirectory(Generator)
 add_subdirectory(Geometry)
+add_subdirectory(SimG4)
 
 dd4hep_add_plugin(lhecsw
                   SOURCES src/*.cc
