@@ -1,3 +1,5 @@
+find_package(HepMC3)
+
 add_subdirectory(BDSIMInterface)
 add_subdirectory(CepGenInterface)
 add_subdirectory(Common)

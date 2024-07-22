@@ -10,7 +10,7 @@ macro(lhecsw_build lib_name)
       list(APPEND sources ${s})
     endforeach()
     message(STATUS "Building ${lib_name}...")
-    add_library(${lib_name} SHARED ${sources})
+    gaudi_add_module(${lib_name} SOURCES ${sources})
     if(ARG_LIBRARIES)
       message(STATUS "... external libs: ${ARG_LIBRARIES}")
       target_link_libraries(${lib_name} PUBLIC ${ARG_LIBRARIES})
@@ -25,10 +25,15 @@ macro(lhecsw_build lib_name)
     endif()
   else()
     message(STATUS "Building headers-only ${lib_name}...")
-    add_library(${lib_name} INTERFACE)
+    gaudi_add_header_only_library(${lib_name})
     target_include_directories(${lib_name} INTERFACE include)
   endif()
-  install(TARGETS ${lib_name} LIBRARY DESTINATION lib)
+
+  install(TARGETS ${lib_name}
+    EXPORT ${PROJECT_NAME}Targets
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
+    COMPONENT dev)
   list(APPEND lhecswlibs ${lib_name})
   set(lhecswlibs ${lhecswlibs} PARENT_SCOPE)
 endmacro()

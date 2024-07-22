@@ -1,10 +1,10 @@
 # look for CepGen
 find_package(CepGen)
-if(NOT CepGen_FOUND)
+if(NOT CepGen_FOUND OR NOT HepMC3_FOUND)
   return()
 endif()
 
 lhecsw_build(Generator_CepGenInterface
     SOURCES src/CepGen*.cc
-    LIBRARIES DD4hep::DDG4 ${CepGen_LIBRARIES}
-    HEADERS ${CepGen_INCLUDE_DIRS})
+    LIBRARIES DD4hep::DDG4 ${CepGen_LIBRARIES} ${HEPMC3_LIBRARIES}
+    HEADERS ${CepGen_INCLUDE_DIRS} ${HEPMC3_INCLUDE_DIR})

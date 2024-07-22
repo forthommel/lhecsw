@@ -26,9 +26,11 @@ add_subdirectory(Generator)
 add_subdirectory(Geometry)
 add_subdirectory(SimG4)
 
-dd4hep_add_plugin(lhecsw
-                  SOURCES src/*.cc
-                  USES DD4hep::DDCore DD4hep::DDRec ROOT::Core ROOT::Geom ROOT::GenVector ROOT::MathCore ${lhecswlibs})
-
-install(TARGETS lhecsw LIBRARY DESTINATION lib)
 configure_file(cmake/lhecenv.in source-lhecenv.sh @ONLY)
+
+install(EXPORT ${PROJECT_NAME}Targets
+        NAMESPACE ${PROJECT_NAME}::
+        FILE "${PROJECT_NAME}Targets.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/")
+
+#gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)

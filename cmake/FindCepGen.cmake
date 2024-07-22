@@ -26,7 +26,7 @@ if(CepGen_FOUND)
     set(CepGen_DATA_DIRS ${CepGen_DATA_DIR})
     set(CepGen_DEFINITIONS ${PC_CepGen_CFLAGS_OTHER})
 else()
-    message(STATUS "CepGen path was not found. Did you set the $CEPGEN_DIR environment variable?")
+    message(STATUS "CepGen path was not found. Did you set the $CEPGEN_PATH environment variable?")
 endif()
 
 if(CepGen_FOUND AND NOT TARGET CepGen::CepGen)
