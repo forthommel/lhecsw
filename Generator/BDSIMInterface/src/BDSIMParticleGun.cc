@@ -16,114 +16,26 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DDG4/Factories.h>
-#include <DDG4/Geant4InputAction.h>
+#include <HepMC3/FourVector.h>
+#include <HepMC3/GenEvent.h>
+#include <HepMC3/GenParticle.h>
+#include <HepMC3/GenVertex.h>
 #include <TFile.h>
 #include <TTree.h>
 
 #include "Generator/BDSIMInterface/include/BDSIMParticleGun.h"
 
-using namespace std::string_literals;
-using EventReaderStatus = dd4hep::sim::Geant4EventReader::EventReaderStatus;
-using PropertyMask = dd4hep::detail::ReferenceBitMask<int>;
+DECLARE_COMPONENT(BDSIMParticleGun)
 
-BDSIMParticleGun::BDSIMParticleGun(const std::string& filename)
-    : dd4hep::sim::Geant4EventReader(filename), filename_(filename) {
-  m_directAccess = true;
-  if (file_.reset(new TFile(filename.data())); !file_)
-    dd4hep::except("BDSIMParticleGun::BDSIMParticleGun", "Failed to open file '%s'!", filename.data());
-}
+BDSIMParticleGun::BDSIMParticleGun(const std::string& type, const std::string& name, const IInterface* parent)
+    : GaudiTool(type, name, parent),
+      filename_{this, "filename", "", "BDSIM event filename"},
+      tree_name_{this, "treeName", "Event", "BDSIM event tree name"},
+      scorer_name_{this, "scorerName", "BEND_0", "BDSIM scorer name"} {}
 
-EventReaderStatus BDSIMParticleGun::moveToEvent(int event_number) {
-  if (m_currEvent == event_number)
-    return EVENT_READER_OK;
-  if (!tree_)
-    dd4hep::except("BDSIMParticleGun:::moveToEvent", "No BDSIM event tree defined!");
-  if (event_number >= (int)max_events_)
-    return EVENT_READER_EOF;
-  switch (tree_->GetEntry(event_number)) {
-    case -1:  // ROOT I/O error
-      return EVENT_READER_IO_ERROR;
-    case 0:  // empty event loaded
-      return EVENT_READER_ERROR;
-    default: {  // successful readout of event
-      dd4hep::printout(
-          dd4hep::DEBUG, "BDSIMParticleGun::moveToEvent", "Successfully moved to event number %d.", event_number);
-      m_currEvent = event_number;
-      return EVENT_READER_OK;
-    }
-  }
-}
-
-EventReaderStatus BDSIMParticleGun::readParticles(int event_number, Vertices& vertices, Particles& particles) {
-  if (m_currEvent != event_number)
-    if (const auto ret = moveToEvent(event_number); ret != EVENT_READER_OK)
-      dd4hep::except("BDSIMParticleGun::readParticles", "Failed to retrieve event number %d!", event_number);
-  vertices.clear();
-  particles.clear();
-  for (int i = 0; i < sampler_->n; ++i) {
-    dd4hep::sim::Geant4ParticleHandle part(new Particle(i));
-    part->id = sampler_->trackID.at(i);
-    part->pdgID = sampler_->partID.at(i);
-    PropertyMask status(part->status);
-    status.set(dd4hep::sim::G4PARTICLE_GEN_STABLE);
-    if (const auto parent = sampler_->parentID.at(i); parent == 0)  // beam particle
-      status.set(dd4hep::sim::G4PARTICLE_GEN_BEAM);
-    else  // secondary emission
-      part->parents.insert(parent);
-    part->time = part->properTime = 0.;
-    auto* vtx = vertices.emplace_back(new Vertex);  // add the vertex
-    if ((int)sampler_->charge.size() > i)           // sometimes not filled
-      part->charge = sampler_->charge.at(i);
-    else {  //FIXME should retrieve this from Geant4/elsewhere...
-      const auto pdgid = std::abs(part->pdgID);
-      if (pdgid == 11 || pdgid == 13 || pdgid == 15)
-        part->charge = -part->pdgID / pdgid;
-      else if (pdgid == 2212)
-        part->charge = part->pdgID / pdgid;
-    }
-    const auto ptot = sampler_->p.at(i) / dd4hep::MeV;
-    if ((int)sampler_->mass.size() > i)  // sometimes not filled
-      part->mass = sampler_->mass.at(i);
-    else {  // compute from energy/momentum conservation
-      const auto energy = sampler_->energy.at(i) / dd4hep::MeV;
-      part->mass = std::sqrt(energy * energy - ptot * ptot);
-    }
-    part->psx = part->pex = ptot * sampler_->xp.at(i);
-    part->psy = part->pey = ptot * sampler_->yp.at(i);
-    part->psz = part->pez = ptot * sampler_->zp.at(i);
-    part->vsx = part->vex = sampler_->x.at(i) / dd4hep::mm;
-    part->vsy = part->vey = sampler_->y.at(i) / dd4hep::mm;
-    part->vsz = part->vez = sampler_->z / dd4hep::mm;
-    vtx->x = part->vsx;
-    vtx->y = part->vsy;
-    vtx->z = part->vsz;
-    vtx->time = part->time;
-    vtx->in.insert(part->id);
-    vtx->out.insert(part->id);
-    dd4hep::printout(
-        dd4hep::INFO,
-        "BDSIMParticleGun::readParticles",
-        "Added particle #%d with PDG id=%d, charge=%de, status=%d/%d, vertex=(%g, %g, %g), momentum=(%g, %g, %g)",
-        part->id,
-        part->pdgID,
-        part->charge,
-        part->status,
-        part->genStatus,
-        part->vsx,
-        part->vsy,
-        part->vsz,
-        part->psx,
-        part->psy,
-        part->psz);
-    particles.emplace_back(part);
-  }
-  return EVENT_READER_OK;
-}
-
-EventReaderStatus BDSIMParticleGun::setParameters(std::map<std::string, std::string>& parameters) {
-  _getParameterValue(parameters, "TreeName", tree_name_, "Event"s);
-  _getParameterValue(parameters, "ScorerName", scorer_name_, "BEND_0"s);
+StatusCode BDSIMParticleGun::initialize() {
+  if (file_.reset(new TFile(((std::string)filename_).data())); !file_)
+    return Error("Failed to open file '" + filename_ + "'!");
 
   const auto patch_scorer_name = [](const std::string& scorer_name) -> std::string {
     if (scorer_name[scorer_name.size() - 1] == '.')
@@ -131,20 +43,60 @@ EventReaderStatus BDSIMParticleGun::setParameters(std::map<std::string, std::str
     return scorer_name + ".";  // patch for BDSIM output
   };
 
-  tree_ = file_->Get<TTree>(tree_name_.data());
+  if (tree_)
+    warning() << "Replacing an already existing TTree handle by a new initialisation call.";
+  tree_ = file_->Get<TTree>(((std::string)tree_name_).data());
   if (const auto ret = tree_->SetBranchAddress(patch_scorer_name(scorer_name_).data(), &sampler_); ret < TTree::kMatch)
-    dd4hep::except("BDSIMParticleGun::BDSIMParticleGun",
-                   "Failed to load '%s' scorer branch! Return value: %d.",
-                   scorer_name_.data(),
-                   ret);
-  dd4hep::printout(dd4hep::DEBUG,
-                   "BDSIMParticleGun::BDSIMParticleGun",
-                   "Loaded '%s' scorer in '%s' tree from '%s' file.",
-                   scorer_name_.data(),
-                   tree_name_.data(),
-                   filename_.data());
+    return Error("Failed to load '" + scorer_name_ + "' scorer branch! Return value: " + std::to_string(ret) + ".");
+
+  debug() << "Loaded '" << scorer_name_ << "' scorer in '" << tree_name_ << "' tree from '" << filename_ << "' file.";
   max_events_ = tree_->GetEntriesFast();
-  return EVENT_READER_OK;
+  return StatusCode::SUCCESS;
 }
 
-DECLARE_GEANT4_EVENT_READER(BDSIMParticleGun)  // add to the factory
+StatusCode BDSIMParticleGun::finalize() {
+  tree_ = nullptr;
+  file_.release();
+  return StatusCode::SUCCESS;
+}
+
+StatusCode BDSIMParticleGun::getNextEvent(HepMC3::GenEvent& hepmc_evt) {
+  if (!tree_)
+    return Error("No BDSIM event tree defined!");
+  if (event_number_ >= max_events_) {
+    warning() << "End of file reached. Now starting over.";
+    event_number_ = 0ull;
+  }
+  switch (tree_->GetEntry(event_number_)) {
+    case -1:  // ROOT I/O error
+      return Error("ROOT I/O error encountered.");
+    case 0:  // empty event loaded
+      return Error("An empty event content was loaded.");
+    default: {  // successful readout of event
+      debug() << "Successfully moved to event number " << event_number_ << ".";
+      return readEvent(hepmc_evt);
+    }
+  }
+}
+
+StatusCode BDSIMParticleGun::readEvent(HepMC3::GenEvent& hepmc_evt) {
+  hepmc_evt.clear();
+  for (int i = 0; i < sampler_->n; ++i) {
+    const auto ptot = sampler_->p.at(i) * 1.e3;
+    const auto mom = HepMC3::FourVector(
+        ptot * sampler_->xp.at(i), ptot * sampler_->yp.at(i), ptot * sampler_->zp.at(i), sampler_->energy.at(i) * 1.e3);
+    int status{1};
+    if (const auto parent = sampler_->parentID.at(i); parent == 0)  // beam particle
+      status = -9;
+    auto part = std::make_shared<HepMC3::GenParticle>(mom, sampler_->partID.at(i), status);
+    const auto vtx_pos = HepMC3::FourVector(sampler_->x.at(i) * 10., sampler_->y.at(i) * 10., sampler_->z * 10., 0.);
+    part->production_vertex()->set_position(vtx_pos);
+    hepmc_evt.add_particle(part);
+    info() << "Added particle #" << part->id() << " with PDG id=" << part->pid() << ", status=" << part->status()
+           << ", vertex=(" << part->production_vertex()->position().x() << ","
+           << part->production_vertex()->position().y() << "," << part->production_vertex()->position().z() << ";"
+           << part->production_vertex()->position().t() << "), momentum=(" << part->momentum().px() << ","
+           << part->momentum().py() << "," << part->momentum().pz() << ";" << part->momentum().e() << ").";
+  }
+  return StatusCode::SUCCESS;
+}

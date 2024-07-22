@@ -6,5 +6,5 @@ endif()
 
 lhecsw_build(Generator_CepGenInterface
     SOURCES src/CepGen*.cc
-    LIBRARIES DD4hep::DDG4 ${CepGen_LIBRARIES} ${HEPMC3_LIBRARIES}
+    LIBRARIES Gaudi::GaudiAlgLib ${CepGen_LIBRARIES} ${HEPMC3_LIBRARIES}
     HEADERS ${CepGen_INCLUDE_DIRS} ${HEPMC3_INCLUDE_DIR})

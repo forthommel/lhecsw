@@ -21,90 +21,69 @@
 #include <CepGen/Core/RunParameters.h>
 #include <CepGen/EventFilter/EventExporter.h>
 #include <CepGen/EventFilter/EventModifier.h>
+#include <CepGen/Generator.h>
 #include <CepGen/Modules/EventExporterFactory.h>
 #include <CepGen/Modules/EventModifierFactory.h>
 #include <CepGen/Modules/ProcessFactory.h>
 #include <CepGen/Physics/PDG.h>
 #include <CepGen/Process/Process.h>
 #include <CepGenAddOns/HepMC3Wrapper/HepMC3EventInterface.h>
-#include <DDG4/Factories.h>
-#include <DDG4/Geant4InputAction.h>
 
 #include "Generator/CepGenInterface/include/CepGenEventGenerator.h"
 
-using EventReaderStatus = dd4hep::sim::Geant4EventReader::EventReaderStatus;
+DECLARE_COMPONENT(CepGenEventGenerator)
 
-CepGenEventGenerator::CepGenEventGenerator(const std::string& filename)
-    : dd4hep::sim::Geant4EventReader(filename), cepgen_(new cepgen::Generator), xsec_(new HepMC3::GenCrossSection) {
+CepGenEventGenerator::CepGenEventGenerator(const std::string& type, const std::string& name, const IInterface* parent)
+    : GaudiTool(type, name, parent),
+      verbosity_{this, "verbosity", static_cast<int>(cepgen::utils::Logger::get().level()), "CepGen verbosity"},
+      process_cmds_{this, "process", {}, "CepGen commands to define process"},
+      modifiers_cmds_{this, "modifiers", {}, "CepGen modifier->commands to define modifiers chain"},
+      outputs_cmds_{this, "outputs", {}, "CepGen output->commands to define outputs chain"} {
+  cepgen::utils::Logger::get().setLevel(static_cast<cepgen::utils::Logger::Level>((int)verbosity_));
+}
+
+StatusCode CepGenEventGenerator::initialize() {
+  if (const auto status = GaudiTool::initialize(); !status.isSuccess())
+    return status;
+
+  cepgen_.reset(new cepgen::Generator);
+  xsec_.reset(new HepMC3::GenCrossSection);
   cepgen::initialise();
-  hepmc_converter_.particle_properties_getter = [](int pdgid) {
-    const auto charges = cepgen::PDG::get().charges(pdgid);
-    HepMC3EventConverter::ParticleProperties props;
-    if (!charges.empty())
-      props.charge = charges.at(0);
-    return props;
-  };
-}
-
-EventReaderStatus CepGenEventGenerator::moveToEvent(int) { return EVENT_READER_OK; }
-
-EventReaderStatus CepGenEventGenerator::readParticles(int, Vertices& vertices, Particles& particles) {
-  HepMC3::CepGenEvent evt(cepgen_->next());
-  evt.set_cross_section(xsec_);
-  evt.weights().push_back(1.);
-  if (hepmc_converter_.convert(evt, vertices, particles))
-    return EVENT_READER_OK;
-  return EVENT_READER_IO_ERROR;
-}
-
-EventReaderStatus CepGenEventGenerator::setParameters(std::map<std::string, std::string>& parameters) {
-  int verb = 0;
-  std::list<std::string> process_commands;
-  std::map<std::string, std::vector<std::string> > modif_commands, output_commands;
-  _getParameterValue(parameters, "Verbosity", verb, static_cast<int>(cepgen::utils::Logger::get().level()));
-  _getParameterValue(parameters, "Process", process_commands, process_commands);
-  _getParameterValue(parameters, "Modifier", modif_commands, modif_commands);
-  _getParameterValue(parameters, "Output", output_commands, output_commands);
-
-  cepgen::utils::Logger::get().setLevel(static_cast<cepgen::utils::Logger::Level>(verb));
 
   cepgen::ParametersList plist_proc;
-  for (const auto& cmd : process_commands)
+  for (const auto& cmd : process_cmds_)
     plist_proc.feed(cmd);
-  {
-    std::ostringstream params_printout;
-    params_printout << plist_proc;
-    dd4hep::printout(dd4hep::INFO,
-                     "CepGenEventGenerator::setParameters",
-                     "CepGen process parameters:\n%s",
-                     params_printout.str().data());
-  }
+  info() << "CepGen process parameters:\n" << plist_proc;
   cepgen_->runParameters().setProcess(cepgen::ProcessFactory::get().build(plist_proc));
 
-  for (const auto& modif : modif_commands) {
+  for (const auto& mod : modifiers_cmds_) {
     cepgen::ParametersList plist_mod;
-    for (const auto& cmd : modif.second)
+    for (const auto& cmd : mod.second)
       plist_mod.feed(cmd);
-    cepgen_->runParameters().addModifier(cepgen::EventModifierFactory::get().build(modif.first, plist_mod));
+    cepgen_->runParameters().addModifier(cepgen::EventModifierFactory::get().build(mod.first, plist_mod));
   }
 
-  for (const auto& output : output_commands) {
-    cepgen::ParametersList plist_mod;
-    for (const auto& cmd : output.second)
-      plist_mod.feed(cmd);
-    cepgen_->runParameters().addEventExporter(cepgen::EventExporterFactory::get().build(output.first, plist_mod));
+  for (const auto& mod : outputs_cmds_) {
+    cepgen::ParametersList plist_out;
+    for (const auto& cmd : mod.second)
+      plist_out.feed(cmd);
+    cepgen_->runParameters().addEventExporter(cepgen::EventExporterFactory::get().build(mod.first, plist_out));
   }
 
-  {
-    std::ostringstream params_printout;
-    params_printout << cepgen_->runParameters();
-    dd4hep::printout(
-        dd4hep::INFO, "CepGenEventGenerator::setParameters", "CepGen parameters:\n%s", params_printout.str().data());
-  }
+  info() << "CepGen parameters:\n" << cepgen_->runParameters();
   const auto xsec = cepgen_->computeXsection();
   xsec_->set_cross_section(xsec, xsec.uncertainty());
-
-  return EVENT_READER_OK;
+  return StatusCode::SUCCESS;
 }
 
-DECLARE_GEANT4_EVENT_READER(CepGenEventGenerator)  // add to the factory
+StatusCode CepGenEventGenerator::finalize() {
+  cepgen_.release();
+  return StatusCode::SUCCESS;
+}
+
+StatusCode CepGenEventGenerator::getNextEvent(HepMC3::GenEvent& hepmc_evt) {
+  hepmc_evt = HepMC3::CepGenEvent(cepgen_->next());
+  hepmc_evt.set_cross_section(xsec_);
+  hepmc_evt.weights().push_back(1.);
+  return StatusCode::SUCCESS;
+}

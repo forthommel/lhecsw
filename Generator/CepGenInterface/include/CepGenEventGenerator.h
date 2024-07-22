@@ -16,25 +16,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <CepGen/Generator.h>
+#include <GaudiAlg/GaudiTool.h>
 
-#include "Generator/Common/include/HepMC3EventConverter.h"
+#include "Generator/Common/include/IHepMCProviderTool.h"
 
-class CepGenEventGenerator : public dd4hep::sim::Geant4EventReader {
+namespace cepgen {
+  class Generator;
+}
+
+namespace HepMC3 {
+  class GenEvent;
+}
+
+class CepGenEventGenerator : public GaudiTool, virtual public IHepMCProviderTool {
 public:
-  explicit CepGenEventGenerator(const std::string&);
+  explicit CepGenEventGenerator(const std::string&, const std::string&, const IInterface*);
   virtual ~CepGenEventGenerator() = default;
 
-  using Particles = dd4hep::sim::Geant4InputAction::Particles;
-  using Vertices = dd4hep::sim::Geant4InputAction::Vertices;
-
-  EventReaderStatus moveToEvent(int event_number) override;
-  inline EventReaderStatus skipEvent() override { return EVENT_READER_OK; }
-  EventReaderStatus readParticles(int event_number, Vertices& vertices, Particles& particles) override;
-  EventReaderStatus setParameters(std::map<std::string, std::string>& parameters) override;
+  StatusCode initialize() override;
+  StatusCode finalize() override;
+  StatusCode getNextEvent(HepMC3::GenEvent&) override;
 
 private:
-  const std::unique_ptr<cepgen::Generator> cepgen_;
+  std::unique_ptr<cepgen::Generator> cepgen_;
   std::shared_ptr<HepMC3::GenCrossSection> xsec_;
-  HepMC3EventConverter hepmc_converter_;
+
+  Gaudi::Property<int> verbosity_;                           ///< CepGen module verbosity
+  Gaudi::Property<std::vector<std::string> > process_cmds_;  ///< CepGen commands to define process
+  Gaudi::Property<std::map<std::string, std::vector<std::string> > > modifiers_cmds_;  ///< Modifiers chain
+  Gaudi::Property<std::map<std::string, std::vector<std::string> > > outputs_cmds_;    ///< Outputs chain
 };
