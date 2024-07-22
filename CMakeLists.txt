@@ -13,11 +13,14 @@ find_package(podio REQUIRED)
 find_package(Gaudi REQUIRED)
 find_package(EDM4HEP REQUIRED)
 find_package(k4FWCore REQUIRED)
-
 find_package(DD4hep REQUIRED)
-include(${DD4hep_DIR}/cmake/DD4hep.cmake)
-include(${DD4hep_DIR}/cmake/DD4hepBuild.cmake)
-dd4hep_configure_output()
+
+include(GNUInstallDirs)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE BOOL "RPATH USE LINK PATH")
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/InstallArea/
+      CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
+endif()
 
 include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(Common)

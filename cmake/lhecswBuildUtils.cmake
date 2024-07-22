@@ -1,23 +1,34 @@
 macro(lhecsw_build lib_name)
   set(options)
   set(one_vals)
-  set(multi_vals SOURCES LIBRARIES HEADERS PROPERTY)
+  set(multi_vals SOURCES PLUGINS_SOURCES LIBRARIES HEADERS PROPERTY)
   cmake_parse_arguments(ARG "${options}" "${one_vals}" "${multi_vals}" ${ARGN})
-  if(ARG_SOURCES)
+  if(ARG_SOURCES OR ARG_PLUGINS_SOURCES)
     set(sources)
     foreach(_s ${ARG_SOURCES})
       file(GLOB s "${_s}")
       list(APPEND sources ${s})
     endforeach()
+    set(plugins_sources)
+    foreach(_s ${ARG_PLUGINS_SOURCES})
+      file(GLOB s "${_s}")
+      list(APPEND plugins_sources ${s})
+    endforeach()
     message(STATUS "Building ${lib_name}...")
-    gaudi_add_module(${lib_name} SOURCES ${sources})
+    if(sources)
+      message(STATUS "... sources: ${sources}")
+      gaudi_add_library(${lib_name} SOURCES ${sources} LINK ${ARG_LIBRARIES})
+    endif()
+    if(plugins_sources)
+      message(STATUS "... plugin sources: ${plugins_sources}")
+      gaudi_add_module(${lib_name}Plugins SOURCES ${plugins_sources} LINK ${ARG_LIBRARIES})
+    endif()
     if(ARG_LIBRARIES)
       message(STATUS "... external libs: ${ARG_LIBRARIES}")
-      target_link_libraries(${lib_name} PUBLIC ${ARG_LIBRARIES})
     endif()
     if(ARG_HEADERS)
       message(STATUS "... external headers: ${ARG_HEADERS}")
-      target_include_directories(${lib_name} PRIVATE ${ARG_HEADERS})
+      target_include_directories(${lib_name} PUBLIC ${ARG_HEADERS})
     endif()
     if(ARG_PROPERTY)
       message(STATUS "... additional properties: ${ARG_PROPERTY}")
@@ -29,11 +40,20 @@ macro(lhecsw_build lib_name)
     target_include_directories(${lib_name} INTERFACE include)
   endif()
 
-  install(TARGETS ${lib_name}
-    EXPORT ${PROJECT_NAME}Targets
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
-    COMPONENT dev)
+  if(sources)
+    install(TARGETS ${lib_name}
+      EXPORT ${PROJECT_NAME}Targets
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
+      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
+      COMPONENT dev)
+  endif()
+  if(plugins_sources)
+    install(TARGETS ${lib_name}Plugins
+      EXPORT ${PROJECT_NAME}Targets
+      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
+      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
+      COMPONENT dev)
+  endif()
   list(APPEND lhecswlibs ${lib_name})
   set(lhecswlibs ${lhecswlibs} PARENT_SCOPE)
 endmacro()
