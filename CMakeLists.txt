@@ -6,6 +6,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake $ENV{DD4hep_DIR}/cmake)
 
 project(lhecsw)
 set(lhecswlibs)
+
+include(GNUInstallDirs)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE BOOL "RPATH use link path")
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install/
+      CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
+endif()
+
 include(lhecswEnvironmentCheck)
 include(lhecswBuildUtils)
 
@@ -14,13 +22,6 @@ find_package(Gaudi REQUIRED)
 find_package(EDM4HEP REQUIRED)
 find_package(k4FWCore REQUIRED)
 find_package(DD4hep REQUIRED)
-
-include(GNUInstallDirs)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE BOOL "RPATH USE LINK PATH")
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/InstallArea/
-      CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-endif()
 
 include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(Common)

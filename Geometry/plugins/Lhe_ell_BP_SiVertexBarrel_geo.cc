@@ -23,7 +23,7 @@
 
 #include <exception>
 
-#include "Common/include/GeometryUtils.h"
+#include "Geometry/include/Utils.h"
 
 using namespace std;
 using namespace dd4hep;
@@ -100,14 +100,14 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     Volume m_env = volumes[m_nam];
     string lay_nam = det_name + "_" + m_nam + _toString(x_layer.id(), "_layer%d");
 
-    double phi0 = x_layout.phi0();          // Starting phi of first module.
-    double phi_tilt = x_layout.phi_tilt();  // Phi tilt of a module.
-    double rc = x_layout.rc();              // Radius of the module center.
-    double rphi_dr = x_layout.dr();         // The delta radius of every other module.
-    double phic = phi0;                     // Phi of the module center.
-    double z0 = z_layout.z0();              // Z position of first module in phi.
-    double nz = z_layout.nz();              // Number of modules to place in z.
-    double z_dr = z_layout.dr();            // Radial displacement parameter, of every other module.
+    //double phi0 = x_layout.phi0();  // Starting phi of first module.
+    //double phi_tilt = x_layout.phi_tilt();  // Phi tilt of a module.
+    double rc = x_layout.rc();  // Radius of the module center.
+    //double rphi_dr = x_layout.dr();  // The delta radius of every other module.
+    //double phic = phi0;         // Phi of the module center.
+    double z0 = z_layout.z0();  // Z position of first module in phi.
+    double nz = z_layout.nz();  // Number of modules to place in z.
+    //double z_dr = z_layout.dr();  // Radial displacement parameter, of every other module.
 
     // not necessary, calculated here
     //int        nphi     = x_layout.nphi();             // Number of modules in phi.

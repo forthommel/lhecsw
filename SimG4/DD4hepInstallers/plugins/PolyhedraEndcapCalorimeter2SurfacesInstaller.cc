@@ -17,7 +17,7 @@
 
 #include <DD4hep/Printout.h>
 
-#include "DataFormats/Simulation/include/PolyhedraEndcapCalorimeter2Surfaces.h"
+#include "DataFormats/SimDD4hep/include/PolyhedraEndcapCalorimeter2Surfaces.h"
 
 /// Install measurement surfaces
 template <typename UserData>

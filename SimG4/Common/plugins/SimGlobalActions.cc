@@ -20,7 +20,7 @@
 #include <k4Interface/IGeoSvc.h>
 #include <k4Interface/ISimG4ActionTool.h>
 
-#include "SimG4/include/SimG4ActionInitialization.h"
+#include "SimG4/Common/include/SimG4ActionInitialization.h"
 
 class SimGlobalActions final : public AlgTool, public ISimG4ActionTool {
 public:

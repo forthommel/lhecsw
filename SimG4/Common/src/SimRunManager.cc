@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SimG4/include/SimRunManager.h"
+#include "SimG4/Common/include/SimRunManager.h"
 
 SimRunManager::SimRunManager()
     : G4RunManager(), message_service_("MessageSvc", "SimRunManager"), log_(&(*message_service_), "SimRunManager") {}

@@ -17,7 +17,7 @@
 #include <DD4hep/DetFactoryHelper.h>
 #include <XML/Layering.h>
 
-#include "Common/include/GeometryUtils.h"
+#include "Geometry/include/Utils.h"
 
 using namespace std;
 using namespace dd4hep;

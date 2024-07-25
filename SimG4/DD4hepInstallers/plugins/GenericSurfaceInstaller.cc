@@ -13,7 +13,7 @@
 
 #include <DD4hep/Printout.h>
 
-#include "DataFormats/Simulation/include/GenericSurface.h"
+#include "DataFormats/SimDD4hep/include/GenericSurface.h"
 
 /** \addtogroup SurfacePlugin
  * @{

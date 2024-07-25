@@ -1,5 +1,4 @@
-file(GLOB sources src/*.cc)
-
-gaudi_add_module(SimG4
-                 SOURCES ${sources}
-                 LINK k4FWCore::k4FWCore ${Geant4_LIBRARIES})
+add_subdirectory(Common)
+add_subdirectory(DD4hepInstallers)
+add_subdirectory(Tracker)
+set(lhecswlibs ${lhecswlibs} PARENT_SCOPE)
