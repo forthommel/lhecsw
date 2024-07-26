@@ -64,7 +64,6 @@ macro(lhecsw_build lib_name)
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
       COMPONENT dev)
-    list(APPEND lhecswlibs ${lib_name})
   endif()
   if(plugins_sources)
     install(TARGETS ${lib_name}Plugins
@@ -72,7 +71,5 @@ macro(lhecsw_build lib_name)
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
       COMPONENT dev)
-    list(APPEND lhecswlibs ${lib_name}Plugins)
   endif()
-  set(lhecswlibs ${lhecswlibs} PARENT_SCOPE)
 endmacro()
