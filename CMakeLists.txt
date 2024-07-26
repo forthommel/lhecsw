@@ -30,11 +30,12 @@ add_subdirectory(Generator)
 add_subdirectory(Geometry)
 add_subdirectory(SimG4)
 
-configure_file(cmake/lhecenv.in source-lhecenv.sh @ONLY)
+#configure_file(cmake/lhecenv.in source-lhecenv.sh @ONLY)
 
 install(EXPORT ${PROJECT_NAME}Targets
         NAMESPACE ${PROJECT_NAME}::
         FILE "${PROJECT_NAME}Targets.cmake"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/")
+gaudi_install(PYTHON ${PROJECT_SOURCE_DIR}/python)
 
 #gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)

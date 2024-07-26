@@ -1,74 +1,87 @@
-"""
-
-   Subtest using LHeD showing the usage of the G4Particle gun using
-   the Geant4GeneratorWrapper object.
-
-   @author  M.Frank
-   @version 1.0
-
-"""
-from __future__ import absolute_import, unicode_literals
-import logging
-
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+from Gaudi.Configuration import *
+from Configurables import GeoSvc
+from Configurables import GenAlg, HepMCToEDMConverter, SimG4PrimariesFromEdmTool
+from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions, SimG4SaveTrackerHits
+from Configurables import SimG4SingleParticleGeneratorTool
+from Configurables import PodioOutput, FCCDataSvc
+from Configurables import ApplicationMgr
 
 
-def run():
-    import DDG4
-    from DDG4 import OutputLevel as Output
-    import LHeD
+geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
+    detectors = [
+        'file:${lhecsw}/Geometry/data/compact/LHeD.xml',
+    ],
+    OutputLevel = INFO,
+)
 
-    lhed = LHeD.LHeD()
-    geant4 = lhed.geant4
-    kernel = lhed.kernel
+actions = SimG4FullSimActions(
+    enableHistory = True
+)
 
-    lhed.loadGeometry()
-    geant4.printDetectors()
-    #kernel.UI = "UI"
-    #geant4.setupCshUI(vis=True)
-    geant4.setupUI(vis=False)
-    lhed.setupField(quiet=False)
-    DDG4.importConstants(kernel.detectorDescription(), debug=False)
+geantservice = SimG4Svc("SimG4Svc",  # Geant4 simulation service
+    detector = 'SimG4DD4hepDetector',
+    physicslist = "SimG4FtfpBert",
+    actions = actions,
+)
 
-    prt = DDG4.EventAction(kernel, 'Geant4ParticlePrint/ParticlePrint')
-    prt.OutputLevel = Output.INFO
-    prt.OutputType = 3  # Print both: table and tree
-    kernel.eventAction().adopt(prt)
+outputs = []
+for (name, readout) in [
+        ("vertexBarrelHits", "SiVertexBarrelHits"),
+        ("vertexOuterBarrelHits", "SiVertexBarrel2Hits"),
+        ("trackerBarrelHits", "SiTrackerBarrelHits"),
+        ("trackerOuterBarrelHits", "SiTrackerOBarrelHits"),
+        ("trackerForwardHits", "SiTrackerForwardHits"),
+        ("trackerBackwardHits","SiTrackerBackwardHits"),
+    ]:
+    tmp = SimG4SaveTrackerHits(name, readoutName = readout)
+    tmp.SimTrackHits.Path = name
+    outputs.append(tmp)
 
-    #geant4.setupROOTOutput('RootOutput', 'output.root')
+pgun = SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",
+    saveEdm = True,
+    particleName = "e-",
+    energyMin = 50,
+    energyMax = 50,
+    etaMin = 0,
+    etaMax = 0,
+    OutputLevel = DEBUG,
+)
 
-    gen = DDG4.GeneratorAction(kernel, "Geant4GeneratorActionInit/GenerationInit")
-    kernel.generatorAction().adopt(gen)
-    logger.info("#  First particle generator: gun")
-    gun = DDG4.GeneratorAction(kernel, "Geant4GeneratorWrapper/Gun")
-    gun.Uses = 'G4ParticleGun'
-    gun.Mask = 1
-    kernel.generatorAction().adopt(gun)
+genalg = GenAlg()
+genalg.hepmc.Path = "hepmc"
 
-    # Merge all existing interaction records
-    merger = DDG4.GeneratorAction(kernel, "Geant4InteractionMerger/InteractionMerger")
-    merger.enableUI()
-    kernel.generatorAction().adopt(merger)
+geantsim = SimG4Alg("SimG4Alg",
+    outputs = outputs,
+    eventProvider = pgun,
+    OutputLevel = DEBUG,
+)
 
-    # And handle the simulation particles.
-    part = DDG4.GeneratorAction(kernel, "Geant4ParticleHandler/ParticleHandler")
-    kernel.generatorAction().adopt(part)
-    part.OutputLevel = Output.INFO
-    part.enableUI()
-    user = DDG4.Action(kernel, "Geant4TCUserParticleHandler/UserParticleHandler")
-    user.TrackingVolume_Zmax = DDG4.EcalPlug_zmin_fwd
-    user.TrackingVolume_Rmax = DDG4.EcalBarrel_rmin1
-    user.enableUI()
-    part.adopt(user)
+out = PodioOutput("out",  # PODIO output algorithm
+    outputCommands = [
+        "keep *"
+    ],
+    filename = "output.root",
+    OutputLevel = DEBUG,
+)
 
-    lhed.setupDetectors()
-    lhed.setupPhysics('QGSP_BERT')
-    lhed.test_config()
-    gun.generator()  # Instantiate gun to be able to set properties from G4 prompt
-    kernel.run()
-    kernel.terminate()
+podioevent = FCCDataSvc("EventDataSvc")
 
-
-if __name__ == "__main__":
-    run()
+# wrap everything together
+ApplicationMgr(
+    TopAlg = [
+        genalg,
+        geantsim,
+        out
+    ],
+    EvtSel = 'NONE',
+    EvtMax   = 100,
+    ExtSvc = [  # order is important, as GeoSvc is needed by G4SimSvc
+        podioevent,
+        geoservice,
+        geantservice,
+        #audsvc,
+    ],
+    #OutputLevel = DEBUG,
+    #OutputLevel = VERBOSE,
+    OutputLevel = INFO,
+)
