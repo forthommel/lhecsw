@@ -1,70 +1,70 @@
-"""
-
-   Run simulation using Geant4/BDSIM input file loader
-
-   @author  L.Forthomme
-   @version 1.0
-
-"""
-from __future__ import absolute_import, unicode_literals
-import logging
-
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+from Gaudi.Configuration import *
+from Configurables import GeoSvc, GenAlg
+from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
+from Configurables import PodioOutput, FCCDataSvc
+from Configurables import ApplicationMgr
+from Generator.bdsimInterface_cff import *
+from SimG4.common_cff import g4outputs
 
 
-def run():
-    import os
-    import DDG4
-    from DDG4 import OutputLevel as Output
-    import LHeD
+geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
+    detectors = [
+        'file:${lhecsw}/Geometry/data/compact/LHeD.xml',
+    ],
+    OutputLevel = INFO,
+)
 
-    DDG4.Core.setPrintFormat(str("%-32s %6s %s"))
+actions = SimG4FullSimActions(
+    enableHistory = True
+)
 
-    lhed = LHeD.LHeD()
-    geant4 = lhed.geant4
-    kernel = lhed.kernel
+geantservice = SimG4Svc("SimG4Svc",  # Geant4 simulation service
+    detector = 'SimG4DD4hepDetector',
+    physicslist = "SimG4FtfpBert",
+    actions = actions,
+)
 
-    lhed.loadGeometry()
-    geant4.printDetectors()
-    # Configure UI
-    geant4.setupUI(vis=False)
-    lhed.setupField(quiet=False)
-    DDG4.importConstants(kernel.detectorDescription(), debug=False)
+bdsim.filename = '/eos/project-l/lhec/public/examples/BDSIM_10evts_lstar23.root'
+bdsim.scorerName = 'BEND_0'
 
-    prt = DDG4.EventAction(kernel, 'Geant4ParticlePrint/ParticlePrint')
-    prt.OutputLevel = Output.WARNING
-    prt.OutputType = 3  # Print both: table and tree
-    kernel.eventAction().adopt(prt)
+genalg = GenAlg("bdsim",
+    SignalProvider = bdsim,
+)
+genalg.hepmc.Path = "hepmc"
 
-    geant4.setupROOTOutput('RootOutput', 'output.root')
+geantsim = SimG4Alg("SimG4Alg",
+    outputs = g4outputs,
+    eventProvider = bdsimParticles,
+    OutputLevel = DEBUG,
+)
 
-    gen = DDG4.GeneratorAction(kernel, 'Geant4InputAction/Input')
-    gen.Input = 'BDSIMParticleGun|~lforthom/public/forPeter/BDSIM_10evts_lstar23.root'
-    gen.OutputLevel = Output.DEBUG
-    geant4.buildInputStage([gen], output_level=Output.DEBUG)
+out = PodioOutput("out",  # PODIO output algorithm
+    outputCommands = [
+        "keep *"
+    ],
+    filename = "output.root",
+    OutputLevel = DEBUG,
+)
 
-    part = DDG4.GeneratorAction(kernel, 'Geant4ParticleHandler/ParticleHandler')
-    kernel.generatorAction().adopt(part)
-    part.enableUI()
+podioevent = FCCDataSvc("EventDataSvc")
 
-    lhed.setupDetectors()
-    # Now build the physics list:
-    lhed.setupPhysics('QGSP_BERT')
-    lhed.test_config()
-
-    #scan = DDG4.SteppingAction(kernel, 'Geant4MaterialScanner/MaterialScan')
-    #kernel.steppingAction().adopt(scan)
-
-    #kernel.configure()
-    #kernel.initialize()
-    kernel.NumEvents = 10
-
-    kernel.run()
-    kernel.terminate()
-    logger.info('End of run. Terminating .......')
-    logger.info('TEST_PASSED')
-
-
-if __name__ == "__main__":
-    run()
+# wrap everything together
+ApplicationMgr(
+    TopAlg = [
+        genalg,
+        bdsimHepMCConverter,
+        geantsim,
+        out
+    ],
+    EvtSel = 'NONE',
+    EvtMax   = 10_000,
+    ExtSvc = [  # order is important, as GeoSvc is needed by G4SimSvc
+        podioevent,
+        geoservice,
+        geantservice,
+        #audsvc,
+    ],
+    #OutputLevel = DEBUG,
+    #OutputLevel = VERBOSE,
+    OutputLevel = INFO,
+)

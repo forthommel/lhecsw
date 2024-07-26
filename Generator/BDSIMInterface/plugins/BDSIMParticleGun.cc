@@ -34,7 +34,7 @@ public:
       : GaudiTool(type, name, parent),
         filename_{this, "filename", "", "BDSIM event filename"},
         tree_name_{this, "treeName", "Event", "BDSIM event tree name"},
-        scorer_name_{this, "scorerName", "BEND_0", "BDSIM scorer name"} {}
+        scorer_name_{this, "scorerName", "", "BDSIM scorer name"} {}
   virtual ~BDSIMParticleGun() = default;
 
   inline StatusCode initialize() override {
@@ -102,14 +102,17 @@ StatusCode BDSIMParticleGun::readEvent(HepMC3::GenEvent& hepmc_evt) {
   hepmc_evt.clear();
   for (int i = 0; i < sampler_->n; ++i) {
     const auto ptot = sampler_->p.at(i) * 1.e3;
-    const auto mom = HepMC3::FourVector(
-        ptot * sampler_->xp.at(i), ptot * sampler_->yp.at(i), ptot * sampler_->zp.at(i), sampler_->energy.at(i) * 1.e3);
+    const auto mom = HepMC3::FourVector(ptot * sampler_->xp.at(i),
+                                        ptot * sampler_->yp.at(i),
+                                        -ptot * sampler_->zp.at(i),
+                                        sampler_->energy.at(i) * 1.e3);
     int status{1};
     if (const auto parent = sampler_->parentID.at(i); parent == 0)  // beam particle
       status = -9;
     auto part = std::make_shared<HepMC3::GenParticle>(mom, sampler_->partID.at(i), status);
-    const auto vtx_pos = HepMC3::FourVector(sampler_->x.at(i) * 10., sampler_->y.at(i) * 10., sampler_->z * 10., 0.);
-    part->production_vertex()->set_position(vtx_pos);
+    const auto vtx_pos = HepMC3::FourVector(sampler_->x.at(i) * 10., sampler_->y.at(i) * 10., -sampler_->z * 10., 0.);
+    auto vtx = std::make_shared<HepMC3::GenVertex>(vtx_pos);
+    part->production_vertex() = vtx;
     hepmc_evt.add_particle(part);
     info() << "Added particle #" << part->id() << " with PDG id=" << part->pid() << ", status=" << part->status()
            << ", vertex=(" << part->production_vertex()->position().x() << ","
