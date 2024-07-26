@@ -25,10 +25,10 @@ namespace HepMC3 {
   class GenEvent;
 }
 
+/// HepMC3 data providers (MC generators, ...) interfacing base class
 class IHepMCProviderTool : virtual public IAlgTool {
 public:
   DeclareInterfaceID(IHepMCProviderTool, 3, 0);
-
   virtual StatusCode getNextEvent(HepMC3::GenEvent&) = 0;
 };
 

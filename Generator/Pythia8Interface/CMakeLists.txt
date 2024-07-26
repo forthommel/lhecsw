@@ -5,6 +5,6 @@ if(NOT Pythia8_FOUND OR NOT HepMC3_FOUND)
 endif()
 
 lhecsw_build(Generator_Pythia8Interface
-    SOURCES src/Pythia8*.cc
+    PLUGINS_SOURCES plugins/Pythia8*.cc
     LIBRARIES k4FWCore::k4FWCore Gaudi::GaudiAlgLib ${Pythia8_LIBRARIES} ${HEPMC3_LIBRARIES}
     HEADERS ${Pythia8_INCLUDE_DIRS} ${HEPMC3_INCLUDE_DIRS} ${HEPMC3_INCLUDE_DIR})

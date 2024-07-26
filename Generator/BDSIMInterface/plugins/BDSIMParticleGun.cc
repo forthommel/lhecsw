@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <GaudiAlg/GaudiTool.h>
 #include <HepMC3/FourVector.h>
 #include <HepMC3/GenEvent.h>
 #include <HepMC3/GenParticle.h>
@@ -23,61 +24,79 @@
 #include <TFile.h>
 #include <TTree.h>
 
-#include "Generator/BDSIMInterface/include/BDSIMParticleGun.h"
+#include <BDSOutputROOTEventSampler.hh>
 
-DECLARE_COMPONENT(BDSIMParticleGun)
+#include "Generator/Common/include/IHepMCProviderTool.h"
 
-BDSIMParticleGun::BDSIMParticleGun(const std::string& type, const std::string& name, const IInterface* parent)
-    : GaudiTool(type, name, parent),
-      filename_{this, "filename", "", "BDSIM event filename"},
-      tree_name_{this, "treeName", "Event", "BDSIM event tree name"},
-      scorer_name_{this, "scorerName", "BEND_0", "BDSIM scorer name"} {}
+class BDSIMParticleGun : public GaudiTool, virtual public IHepMCProviderTool {
+public:
+  explicit BDSIMParticleGun(const std::string& type, const std::string& name, const IInterface* parent)
+      : GaudiTool(type, name, parent),
+        filename_{this, "filename", "", "BDSIM event filename"},
+        tree_name_{this, "treeName", "Event", "BDSIM event tree name"},
+        scorer_name_{this, "scorerName", "BEND_0", "BDSIM scorer name"} {}
+  virtual ~BDSIMParticleGun() = default;
 
-StatusCode BDSIMParticleGun::initialize() {
-  if (file_.reset(new TFile(((std::string)filename_).data())); !file_)
-    return Error("Failed to open file '" + filename_ + "'!");
+  inline StatusCode initialize() override {
+    if (const auto status = GaudiTool::initialize(); !status.isSuccess())
+      return status;
+    if (file_.reset(new TFile(filename_.value().data())); !file_)
+      return Error("Failed to open file '" + filename_ + "'!");
 
-  const auto patch_scorer_name = [](const std::string& scorer_name) -> std::string {
-    if (scorer_name[scorer_name.size() - 1] == '.')
-      return scorer_name;
-    return scorer_name + ".";  // patch for BDSIM output
-  };
+    const auto patch_scorer_name = [](const std::string& scorer_name) -> std::string {
+      if (scorer_name[scorer_name.size() - 1] == '.')
+        return scorer_name;
+      return scorer_name + ".";  // patch for BDSIM output
+    };
 
-  if (tree_)
-    warning() << "Replacing an already existing TTree handle by a new initialisation call.";
-  tree_ = file_->Get<TTree>(((std::string)tree_name_).data());
-  if (const auto ret = tree_->SetBranchAddress(patch_scorer_name(scorer_name_).data(), &sampler_); ret < TTree::kMatch)
-    return Error("Failed to load '" + scorer_name_ + "' scorer branch! Return value: " + std::to_string(ret) + ".");
+    if (tree_)
+      warning() << "Replacing an already existing TTree handle by a new initialisation call.";
+    tree_ = file_->Get<TTree>(tree_name_.value().data());
+    if (const auto ret = tree_->SetBranchAddress(patch_scorer_name(scorer_name_).data(), &sampler_);
+        ret < TTree::kMatch)
+      return Error("Failed to load '" + scorer_name_ + "' scorer branch! Return value: " + std::to_string(ret) + ".");
 
-  debug() << "Loaded '" << scorer_name_ << "' scorer in '" << tree_name_ << "' tree from '" << filename_ << "' file.";
-  max_events_ = tree_->GetEntriesFast();
-  return StatusCode::SUCCESS;
-}
-
-StatusCode BDSIMParticleGun::finalize() {
-  tree_ = nullptr;
-  file_.release();
-  return StatusCode::SUCCESS;
-}
-
-StatusCode BDSIMParticleGun::getNextEvent(HepMC3::GenEvent& hepmc_evt) {
-  if (!tree_)
-    return Error("No BDSIM event tree defined!");
-  if (event_number_ >= max_events_) {
-    warning() << "End of file reached. Now starting over.";
-    event_number_ = 0ull;
+    debug() << "Loaded '" << scorer_name_ << "' scorer in '" << tree_name_ << "' tree from '" << filename_ << "' file.";
+    max_events_ = tree_->GetEntriesFast();
+    return StatusCode::SUCCESS;
   }
-  switch (tree_->GetEntry(event_number_)) {
-    case -1:  // ROOT I/O error
-      return Error("ROOT I/O error encountered.");
-    case 0:  // empty event loaded
-      return Error("An empty event content was loaded.");
-    default: {  // successful readout of event
-      debug() << "Successfully moved to event number " << event_number_ << ".";
-      return readEvent(hepmc_evt);
+  inline StatusCode finalize() override {
+    tree_ = nullptr;
+    file_.release();
+    return StatusCode::SUCCESS;
+  }
+  inline StatusCode getNextEvent(HepMC3::GenEvent& hepmc_evt) override {
+    if (!tree_)
+      return Error("No BDSIM event tree defined!");
+    if (event_number_ >= max_events_) {
+      warning() << "End of file reached. Now starting over.";
+      event_number_ = 0ull;
+    }
+    switch (tree_->GetEntry(event_number_)) {
+      case -1:  // ROOT I/O error
+        return Error("ROOT I/O error encountered.");
+      case 0:  // empty event loaded
+        return Error("An empty event content was loaded.");
+      default: {  // successful readout of event
+        debug() << "Successfully moved to event number " << event_number_ << ".";
+        return readEvent(hepmc_evt);
+      }
     }
   }
-}
+
+private:
+  StatusCode readEvent(HepMC3::GenEvent&);
+
+  Gaudi::Property<std::string> filename_, tree_name_, scorer_name_;
+  Gaudi::Property<unsigned long long> max_events_{0ull};
+  unsigned long long event_number_{0ull};
+
+  std::unique_ptr<TFile> file_;
+  TTree* tree_{nullptr};                                // NOT owning
+  BDSOutputROOTEventSampler<float>* sampler_{nullptr};  // NOT owning
+};
+
+DECLARE_COMPONENT(BDSIMParticleGun)
 
 StatusCode BDSIMParticleGun::readEvent(HepMC3::GenEvent& hepmc_evt) {
   hepmc_evt.clear();
