@@ -1,10 +1,10 @@
 from Gaudi.Configuration import *
-from Configurables import GeoSvc
-from Configurables import GenAlg, HepMCToEDMConverter, SimG4PrimariesFromEdmTool
-from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions, SimG4SaveTrackerHits
+from Configurables import GeoSvc, GenAlg
+from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
 from Configurables import SimG4SingleParticleGeneratorTool
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
+from SimG4.common_cff import g4outputs
 
 
 geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
@@ -24,19 +24,6 @@ geantservice = SimG4Svc("SimG4Svc",  # Geant4 simulation service
     actions = actions,
 )
 
-outputs = []
-for (name, readout) in [
-        ("vertexBarrelHits", "SiVertexBarrelHits"),
-        ("vertexOuterBarrelHits", "SiVertexBarrel2Hits"),
-        ("trackerBarrelHits", "SiTrackerBarrelHits"),
-        ("trackerOuterBarrelHits", "SiTrackerOBarrelHits"),
-        ("trackerForwardHits", "SiTrackerForwardHits"),
-        ("trackerBackwardHits","SiTrackerBackwardHits"),
-    ]:
-    tmp = SimG4SaveTrackerHits(name, readoutName = readout)
-    tmp.SimTrackHits.Path = name
-    outputs.append(tmp)
-
 pgun = SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",
     saveEdm = True,
     particleName = "e-",
@@ -51,7 +38,7 @@ genalg = GenAlg()
 genalg.hepmc.Path = "hepmc"
 
 geantsim = SimG4Alg("SimG4Alg",
-    outputs = outputs,
+    outputs = g4outputs,
     eventProvider = pgun,
     OutputLevel = DEBUG,
 )

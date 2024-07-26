@@ -1,12 +1,10 @@
 from Gaudi.Configuration import *
-from Configurables import GeoSvc
-from Configurables import GenAlg, HepMCToEDMConverter, SimG4PrimariesFromEdmTool
-from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions, SimG4SaveTrackerHits
-from Configurables import SimG4SingleParticleGeneratorTool
-from Configurables import CepGenEventGenerator
+from Configurables import GeoSvc, GenAlg
+from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
 from Generator.cepgenInterface_cff import *
+from SimG4.common_cff import g4outputs
 
 
 geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
@@ -26,20 +24,6 @@ geantservice = SimG4Svc("SimG4Svc",  # Geant4 simulation service
     actions = actions,
 )
 
-
-outputs = []
-for (name, readout) in [
-        ("vertexBarrelHits", "SiVertexBarrelHits"),
-        ("vertexOuterBarrelHits", "SiVertexBarrel2Hits"),
-        ("trackerBarrelHits", "SiTrackerBarrelHits"),
-        ("trackerOuterBarrelHits", "SiTrackerOBarrelHits"),
-        ("trackerForwardHits", "SiTrackerForwardHits"),
-        ("trackerBackwardHits","SiTrackerBackwardHits"),
-    ]:
-    tmp = SimG4SaveTrackerHits(name, readoutName = readout)
-    tmp.SimTrackHits.Path = name
-    outputs.append(tmp)
-
 cepgen.process = [
     'name:lpair',
     'kinematics/beam1id:2212',
@@ -54,19 +38,8 @@ genalg = GenAlg("CepGen",
 )
 genalg.hepmc.Path = "hepmc"
 
-pgun = SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",
-    saveEdm = True,
-    particleName = "e-",
-    energyMin = 50,
-    energyMax = 50,
-    etaMin = 0,
-    etaMax = 0,
-    OutputLevel = DEBUG,
-)
-
 geantsim = SimG4Alg("SimG4Alg",
-    outputs = outputs,
-    #eventProvider = pgun,
+    outputs = g4outputs,
     eventProvider = cepgenParticles,
     OutputLevel = DEBUG,
 )

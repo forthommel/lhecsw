@@ -1,12 +1,11 @@
 from Gaudi.Configuration import *
-from Configurables import GeoSvc
-from Configurables import GenAlg, HepMCToEDMConverter, SimG4PrimariesFromEdmTool
-from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions, SimG4SaveTrackerHits
+from Configurables import GeoSvc, GenAlg
+from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
 from Configurables import SimG4SingleParticleGeneratorTool
-from Configurables import CepGenEventGenerator
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
 from Generator.pythia8Interface_cff import *
+from SimG4.common_cff import g4outputs
 
 
 geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
@@ -25,20 +24,6 @@ geantservice = SimG4Svc("SimG4Svc",  # Geant4 simulation service
     physicslist = "SimG4FtfpBert",
     actions = actions,
 )
-
-
-outputs = []
-for (name, readout) in [
-        ("vertexBarrelHits", "SiVertexBarrelHits"),
-        ("vertexOuterBarrelHits", "SiVertexBarrel2Hits"),
-        ("trackerBarrelHits", "SiTrackerBarrelHits"),
-        ("trackerOuterBarrelHits", "SiTrackerOBarrelHits"),
-        ("trackerForwardHits", "SiTrackerForwardHits"),
-        ("trackerBackwardHits","SiTrackerBackwardHits"),
-    ]:
-    tmp = SimG4SaveTrackerHits(name, readoutName = readout)
-    tmp.SimTrackHits.Path = name
-    outputs.append(tmp)
 
 pythia8.preInitCommands = [
     'Beams:idA = 2212',     # beam 1 = proton
@@ -66,7 +51,7 @@ pgun = SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",
 )
 
 geantsim = SimG4Alg("SimG4Alg",
-    outputs = outputs,
+    outputs = g4outputs,
     #eventProvider = pgun,
     eventProvider = pythia8Particles,
     OutputLevel = DEBUG,
