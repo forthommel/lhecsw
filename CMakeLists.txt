@@ -27,6 +27,7 @@ add_subdirectory(Common)
 add_subdirectory(DataFormats)
 add_subdirectory(Generator)
 add_subdirectory(Geometry)
+add_subdirectory(SimAlgos)
 add_subdirectory(SimG4)
 
 #configure_file(cmake/lhecenv.in source-lhecenv.sh @ONLY)

@@ -1,11 +1,10 @@
 from Gaudi.Configuration import *
 from Configurables import GeoSvc, GenAlg
 from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
-from Configurables import SimG4SingleParticleGeneratorTool
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
 from Generator.pythia8Interface_cff import *
-from SimG4.common_cff import g4outputs
+from SimG4.sim_cff import g4outputs
 
 
 geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
@@ -40,19 +39,8 @@ genalg = GenAlg("Pythia8",
 )
 genalg.hepmc.Path = "hepmc"
 
-pgun = SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",
-    saveEdm = True,
-    particleName = "e-",
-    energyMin = 50,
-    energyMax = 50,
-    etaMin = 0,
-    etaMax = 0,
-    OutputLevel = DEBUG,
-)
-
 geantsim = SimG4Alg("SimG4Alg",
     outputs = g4outputs,
-    #eventProvider = pgun,
     eventProvider = pythia8Particles,
     OutputLevel = DEBUG,
 )

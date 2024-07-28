@@ -4,7 +4,8 @@ from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
 from Generator.cepgenInterface_cff import *
-from SimG4.common_cff import g4outputs
+from SimG4.sim_cff import g4outputs
+from SimAlgos.digi_cff import digis
 
 
 geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
@@ -60,6 +61,7 @@ ApplicationMgr(
         genalg,
         cepgenHepMCConverter,
         geantsim,
+        *digis,
         out
     ],
     EvtSel = 'NONE',

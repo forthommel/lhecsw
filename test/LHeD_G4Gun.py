@@ -4,7 +4,7 @@ from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
 from Configurables import SimG4SingleParticleGeneratorTool
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
-from SimG4.common_cff import g4outputs
+from SimG4.sim_cff import g4outputs
 
 
 geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
