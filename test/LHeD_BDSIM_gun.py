@@ -1,18 +1,13 @@
 from Gaudi.Configuration import *
-from Configurables import GeoSvc, GenAlg
+from Configurables import GenAlg
 from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
+
 from Generator.bdsimInterface_cff import *
+from Geometry.geoservice_cfi import geoservice
 from SimG4.sim_cff import g4outputs
 
-
-geoservice = GeoSvc("GeoSvc",  # DD4hep geometry service
-    detectors = [
-        'file:${lhecsw}/Geometry/data/compact/LHeD.xml',
-    ],
-    OutputLevel = INFO,
-)
 
 actions = SimG4FullSimActions(
     enableHistory = True

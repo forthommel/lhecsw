@@ -17,7 +17,7 @@
 #include <DDSegmentation/BitField64.h>
 
 #include "DataFormats/SimDD4hep/include/CaloFaceBarrelSurfaces.h"
-#include "Geometry/include/CaloBarrelPlane.h"
+#include "Geometry/DD4hep/include/CaloBarrelPlane.h"
 
 template <>
 void Installer<CaloFaceBarrelSurfaces>::handle_arguments(int argc, char** argv) {

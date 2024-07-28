@@ -17,7 +17,7 @@
 #include <DDSegmentation/BitField64.h>
 
 #include "DataFormats/SimDD4hep/include/CaloFaceEndcapSurfaces.h"
-#include "Geometry/include/CaloEndcapPlane.h"
+#include "Geometry/DD4hep/include/CaloEndcapPlane.h"
 
 template <>
 void Installer<CaloFaceEndcapSurfaces>::handle_arguments(int argc, char** argv) {
