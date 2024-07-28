@@ -10,6 +10,7 @@ digis = []
 for (name, readout) in [*tracker_vertex_components, *tracker_outer_barrel_components]:
     digi = TrackHitDigitiser(name + 'Hits',
         simhits = name + 'SimHits',
+        algorithm = 'gaussianResolution',
         #readout = readout,
     )
     digis.append(digi)

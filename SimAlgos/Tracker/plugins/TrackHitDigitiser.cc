@@ -24,6 +24,7 @@
 #include <edm4hep/TrackerHitCollection.h>
 #include <k4FWCore/DataHandle.h>
 
+#include "SimAlgos/Tracker/include/GaussianResolutionTrackHitDigitiser.h"
 #include "SimAlgos/Tracker/include/TrivialTrackHitDigitiser.h"
 
 class TrackHitDigitiser : public GaudiAlgorithm {
@@ -34,12 +35,16 @@ public:
         hits_coll_{name, Gaudi::DataHandle::Writer, this},
         simhits_hits_assoc_{name + "HitsAssociation", Gaudi::DataHandle::Writer, this},
         algo_name_{this, "algorithm", "trivial"} {
-    if (algo_name_ == "trivial")
-      algo_.reset(new TrivialTrackHitDigitiser(name, service_locator));
-    else
-      throw std::runtime_error("Invalid algorithm name: '" + algo_name_ + "'.");
     declareProperty("simhits", simhits_coll_, "Input collection for simulated track hits");
     declareProperty(name, hits_coll_, "Output collection for digitised track hits");
+
+    // build the user-steered hit digitiser flavour
+    if (algo_name_ == "trivial")
+      algo_.reset(new TrivialTrackHitDigitiser(name, service_locator));
+    else if (algo_name_ == "gaussianResolution")
+      algo_.reset(new GaussianResolutionTrackHitDigitiser(name, service_locator));
+    else
+      throw std::runtime_error("Invalid algorithm name: '" + algo_name_ + "'.");
   }
   virtual ~TrackHitDigitiser() = default;
 
