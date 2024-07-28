@@ -1,24 +1,13 @@
 from Gaudi.Configuration import *
 from Configurables import GenAlg
-from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
 
 from Generator.cepgenInterface_cff import *
 from Geometry.geoservice_cfi import geoservice
-from SimG4.sim_cff import g4outputs
+from SimG4.sim_cff import geantservice, geantsim
 from SimAlgos.digi_cff import digis
 
-
-actions = SimG4FullSimActions(
-    enableHistory = True
-)
-
-geantservice = SimG4Svc("SimG4Svc",  # Geant4 simulation service
-    detector = 'SimG4DD4hepDetector',
-    physicslist = "SimG4FtfpBert",
-    actions = actions,
-)
 
 cepgen.process = [
     'name:lpair',
@@ -34,11 +23,7 @@ genalg = GenAlg("CepGen",
 )
 genalg.hepmc.Path = "hepmc"
 
-geantsim = SimG4Alg("SimG4Alg",
-    outputs = g4outputs,
-    eventProvider = cepgenParticles,
-    OutputLevel = DEBUG,
-)
+geantsim.eventProvider = cepgenParticles
 
 out = PodioOutput("out",  # PODIO output algorithm
     outputCommands = [

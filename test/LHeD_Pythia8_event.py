@@ -1,23 +1,12 @@
 from Gaudi.Configuration import *
 from Configurables import GenAlg
-from Configurables import SimG4Svc, SimG4Alg, SimG4FullSimActions
 from Configurables import PodioOutput, FCCDataSvc
 from Configurables import ApplicationMgr
 
 from Generator.pythia8Interface_cff import *
 from Geometry.geoservice_cfi import geoservice
-from SimG4.sim_cff import g4outputs
+from SimG4.sim_cff import geantservice, geantsim
 
-
-actions = SimG4FullSimActions(
-    enableHistory = True
-)
-
-geantservice = SimG4Svc("SimG4Svc",  # Geant4 simulation service
-    detector = 'SimG4DD4hepDetector',
-    physicslist = "SimG4FtfpBert",
-    actions = actions,
-)
 
 pythia8.preInitCommands = [
     'Beams:idA = 2212',     # beam 1 = proton
@@ -34,11 +23,7 @@ genalg = GenAlg("Pythia8",
 )
 genalg.hepmc.Path = "hepmc"
 
-geantsim = SimG4Alg("SimG4Alg",
-    outputs = g4outputs,
-    eventProvider = pythia8Particles,
-    OutputLevel = DEBUG,
-)
+geantsim.eventProvider = pythia8Particles
 
 out = PodioOutput("out",  # PODIO output algorithm
     outputCommands = [
