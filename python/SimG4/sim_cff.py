@@ -1,5 +1,5 @@
 from Gaudi.Configuration import *
-from SimAlgos.common_cff import tracker_components, calo_components, muon_components
+from Geometry.components_cff import tracker_components, calo_components, muon_components
 from Configurables import SimG4Svc, SimG4Alg
 from Configurables import SimG4FullSimActions, SimG4SaveTrackerHits, SimG4SaveCalHits
 

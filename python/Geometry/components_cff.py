@@ -3,12 +3,15 @@ tracker_vertex_components = [
     ("vertexBarrel", "SiVertexBarrelHits"),
     ("vertexOuterBarrel", "SiVertexBarrel2Hits"),
 ]
-tracker_outer_components = [
+tracker_outer_barrel_components = [
     ("trackerBarrel", "SiTrackerBarrelHits"),
     ("trackerOuterBarrel", "SiTrackerOBarrelHits"),
+]
+tracker_outer_endcaps_components = [
     ("trackerForward", "SiTrackerForwardHits"),
     ("trackerBackward", "SiTrackerBackwardHits"),
 ]
+tracker_outer_components = tracker_outer_barrel_components + tracker_outer_endcaps_components
 tracker_components = tracker_vertex_components + tracker_outer_components
 
 # calorimeter components

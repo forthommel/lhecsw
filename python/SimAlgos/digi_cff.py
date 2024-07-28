@@ -1,14 +1,16 @@
 from Gaudi.Configuration import *
-from SimAlgos.common_cff import tracker_components, calo_components, muon_components
+from Geometry.components_cff import tracker_vertex_components, tracker_outer_barrel_components
+#from Geometry.components_cff import calo_components, muon_components
 from Configurables import TrackHitDigitiser
 
 
 digis = []
 
 # tracker components
-for (name, readout) in tracker_components:
+for (name, readout) in [*tracker_vertex_components, *tracker_outer_barrel_components]:
     digi = TrackHitDigitiser(name + 'Hits',
         simhits = name + 'SimHits',
+        #readout = readout,
     )
     digis.append(digi)
 

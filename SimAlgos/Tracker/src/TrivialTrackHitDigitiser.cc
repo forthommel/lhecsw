@@ -29,6 +29,8 @@ TrivialTrackHitDigitiser::TrivialTrackHitDigitiser(const std::string& name, ISvc
       z_res_{this, "zResolution", 0.} {}
 
 StatusCode TrivialTrackHitDigitiser::initialize() {
+  if (auto sc = ITrackDigitisationAlgo::initialize(); sc.isFailure())
+    return sc;
   x_res_gen_ = randSvc()->generator(Rndm::Gauss(0., x_res_));
   y_res_gen_ = randSvc()->generator(Rndm::Gauss(0., y_res_));
   z_res_gen_ = randSvc()->generator(Rndm::Gauss(0., z_res_));
