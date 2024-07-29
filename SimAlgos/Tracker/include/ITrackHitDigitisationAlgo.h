@@ -16,23 +16,21 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SimAlgos_Tracker_ITrackDigitisationAlgo_h
-#define SimAlgos_Tracker_ITrackDigitisationAlgo_h
+#ifndef SimAlgos_Tracker_ITrackHitDigitisationAlgo_h
+#define SimAlgos_Tracker_ITrackHitDigitisationAlgo_h
 
-#include <GaudiAlg/GaudiAlgorithm.h>
+#include <GaudiKernel/IAlgTool.h>
 
 namespace edm4hep {
   class SimTrackerHit;
   class MutableTrackerHit;
 }  // namespace edm4hep
 
-class ITrackDigitisationAlgo : public GaudiAlgorithm {
+class ITrackHitDigitisationAlgo : virtual public IAlgTool {
 public:
-  explicit ITrackDigitisationAlgo(const std::string& name, ISvcLocator* service_locator)
-      : GaudiAlgorithm(name, service_locator) {}
-  virtual ~ITrackDigitisationAlgo() = default;
+  DeclareInterfaceID(ITrackHitDigitisationAlgo, 1, 0);
 
-  virtual StatusCode run(const edm4hep::SimTrackerHit&, edm4hep::MutableTrackerHit&) = 0;
+  virtual StatusCode run(const edm4hep::SimTrackerHit&, edm4hep::MutableTrackerHit&) const = 0;
 };
 
 #endif

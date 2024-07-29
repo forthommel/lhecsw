@@ -36,5 +36,5 @@ for (name, readout) in muon_components:
 
 geantsim = SimG4Alg("SimG4Alg",
     outputs = _outputs,
-    OutputLevel = DEBUG,
+    OutputLevel = INFO,
 )
