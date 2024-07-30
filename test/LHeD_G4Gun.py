@@ -43,7 +43,7 @@ ApplicationMgr(
         out
     ],
     EvtSel = 'NONE',
-    EvtMax   = 100,
+    EvtMax   = 5000,
     ExtSvc = [  # order is important, as GeoSvc is needed by G4SimSvc
         podioevent,
         geoservice,
