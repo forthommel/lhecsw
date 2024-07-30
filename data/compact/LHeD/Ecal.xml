@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <comment>EM Calorimeter Barrels (I+M+O)</comment>
+  <include ref="LHeD/EcalBarrel.xml"/>
+  <comment>EM Calorimeter Plugs</comment>
+  <include ref="LHeD/EcalPlugs.xml"/>
+  <comment>Cryostat EMC-LAr</comment>
+  <include ref="LHeD/EcalCryostat.xml"/>
+</lccdd>

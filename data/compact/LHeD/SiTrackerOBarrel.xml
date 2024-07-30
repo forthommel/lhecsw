@@ -19,11 +19,11 @@
 <!-- ====================================================================== -->
 <lccdd>
   <display>
-    <vis name="SiTrackerBarrelModuleVis" alpha="0.4" r="0.1" g="0.2" b="0.4" showDaughters="false" visible="true"/>
-    <vis name="SiTrackerBarrelLayerVis" alpha="0.4" r="1" g="0.2" b="0.4" showDaughters="true" visible="false"/>
+    <vis name="SiTrackerOBarrelModuleVis" alpha="0.4" r="0.3" g="0.1" b="0.6" showDaughters="false" visible="true"/>
+    <vis name="SiTrackerOBarrelLayerVis" alpha="0.4" r="1" g="0.1" b="0.6" showDaughters="true" visible="false"/>
   </display>
   <limits>
-    <limitset name="SiTrackerBarrelRegionLimitSet">
+    <limitset name="SiTrackerOBarrelRegionLimitSet">
       <limit name="step_length_max" particles="*" value="5.0" unit="mm"/>
       <limit name="track_length_max" particles="*" value="5.0" unit="mm"/>
       <limit name="time_max" particles="*" value="5.0" unit="ns"/>
@@ -32,22 +32,15 @@
     </limitset>
   </limits>
   <regions>
-    <region name="SiTrackerBarrelRegion" eunit="MeV" lunit="mm" cut="0.001" threshold="0.001">
-      <limitsetref name="SiTrackerBarrelRegionLimitSet"/>
+    <region name="SiTrackerOBarrelRegion" eunit="MeV" lunit="mm" cut="0.001" threshold="0.001">
+      <limitsetref name="SiTrackerOBarrelRegionLimitSet"/>
     </region>
   </regions>
   <detectors>
-    <!-- SiTrackerMiddleBarrel -->
-    <!--<detector id="2" name="SiTrackerBarrel"
-                         type="Lhe_SiTrackerBarrel"
-                         insideTrackingVolume="true"
-                         readout="SiTrackerBarrelHits"
-                         region="SiTrackerBarrelRegion"
-                         limits="SiTrackerBarrelRegionLimitSet">-->
-    <detector id="2" name="SiTrackerBarrel" type="DD4hep_SiTrackerBarrel" insideTrackingVolume="true" readout="SiTrackerBarrelHits" region="SiTrackerBarrelRegion" limits="SiTrackerBarrelRegionLimitSet">
-      <comment>Middle Tracker Barrel</comment>
-      <module name="SiTrackerModule_Layer0" vis="SiTrackerBarrelModuleVis">
-        <module_envelope width="SiMod_w0 + VxBar_Env" length="SiMod_l0 + VxBar_Env" thickness="1.5*VxBar_Env"/>
+    <detector id="3" name="SiTrackerOBarrel" type="Lhe_SiTrackerBarrel" insideTrackingVolume="true" readout="SiTrackerOBarrelHits" region="SiTrackerOBarrelRegion" limits="SiTrackerOBarrelRegionLimitSet">
+      <comment>Outer Tracker Barrel</comment>
+      <module name="SiTrackerOModule_Layer0" vis="SiTrackerOBarrelModuleVis">
+        <module_envelope width="SiMod_w0" length="SiMod_l0" thickness="0.3*cm"/>
         <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.02*cm" material="PEEK" sensitive="false" vis="false">
           <position z="-0.14*cm"/>
         </module_component>
@@ -76,7 +69,7 @@
           <position z="0.146*cm"/>
         </module_component>
       </module>
-      <module name="SiTrackerModule_Layer1" vis="SiTrackerBarrelModuleVis">
+      <module name="SiTrackerOModule_Layer1" vis="SiTrackerOBarrelModuleVis">
         <module_envelope width="SiMod_w1" length="SiMod_l1" thickness="0.3*cm"/>
         <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.02*cm" material="PEEK" sensitive="false" vis="false">
           <position z="-0.14*cm"/>
@@ -106,7 +99,7 @@
           <position z="0.146*cm"/>
         </module_component>
       </module>
-      <module name="SiTrackerModule_Layer2" vis="SiTrackerBarrelModuleVis">
+      <module name="SiTrackerOModule_Layer2" vis="SiTrackerOBarrelModuleVis">
         <module_envelope width="SiMod_w2" length="SiMod_l2" thickness="0.3*cm"/>
         <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.02*cm" material="PEEK" sensitive="false" vis="false">
           <position z="-0.14*cm"/>
@@ -136,7 +129,7 @@
           <position z="0.146*cm"/>
         </module_component>
       </module>
-      <module name="SiTrackerModule_Layer3" vis="SiTrackerBarrelModuleVis">
+      <module name="SiTrackerOModule_Layer3" vis="SiTrackerOBarrelModuleVis">
         <module_envelope width="SiMod_w3" length="SiMod_l3" thickness="0.3*cm"/>
         <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.02*cm" material="PEEK" sensitive="false" vis="false">
           <position z="-0.14*cm"/>
@@ -166,37 +159,31 @@
           <position z="0.146*cm"/>
         </module_component>
       </module>
-      <layer module="SiTrackerModule_Layer0" id="1" vis="SiTrackerBarrelLayerVis">
-        <barrel_envelope inner_r="Radius_SITLayer0 + 0.5*VxBar_Env" outer_r="Radius_SITLayer0 + 8.*VxBar_Env" z_length="2.*SiMod_z2 + 2.*cm"/>
-        <rphi_layout phi_tilt="0.06*rad" nphi="10" phi0="0." rc="Radius_SITLayer0 + 4.2*mm" dr="0."/>
-        <z_layout dr="0.*mm" z0="SiMod_z2 - 4.5*cm" nz="11"/>
+      <layer module="SiTrackerOModule_Layer0" id="1" vis="SiTrackerOBarrelLayerVis">
+        <barrel_envelope inner_r="Radius_SOTLayer0 + 0.5*VxBar_Env" outer_r="Radius_SOTLayer0 + 8.*VxBar_Env" z_length="2.*SiModO_z0 + 2.*cm"/>
+        <rphi_layout phi_tilt="0.06*rad" nphi="25" phi0="0." rc="Radius_SOTLayer0 + 4.2*mm" dr="0."/>
+        <z_layout dr="0.*mm" z0="SiModO_z0 - 5.*cm" nz="14"/>
       </layer>
-      <layer module="SiTrackerModule_Layer1" id="2" vis="SiTrackerBarrelLayerVis">
-        <barrel_envelope inner_r="Radius_SITLayer1 - 0.5*VxBar_Env" outer_r="Radius_SITLayer1 + 8.*VxBar_Env" z_length="2.*SiMod_z3 + 2.*cm"/>
-        <rphi_layout phi_tilt="0.06*rad" nphi="14" phi0="0.*rad" rc="Radius_SITLayer1 + 4.2*mm" dr="0."/>
-        <z_layout dr="2.5*mm" z0="SiMod_z3 - 5.*cm" nz="11"/>
+      <layer module="SiTrackerOModule_Layer1" id="2" vis="SiTrackerOBarrelLayerVis">
+        <barrel_envelope inner_r="Radius_SOTLayer1 - 0.5*VxBar_Env" outer_r="Radius_SOTLayer1 + 8.*VxBar_Env" z_length="2.*SiModO_z1 + 2.*cm"/>
+        <rphi_layout phi_tilt="0.06*rad" nphi="33" phi0="0.087*rad" rc="Radius_SOTLayer1 + 4.2*mm" dr="0."/>
+        <z_layout dr="0.*mm" z0="SiModO_z1 - 5.*cm" nz="18"/>
       </layer>
-      <layer module="SiTrackerModule_Layer2" id="3" vis="SiTrackerBarrelLayerVis">
-        <barrel_envelope inner_r="Radius_SITLayer2 - 0.5*VxBar_Env" outer_r="Radius_SITLayer2 + 8.*VxBar_Env" z_length="2.*SiMod_z4 + 2.*cm"/>
-        <rphi_layout phi_tilt="0.06*rad" nphi="18" phi0="0.*rad" rc="Radius_SITLayer2 + 4.2*mm" dr="0."/>
-        <z_layout dr="2.5*mm" z0="SiMod_z4 - 5.*cm" nz="11"/>
+      <layer module="SiTrackerOModule_Layer2" id="3" vis="SiTrackerOBarrelLayerVis">
+        <barrel_envelope inner_r="Radius_SOTLayer2 - 0.5*VxBar_Env" outer_r="Radius_SOTLayer2 + 8.*VxBar_Env" z_length="2.*SiModO_z2 + 2.*cm"/>
+        <rphi_layout phi_tilt="0.06*rad" nphi="43" phi0="0.058*rad" rc="Radius_SOTLayer2 + 4.2*mm" dr="0."/>
+        <z_layout dr="0.*mm" z0="SiModO_z2 - 5.*cm" nz="22"/>
       </layer>
-      <layer module="SiTrackerModule_Layer3" id="4" vis="SiTrackerBarrelLayerVis">
-        <barrel_envelope inner_r="Radius_SITLayer3 - 0.5*VxBar_Env" outer_r="Radius_SITLayer3 + 8.*VxBar_Env" z_length="2.*SiMod_z5 + 2.*cm"/>
-        <rphi_layout phi_tilt="0.06*rad" nphi="21" phi0="0.*rad" rc="Radius_SITLayer3 + 4.2*mm" dr="0."/>
-        <z_layout dr="2.5*mm" z0="SiMod_z4 - 5.*cm" nz="11"/>
+      <layer module="SiTrackerOModule_Layer3" id="4" vis="SiTrackerOBarrelLayerVis">
+        <barrel_envelope inner_r="Radius_SOTLayer3 - 0.5*VxBar_Env" outer_r="Radius_SOTLayer3 + 8.*VxBar_Env" z_length="2.*SiModO_z3 + 2.*cm"/>
+        <rphi_layout phi_tilt="0.06*rad" nphi="55" phi0="0.058*rad" rc="Radius_SOTLayer3 + 4.2*mm" dr="0.2"/>
+        <z_layout dr="0.*mm" z0="SiModO_z3 - 5.*cm" nz="25"/>
       </layer>
     </detector>
   </detectors>
   <readouts>
-    <readout name="SiTrackerBarrelHits">
+    <readout name="SiTrackerOBarrelHits">
       <id>system:0,barrel:3,layer:5,module:14,sensor:4</id>
     </readout>
   </readouts>
-  <!--<plugins>
-    <plugin name="Lhe_SiTrackerBarrelSurfacePlugin">
-      <argument value="SiTrackerBarrel"/>
-      <argument value="dimension=1"/>
-    </plugin>
-  </plugins>-->
 </lccdd>

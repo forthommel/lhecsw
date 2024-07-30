@@ -127,13 +127,13 @@
     <constant name="SiModO_z1" value="830.*mm"/>
     <constant name="SiModO_z2" value="980.*mm"/>
     <constant name="SiModO_z3" value="1130.*mm"/>
-    <constant name="SiVXDEndcap_z0" value="SiMod_z0*2.+0.5*cm"/>
+    <!--<constant name="SiVXDEndcap_z0" value="SiMod_z0*2.+0.5*cm"/>
     <constant name="SiVXDEndcap_z1" value="SiMod_z2*2.+0.5*cm"/>
     <constant name="SiModO_zi0" value="SiModO_z0 - SiMod_w0 "/>
     <constant name="SiModO_zi1" value="SiModO_z1 - SiMod_w1 "/>
     <constant name="SiModO_zi2" value="SiModO_z2 - SiMod_w2 "/>
-    <constant name="SiModO_zi3" value="SiModO_z3 - SiMod_w3 "/>
-    <comment>             FTD parameters             </comment>
+    <constant name="SiModO_zi3" value="SiModO_z3 - SiMod_w3 "/>-->
+    <!--<comment>FTD parameters</comment>
     <constant name="Ftd_total_cylinder_thickness" value="1.0*mm"/>
     <constant name="Ftd_cables_thickness" value="0.08*mm"/>
     <constant name="Ftd_Si_thickness1" value="0.3*mm"/>
@@ -142,7 +142,7 @@
     <constant name="Ftd_inner_support_length" value="4*mm"/>
     <constant name="Ftd_outer_support_thickness" value="10*mm"/>
     <constant name="Ftd_outer_support_length" value="4*mm"/>
-    <constant name="Diff_z_Ftd_disk" value="2.5*cm"/>
+    <constant name="Diff_z_Ftd_disk" value="2.5*cm"/>-->
     <comment>            ftd - pos z  </comment>
     <constant name="Ftd_disk_z0" value="650.0*mm"/>
     <constant name="Ftd_disk_z1" value="868.6*mm"/>
@@ -368,58 +368,18 @@
   </detectors>
 -->
   <comment> *** Trackers *** </comment>
-  <!-- SiVertexBarrel -->
-  <comment>Vertex Detector Barrel inner+outer pix</comment>
-  <include ref="LHeD/SiVertexBarrel.xml"/>
-  <comment>Vertex Detector Supports </comment>
-  <include ref="LHeD/SiVertexSupports.xml"/>
-  <!-- SiTrackerBarrel -->
-  <comment>Middle+outer Tracker Barrel</comment>
-  <include ref="LHeD/SiTrackerBarrel.xml"/>
-  <!-- fwd-tracker -->
-  <comment>Forward Tracker outside Barrel</comment>
-  <include ref="LHeD/SiTrackerForward.xml"/>
-  <!-- bwd-tracker -->
-  <comment>Backward Tracker outside Barrel</comment>
-  <include ref="LHeD/SiTrackerBackward.xml"/>
-  <!-- Trackers readouts -->
-  <include ref="LHeD/SiVertexReadout.xml"/>
-  <include ref="LHeD/SiTrackerReadout.xml"/>
-  <comment>Tracker Supports</comment>
-  <include ref="LHeD/SiTrackerSupports.xml"/>
+  <include ref="LHeD/SiVertex.xml"/>
+  <include ref="LHeD/SiTracker.xml"/>
   <comment> *** Calorimeters *** </comment>
-  <!-- ECAL-LAr -->
-  <comment>EM Calorimeter Barrels (I+M+O)</comment>
-  <include ref="LHeD/EcalBarrel.xml"/>
-  <!--EcalPlug fwd/bwd -->
-  <comment>EM Calorimeter Plugs</comment>
-  <include ref="LHeD/EcalPlugs.xml"/>
-  <!-- ECAL-LAr Cryostat -->
-  <comment>Cryostat EMC-LAr</comment>
-  <include ref="LHeD/EcalCryostat.xml"/>
-  <!--HCAL -->
-  <comment>Hadron Calorimeter Barrel</comment>
-  <include ref="LHeD/HcalBarrel.xml"/>
-  <!--HCALEndcap_fwd_bwd -->
-  <comment>Hadron Calorimeter Endcaps</comment>
-  <include ref="LHeD/HcalEndcaps.xml"/>
-  <!-- HCAL plugs -->
-  <comment>Hadron Calorimeter Plugs</comment>
-  <include ref="LHeD/HcalPlugs.xml"/>
+  <include ref="LHeD/Ecal.xml"/>
+  <include ref="LHeD/Hcal.xml"/>
   <comment> *** Muons chambers *** </comment>
-  <!-- Muon -->
-  <comment>Muon Calorimeter Barrel</comment>
-  <include ref="LHeD/MuonBarrel.xml"/>
-  <!-- Muon fwd/bwd -->
-  <comment>Muon Calorimeter Endcaps</comment>
-  <include ref="LHeD/MuonEndcaps.xml"/>
-  <comment> *** Beamline/magnets/services *** </comment>
-  <!-- Solenoid -->
-  <comment>Solenoid/Dipole</comment>
+  <include ref="LHeD/Muon.xml"/>
+  <comment> *** Solenoid/Dipole *** </comment>
   <include ref="LHeD/Magnets.xml"/>
   <!-- circular beam pipe for optimal acceptance simulation -->
   <comment>Beampipe - has to be modified - circular-elliptical</comment>
   <include ref="LHeD/Beampipe.xml"/>
-  <!-- Magnetic fields -->
+  <comment> *** Magnetic fields *** </comment>
   <include ref="LHeD/Fields.xml"/>
 </lccdd>

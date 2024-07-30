@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <comment>Vertex Detector Barrel inner+outer pix</comment>
+  <include ref="LHeD/SiVertexBarrel.xml"/>
+  <comment>Vertex Detector Supports </comment>
+  <include ref="LHeD/SiVertexSupports.xml"/>
+  <!-- Trackers readouts -->
+  <include ref="LHeD/SiVertexReadout.xml"/>
+</lccdd>
