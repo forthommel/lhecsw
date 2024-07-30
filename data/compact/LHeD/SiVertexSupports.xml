@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <detectors>
+    <comment>Vertex Detector Supports </comment>
+    <comment> type="Lhe_ell_BP_MultiLayerTracker" </comment>
+    <detector name="VertexBarrelSupports" type="Lhe_BP_MultiLayerTracker" reflect="true" sensitive="false" vis="SupportVis">
+      <comment>Double-walled Carbon Fiber support tube</comment>
+      <layer id="1" inner_r="VertexBarrel_r0 + 3.7*VxBar_Env" outer_r="VertexBarrel_r0 + 4.6*VxBar_Env" rmax="VertexBarrel_r0 + 2.*(VertexBarrel2_r0 - VertexBarrel_r0)" outer_z="SiMod_z0 + 5.*VxBar_Env">
+        <slice material="CarbonFiber" thickness="VXD_CF_support"/>
+      </layer>
+    </detector>
+    <comment> type="Lhe_circ_ell_BP_MultiLayerTracker" </comment>
+    <detector name="VertexBarrelSupports2" type="Lhe_BP_MultiLayerTracker" reflect="true" sensitive="false" vis="SupportVis">
+      <comment>Double-walled Carbon Fiber support tube</comment>
+      <layer id="2" inner_r="VertexBarrel2_r0 - 2.2*VxBar_Env" outer_r="VertexBarrel2_r0 - 1.6*VxBar_Env" rmax="VertexBarrel2_r0 + (VertexBarrel2_r0 - VertexBarrel_r0)/0.55" outer_z="SiMod_z1 + 9.*VxBar_Env">
+        <slice material="CarbonFiber" thickness="VXD_CF_support"/>
+      </layer>
+    </detector>
+    <detector name="VertexEndSupports" type="Lhe_BP_DiskTracker" reflect="true" sensitive="false" vis="SupportVis">
+      <layer id="1" inner_r="VertexBarrel_r0 + 3.*VxBar_Env" outer_r="VertexBarrel_r0 + 4.6*VxBar_Env" rmax="VertexBarrel_r0 + 2.*(VertexBarrel2_r0 - VertexBarrel_r0)" rmin="VertexBarrel_r0 + VxBar_Env" inner_z="SiMod_z0 + 1.5*cm">
+        <slice material="CarbonFiber" thickness="VXD_CF_support"/>
+      </layer>
+    </detector>
+    <detector name="VertexEndSupports2" type="Lhe_BP_DiskTracker" reflect="true" sensitive="false" vis="SupportVis">
+      <layer id="1" inner_r="VertexBarrel2_r0 - 3.*VxBar_Env" outer_r="VertexBarrel2_r0" rmax="VertexBarrel2_r0 + 2.*(VertexBarrel2_r0 - VertexBarrel_r0)" rmin="VertexBarrel2_r0 + VxBar_Env" inner_z="SiMod_z1 + 2.5*cm">
+        <slice material="CarbonFiber" thickness="VXD_CF_support"/>
+      </layer>
+    </detector>
+  </detectors>
+</lccdd>

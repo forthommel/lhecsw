@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="MuonBarrelVis" alpha="0.4" r="0.8" g="0.9" b="1" showDaughters="false" visible="true"/>
+    <vis name="MuonBarrelStavesVis" alpha="0.4" r="0.8" g="0.9" b="1" showDaughters="fasle" visible="false"/>
+    <vis name="MuonBarrelLayerVis" alpha="0.4" r="0.8" g="0.9" b="1" showDaughters="false" visible="true"/>
+    <vis name="MuonBarrelSensorVis" alpha="0.4" r="0.8" g="0.9" b="1" showDaughters="true" visible="true"/>
+    <vis name="MuonBarrelAbsorberVis" alpha="0.4" r="0.8" g="0.9" b="1" visible="false"/>
+  </display>
+  <detectors>
+    <detector id="17" name="MuonBarrel" type="Lhe_PolyhedraBarrelCalorimeter2" readout="MuonBarrelHits" reflect="false" vis="MuonBarrelVis" calorimeterType="MUON_BARREL" gap="0.*cm" material="Steel235">
+      <comment>Muon Calorimeter Barrel</comment>
+      <dimensions numsides="(int) MuonSides" rmin="((HcalEndcap_rmax+2.0*cm) / ( cos(pi/CaloSides) ) )" z="MuonBarrel_length" z_offset="OffsetZ*1.2"/>
+      <staves vis="MuonBarrelStavesVis"/>
+      <comment> Start with an active layer, followed by a thin 5.0cm absorber layer. The second active layer is followed by a thick 20.0cm steel layer to take the forces. </comment>
+      <layer repeat="1" vis="MuonBarrelLayerVis">
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonBarrelSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonBarrelSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="1.0*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Iron" thickness="5.0*cm" vis="MuonBarrelAbsorberVis"/>
+      </layer>
+      <layer repeat="1" vis="MuonBarrelLayerVis">
+        <slice material="Aluminum" thickness="0.1*cm"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonBarrelSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonBarrelSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="1.0*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Iron" thickness="20.0*cm" vis="MuonBarrelAbsorberVis"/>
+      </layer>
+      <layer repeat="(int) MuonBarrel_layers" vis="MuonBarrelLayerVis">
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonBarrelSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonBarrelSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="1.0*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Iron" thickness="10.0*cm" vis="MuonBarrelAbsorberVis"/>
+      </layer>
+      <comment> The last Iron layer is again 20.0cm to take the forces. </comment>
+      <layer repeat="1" vis="MuonBarrelLayerVis">
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonBarrelSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonBarrelSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="1.0*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Iron" thickness="20.0*cm" vis="MuonBarrelAbsorberVis"/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="MuonBarrelHits">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_SiTrackerBarrelSurfacePlugin">
+      <argument value="MuonBarrel"/>
+      <argument value="dimension=1"/>
+    </plugin>
+  </plugins>-->
+</lccdd>

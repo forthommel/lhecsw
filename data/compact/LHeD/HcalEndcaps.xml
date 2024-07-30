@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="HcalEndcapVis" alpha="1" r="1" g="0.8" b="0.6" showDaughters="false" visible="true"/>
+    <vis name="HcalEndcapLayerVis" alpha="0.1" r="1" g="0.8" b="0.6" showDaughters="false" visible="false"/>
+    <vis name="HcalEndcapStavesVis" alpha="0.1" r="1" g="0.8" b="0.6" showDaughters="true" visible="false"/>
+    <vis name="HcalPlugVis" alpha="0.5" r="1" g="0.8" b="0.8" showDaughters="false" visible="true"/>
+    <vis name="HcalPlugLayerVis" alpha="0.1" r="1" g="0.9" b="0.8" showDaughters="false" visible="false"/>
+  </display>
+  <detectors>
+    <detector id="13" name="HcalEndcap_fwd" type="Lhe_PolyhedraEndcapCalorimeter2" readout="HcalEndcapHits0" reflect="false" vis="HcalEndcapVis" calorimeterType="HAD_ENDCAP">
+      <comment>Hadron Calorimeter Endcaps</comment>
+      <staves vis="HcalEndcapStavesVis"/>
+      <dimensions numsides="(int) CaloSides" zmin="EcalPlug_zmin_fwd" rmin="HcalBarrel_rmin" rmax="HcalEndcap_rmax"/>
+      <layer repeat="(int) HcalEndcap_fwd_layers1">
+        <slice material="Steel235" thickness="2.*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="true" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalEndcap_fwd_layers2">
+        <slice material="Steel235" thickness="2.2*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="true" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalEndcap_fwd_layers3">
+        <slice material="Steel235" thickness="2.5*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="true" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+    </detector>
+    <detector id="14" name="HcalEndcap_bwd" type="Lhe_PolyhedraEndcapCalorimeter2" readout="HcalEndcapHits1" reflect="false" vis="HcalEndcapVis" calorimeterType="HAD_ENDCAP">
+      <staves vis="HcalEndcapStavesVis"/>
+      <comment>Hadron Calorimeter Endcaps</comment>
+      <dimensions numsides="(int) CaloSides" zmin="EcalBarrel_zmin-HcalEndcap_thickness_bwd-3.*cm" rmin="HcalBarrel_rmin" rmax="HcalEndcap_rmax"/>
+      <layer repeat="(int) HcalEndcap_bwd_layers1">
+        <slice material="Steel235" thickness="2.*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="true" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalEndcap_bwd_layers2">
+        <slice material="Steel235" thickness="2.2*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="true" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalEndcap_bwd_layers3">
+        <slice material="Steel235" thickness="2.5*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="true" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="HcalEndcapHits0">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:6,layer:10,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="HcalEndcapHits1">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:6,layer:10,slice:5,x:32:-16,y:-16</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="HcalEndcap_fwd"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="HcalEndcap_fwd"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="HcalEndcap_fwd"/>
+    </plugin>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="HcalEndcap_bwd"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="HcalEndcap_bwd"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="HcalEndcap_bwd"/>
+    </plugin>
+  </plugins>-->
+</lccdd>

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<detectors>
+  <detector name="TrackerReadout" type="Lhe_DiskTracker" reflect="true" sensitive="false" vis="SiVertexBarrelROVis">
+    <comment>Readouts</comment>
+    <layer id="1" inner_r="Radius_SITLayer0 - 4.5*VxBar_Env" outer_r="Radius_SITLayer0 - VxBar_Env" rmax="Radius_SITLayer0" inner_z="SiMod_z0 + 4.5*cm">
+      <slice material="G10" thickness="0.057*cm"/>
+      <slice material="Copper" thickness="0.0038*cm"/>
+    </layer>
+    <layer id="2" inner_r="Radius_SITLayer1 - 4.5*VxBar_Env" outer_r="Radius_SITLayer1 - VxBar_Env" rmax="Radius_SITLayer1" inner_z="SiMod_z1 + 4.5*cm">
+      <slice material="G10" thickness="0.102*cm"/>
+      <slice material="Copper" thickness="0.0068*cm"/>
+    </layer>
+    <layer id="3" inner_r="Radius_SITLayer2 - 4.5*VxBar_Env" outer_r="Radius_SITLayer2 - VxBar_Env" rmax="Radius_SITLayer2" inner_z="SiMod_z2 + 1.5*cm">
+      <slice material="G10" thickness="0.108*cm"/>
+      <slice material="Copper" thickness="0.0072*cm"/>
+    </layer>
+    <layer id="4" inner_r="Radius_SITLayer3 - 4.5*VxBar_Env" outer_r="Radius_SITLayer3 - VxBar_Env" rmax="Radius_SITLayer3" inner_z="SiMod_z3 + 1.5*cm">
+      <slice material="G10" thickness="0.108*cm"/>
+      <slice material="Copper" thickness="0.0072*cm"/>
+    </layer>
+  </detector>
+  <!-- -->
+  <detector name="OTrackerReadout" type="Lhe_DiskTracker" reflect="true" sensitive="false" vis="SiVertexBarrelROVis">
+    <comment>Readouts</comment>
+    <layer id="1" inner_r="Radius_SOTLayer0 - 4.5*VxBar_Env*2" outer_r="Radius_SOTLayer0 + VxBar_Env" rmax="Radius_SOTLayer0" inner_z="SiModO_z0 + 3.*cm">
+      <slice material="G10" thickness="0.108*cm"/>
+      <slice material="Copper" thickness="0.0038*cm"/>
+    </layer>
+    <layer id="2" inner_r="Radius_SOTLayer1 - 4.5*VxBar_Env*2" outer_r="Radius_SOTLayer1 + VxBar_Env" rmax="Radius_SOTLayer1" inner_z="SiModO_z1 + 3.*cm">
+      <slice material="G10" thickness="0.108*cm"/>
+      <slice material="Copper" thickness="0.0068*cm"/>
+    </layer>
+    <layer id="3" inner_r="Radius_SOTLayer2 - 4.5*VxBar_Env*2" outer_r="Radius_SOTLayer2 + VxBar_Env" rmax="Radius_SOTLayer2" inner_z="SiModO_z2 + 3.*cm">
+      <slice material="G10" thickness="0.108*cm"/>
+      <slice material="Copper" thickness="0.0072*cm"/>
+    </layer>
+    <layer id="4" inner_r="Radius_SOTLayer3 - 4.5*VxBar_Env*2" outer_r="Radius_SOTLayer3 + VxBar_Env" rmax="Radius_SOTLayer3" inner_z="SiModO_z3 + 3.*cm">
+      <slice material="G10" thickness="0.108*cm"/>
+      <slice material="Copper" thickness="0.0072*cm"/>
+    </layer>
+  </detector>
+</detectors>

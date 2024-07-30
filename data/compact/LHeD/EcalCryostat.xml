@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="LArCryoLayerVis" alpha="0.8" r="0.1" g="0.4" b="0.5" showDaughters="false" visible="true"/>
+  </display>
+  <detectors>
+    <detector id="6" name="EMC_LAr_Cryo" type="Lhe_MultiLayerTracker" insideTrackingVolume="false">
+      <layer id="1" z_offset="OffsetZ" inner_r="EcalBarrel_cryo_rmin - 3.5*cm" outer_z="EcalBarrel_zmax/2. + 4.0*cm" vis="LArCryoLayerVis">
+        <slice material="Aluminum" thickness="SolenoidBarrelInnerCryostatThickness1"/>
+        <slice material="Vacuum" thickness="SolenoidBarrelInnerAirgapThickness1"/>
+        <slice material="Aluminum" thickness="e"/>
+      </layer>
+    </detector>
+  </detectors>
+</lccdd>
