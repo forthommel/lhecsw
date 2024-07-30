@@ -19,14 +19,14 @@
 <!-- ====================================================================== -->
 <lccdd>
   <comment>Middle+outer Tracker Barrel</comment>
-  <include ref="LHeD/SiTrackerBarrel.xml"/>
-  <include ref="LHeD/SiTrackerOBarrel.xml"/>
+  <include ref="SiTrackerBarrel.xml"/>
+  <include ref="SiTrackerOBarrel.xml"/>
   <comment>Forward Tracker outside Barrel</comment>
-  <include ref="LHeD/SiTrackerForward.xml"/>
+  <include ref="SiTrackerForward.xml"/>
   <comment>Backward Tracker outside Barrel</comment>
-  <include ref="LHeD/SiTrackerBackward.xml"/>
+  <include ref="SiTrackerBackward.xml"/>
   <comment>Tracker Readout</comment>
-  <include ref="LHeD/SiTrackerReadout.xml"/>
+  <include ref="SiTrackerReadout.xml"/>
   <comment>Tracker Supports</comment>
-  <include ref="LHeD/SiTrackerSupports.xml"/>
+  <include ref="SiTrackerSupports.xml"/>
 </lccdd>

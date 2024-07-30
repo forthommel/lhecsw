@@ -19,9 +19,9 @@
 <!-- ====================================================================== -->
 <lccdd>
   <comment>EM Calorimeter Barrels (I+M+O)</comment>
-  <include ref="LHeD/EcalBarrel.xml"/>
+  <include ref="EcalBarrel.xml"/>
   <comment>EM Calorimeter Plugs</comment>
-  <include ref="LHeD/EcalPlugs.xml"/>
+  <include ref="EcalPlugs.xml"/>
   <comment>Cryostat EMC-LAr</comment>
-  <include ref="LHeD/EcalCryostat.xml"/>
+  <include ref="EcalCryostat.xml"/>
 </lccdd>

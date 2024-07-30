@@ -190,7 +190,7 @@
   </detectors>
   <readouts>
     <readout name="SiTrackerBarrelHits">
-      <id>system:0,barrel:3,layer:5,module:14,sensor:4</id>
+      <id>system:5,side:-2,layer:9,module:8,sensor:8,barrel:3</id>
     </readout>
   </readouts>
   <!--<plugins>

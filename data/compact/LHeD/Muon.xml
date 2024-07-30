@@ -20,8 +20,8 @@
 <lccdd>
   <!-- Muon -->
   <comment>Muon Calorimeter Barrel</comment>
-  <include ref="LHeD/MuonBarrel.xml"/>
+  <include ref="MuonBarrel.xml"/>
   <!-- Muon fwd/bwd -->
   <comment>Muon Calorimeter Endcaps</comment>
-  <include ref="LHeD/MuonEndcaps.xml"/>
+  <include ref="MuonEndcaps.xml"/>
 </lccdd>

@@ -183,7 +183,7 @@
   </detectors>
   <readouts>
     <readout name="SiTrackerOBarrelHits">
-      <id>system:0,barrel:3,layer:5,module:14,sensor:4</id>
+      <id>system:5,side:-2,layer:5,module:14,sensor:2,barrel:3</id>
     </readout>
   </readouts>
 </lccdd>

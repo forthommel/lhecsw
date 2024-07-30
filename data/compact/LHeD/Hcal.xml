@@ -19,9 +19,9 @@
 <!-- ====================================================================== -->
 <lccdd>
   <comment>Hadron Calorimeter Barrel</comment>
-  <include ref="LHeD/HcalBarrel.xml"/>
+  <include ref="HcalBarrel.xml"/>
   <comment>Hadron Calorimeter Endcaps</comment>
-  <include ref="LHeD/HcalEndcaps.xml"/>
+  <include ref="HcalEndcaps.xml"/>
   <comment>Hadron Calorimeter Plugs</comment>
-  <include ref="LHeD/HcalPlugs.xml"/>
+  <include ref="HcalPlugs.xml"/>
 </lccdd>

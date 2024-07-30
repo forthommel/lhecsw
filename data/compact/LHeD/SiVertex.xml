@@ -19,9 +19,9 @@
 <!-- ====================================================================== -->
 <lccdd>
   <comment>Vertex Detector Barrel inner+outer pix</comment>
-  <include ref="LHeD/SiVertexBarrel.xml"/>
+  <include ref="SiVertexBarrel.xml"/>
   <comment>Vertex Detector Supports </comment>
-  <include ref="LHeD/SiVertexSupports.xml"/>
+  <include ref="SiVertexSupports.xml"/>
   <!-- Trackers readouts -->
-  <include ref="LHeD/SiVertexReadout.xml"/>
+  <include ref="SiVertexReadout.xml"/>
 </lccdd>

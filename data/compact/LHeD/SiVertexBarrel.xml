@@ -92,10 +92,10 @@
   </detectors>
   <readouts>
     <readout name="SiVertexBarrelHits">
-      <id>system:0,barrel:3,layer:4,module:14,sensor:4</id>
+      <id>system:5,side:-2,layer:4,module:14,sensor:4,barrel:3</id>
     </readout>
     <readout name="SiVertexBarrel2Hits">
-      <id>system:0,barrel:3,layer:4,module:14,sensor:4</id>
+      <id>system:5,side:-2,layer:4,module:14,sensor:4,barrel:3</id>
     </readout>
   </readouts>
   <limits>
