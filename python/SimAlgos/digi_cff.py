@@ -6,16 +6,35 @@ from Configurables import TrackHitDigitiser, GaussianResolutionTrackHitDigitiser
 
 digis = []
 
-# tracker components
-for (name, readout) in [*tracker_vertex_components, *tracker_outer_barrel_components]:
-    _trackerGaussianResolution = GaussianResolutionTrackHitDigitiser(name + 'HitsDigitiser',
+# vertex barrel
+for (name, readout) in tracker_vertex_components:
+    _pixelDigitiser = GaussianResolutionTrackHitDigitiser(name + 'HitsDigitiser',
         readoutName = readout,
-        barrel = True,
+        isBarrel = True,
+        # resolutions taken from LHeC CDR#1 (arXiv:1206.2913 [hep-ex], p. 514)
+        uRes = 0.008,  # in mm
+        vRes = 0.008,  # in mm
         OutputLevel = INFO,
     )
     digi = TrackHitDigitiser(name + 'Hits',
         simhits = name + 'SimHits',
-        algorithm = _trackerGaussianResolution,
+        algorithm = _pixelDigitiser,
+    )
+    digis.append(digi)
+
+# tracker components
+for (name, readout) in tracker_outer_barrel_components:
+    _trackerDigitiser = GaussianResolutionTrackHitDigitiser(name + 'HitsDigitiser',
+        readoutName = readout,
+        isBarrel = True,
+        # resolutions taken from LHeC CDR#1 (arXiv:1206.2913 [hep-ex], p. 514)
+        uRes = 0.015,  # in mm
+        vRes = 0.015,  # in mm
+        OutputLevel = INFO,
+    )
+    digi = TrackHitDigitiser(name + 'Hits',
+        simhits = name + 'SimHits',
+        algorithm = _trackerDigitiser,
     )
     digis.append(digi)
 

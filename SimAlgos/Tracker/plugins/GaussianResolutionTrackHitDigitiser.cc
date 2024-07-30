@@ -35,7 +35,7 @@ public:
       : GaudiTool(type, name, parent),
         geom_("GeoSvc", name),
         readout_name_{this, "readoutName", ""},
-        barrel_{this, "barrel", false},
+        is_barrel_{this, "isBarrel", false},
         resol_u_{this, "uRes", 0.},
         resol_v_{this, "vRes", 0.},
         resol_time_{this, "timeRes", 0.} {}
@@ -63,7 +63,6 @@ public:
     hit.setTime(simhit.getTime() + res_gen_time_->shoot());
     hit.setEDep(simhit.getEDep());
 
-
     const auto det_element = volume_manager_.lookupDetElement(cellid);
     const auto& simhit_pos = simhit.getPosition();
     const auto sim_global_pos =
@@ -71,7 +70,7 @@ public:
     auto local_pos = std::array<double, 3>{0., 0., 0.}, digi_global_pos = local_pos;
     det_element.nominal().worldTransformation().MasterToLocal(sim_global_pos.data(), local_pos.data());
     // smear the local coordinates by the resolution
-    if (barrel_) {
+    if (is_barrel_) {
       local_pos[0] += res_gen_u_->shoot() * dd4hep::mm;
       local_pos[2] += res_gen_v_->shoot() * dd4hep::mm;
     } else {
@@ -94,7 +93,7 @@ private:
   SmartIF<IRndmGen> res_gen_u_, res_gen_v_, res_gen_time_;
 
   Gaudi::Property<std::string> readout_name_;
-  Gaudi::Property<bool> barrel_;
+  Gaudi::Property<bool> is_barrel_;
   Gaudi::Property<double> resol_u_, resol_v_, resol_time_;
 
   dd4hep::Detector* detector_{nullptr};

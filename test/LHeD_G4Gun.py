@@ -6,6 +6,7 @@ from Configurables import ApplicationMgr
 
 from Geometry.geoservice_cfi import geoservice
 from SimG4.sim_cff import geantservice, geantsim
+from SimAlgos.digi_cff import digis
 
 
 pgun = SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",
@@ -15,7 +16,7 @@ pgun = SimG4SingleParticleGeneratorTool("SimG4SingleParticleGeneratorTool",
     energyMax = 50,
     etaMin = 0,
     etaMax = 0,
-    OutputLevel = DEBUG,
+    OutputLevel = INFO,
 )
 
 genalg = GenAlg()
@@ -28,7 +29,7 @@ out = PodioOutput("out",  # PODIO output algorithm
         "keep *"
     ],
     filename = "output.root",
-    OutputLevel = DEBUG,
+    OutputLevel = INFO,
 )
 
 podioevent = FCCDataSvc("EventDataSvc")
@@ -38,6 +39,7 @@ ApplicationMgr(
     TopAlg = [
         genalg,
         geantsim,
+        *digis,
         out
     ],
     EvtSel = 'NONE',
