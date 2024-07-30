@@ -60,8 +60,8 @@ public:
     hit.setPosition(simhit.getPosition());  //FIXME also smear the position
 
     const auto ene = simhit.getEnergy();  //FIXME
-    const auto smeared_ene =
-        ene * std::fabs(res_gen_->shoot() /*FIXME*/) * std::hypot(resol_a_ / std::sqrt(ene), resol_b_);
+    const auto dene = std::hypot(resol_a_ / std::sqrt(ene), resol_b_);
+    const auto smeared_ene = std::fabs(/*FIXME*/ ene + res_gen_->shoot() * ene * dene);
     hit.setEnergy(smeared_ene);
     //hit.addToRawHits(simhit.getObjectID());
 
