@@ -17,9 +17,6 @@
 //
 //==========================================================================
 #include <DD4hep/DetFactoryHelper.h>
-#include <DD4hep/Printout.h>
-#include <DDRec/DetectorData.h>
-#include <DDRec/Surface.h>
 
 #include <exception>
 
@@ -28,22 +25,26 @@
 using namespace std;
 using namespace dd4hep;
 using namespace dd4hep::detail;
-using namespace dd4hep::rec;
 
 static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector sens) {
+  typedef vector<PlacedVolume> Placements;
   xml_det_t x_det = e;
   Material air = description.air();
   int det_id = x_det.id();
   string det_name = x_det.nameStr();
   DetElement sdet(det_name, det_id);
-  Assembly assembly(det_name + "_assembly");
+  Assembly assembly(det_name);
+  Volume motherVol = description.pickMotherVolume(sdet);
   map<string, Volume> volumes;
+  map<string, Placements> sensitives;
   PlacedVolume pv;
 
   double mod_width = 0.0;
   mod_width = 1.;
 
+  assembly.setVisAttributes(description.invisible());
   sens.setType("tracker");
+
   for (xml_coll_t mi(x_det, _U(module)); mi; ++mi) {
     xml_comp_t x_mod = mi;
     xml_comp_t m_env = x_mod.child(_U(module_envelope));
@@ -54,11 +55,8 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     Volume m_vol(det_name + "_" + m_nam, Box(m_env.width() / 2, m_env.length() / 2, m_env.thickness() / 2), air);
     int ncomponents = 0, sensor_number = 1;
 
-    if (volumes.find(m_nam) != volumes.end()) {
-      printout(ERROR, "SiTrackerBarrel", "Logics error in building modules.");
+    if (volumes.find(m_nam) != volumes.end())
       throw runtime_error("Logics error in building modules.");
-    }
-    volumes[m_nam] = m_vol;
 
     for (xml_coll_t ci(x_mod, _U(module_component)); ci; ++ci, ++ncomponents) {
       xml_comp_t x_comp = ci;
@@ -83,14 +81,17 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
       c_vol.setLimitSet(description, x_comp.limitsStr());
       c_vol.setVisAttributes(description, x_comp.visStr());
       if (x_comp.isSensitive()) {
-        pv.addPhysVolID(_U(sensor), sensor_number++);
+        pv.addPhysVolID("sensor", sensor_number);
         c_vol.setSensitiveDetector(sens);
+        sensitives[m_nam].push_back(pv);
+        ++sensor_number;
       }
     }
     m_vol.setVisAttributes(description.visAttributes(x_mod.visStr()));
+    volumes[m_nam] = m_vol;
   }
 
-  for (xml_coll_t li(x_det, _U(layer)); li; ++li) {
+  for (xml_coll_t li(x_det, _U(layer)); li; ++li) {  // loop over the layers
     xml_comp_t x_layer = li;
     xml_comp_t x_barrel = x_layer.child(_U(barrel_envelope));
     xml_comp_t x_layout = x_layer.child(_U(rphi_layout));
@@ -99,6 +100,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     string m_nam = x_layer.moduleStr();
     Volume m_env = volumes[m_nam];
     string lay_nam = det_name + "_" + m_nam + _toString(x_layer.id(), "_layer%d");
+    auto& sensVols = sensitives[m_nam];
 
     double phi0 = x_layout.phi0();          // Starting phi of first module.
     double phi_tilt = x_layout.phi_tilt();  // Phi tilt of a module.
@@ -189,11 +191,21 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
         // Loop over the number of modules in z.
         for (int j = 0; j < nz; j++) {
           // Module PhysicalVolume.
+          const auto mod_nam = lay_nam + _toString(module, "_module%d");
+          DetElement mod_elem(sdet, mod_nam + "_semiell", det_id);
           Transform3D tr(RotationZYX(0, M_PI / 2 - theta, -M_PI / 2), Position(x, y, module_z));
           pv = lay_vol.placeVolume(m_env, tr);
-          pv.addPhysVolID("module", module++);
+          pv.addPhysVolID("layer", lay_id)  // Set the layer ID.
+              .addPhysVolID("module", module);
+          mod_elem.setPlacement(pv);
+          for (size_t ic = 0; ic < sensVols.size(); ++ic) {
+            PlacedVolume sens_pv = sensVols[ic];
+            DetElement comp_elt(mod_elem, sens_pv.volume().name(), module);
+            comp_elt.setPlacement(sens_pv);
+          }
           // Add z increment to get next z placement pos.
           module_z += z_incr;
+          ++module;
         }
         nextPoint++;
       }
@@ -205,14 +217,11 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
      semi-circular, from 270 to 90 degrees
     **************************************************************/
 
-    // circle circumference
-    double c_circ = 2 * M_PI * rc;
+    double c_circ = 2 * M_PI * rc;        // circle circumference
     int n_circ = c_circ / mod_width / 2;  // number of modules for semi-circle
     double phi_incr = (M_PI) / n_circ;    // Phi increment for one module along semi-circle
 
-    // Loop over the number of modules in phi.
-
-    for (int ii = 0; ii < n_circ; ii++) {
+    for (int ii = 0; ii < n_circ; ii++) {            // Loop over the number of modules in phi.
       double dx = z_dr * std::cos(phic + phi_tilt);  // Delta x of module position.
       double dy = z_dr * std::sin(phic + phi_tilt);  // Delta y of module position.
       double x = rc * std::cos(phic);                // Basic x module position.
@@ -221,11 +230,21 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
       // Loop over the number of modules in z.
       for (int j = 0; j < nz; j++) {
         // Module PhysicalVolume.
+        const auto mod_nam = lay_nam + _toString(module, "_module%d");
+        DetElement mod_elem(sdet, mod_nam + "_semicirc", det_id);
         // Transform3D tr(RotationZYX(0,-((M_PI/2)-phic-phi_tilt),M_PI/2),Position(x,y,module_z));
         //NOTE (Nikiforos, 26/08 Rotations needed to be fixed so that component1 (silicon) is on the outside
         Transform3D tr(RotationZYX(0, ((M_PI / 2) - phic - phi_tilt), -M_PI / 2), Position(x, y, module_z));
         pv = lay_vol.placeVolume(m_env, tr);
-        pv.addPhysVolID("module", module++);
+        pv.addPhysVolID("layer", lay_id)  // Set the layer ID.
+            .addPhysVolID("module", module);
+        mod_elem.setPlacement(pv);
+        for (size_t ic = 0; ic < sensVols.size(); ++ic) {
+          PlacedVolume sens_pv = sensVols[ic];
+          DetElement comp_elt(mod_elem, sens_pv.volume().name(), module);
+          comp_elt.setPlacement(sens_pv);
+        }
+
         // Adjust the x and y coordinates of the module.
         x += dx;
         y += dy;
@@ -234,6 +253,7 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
         dy *= -1;
         // Add z increment to get next z placement pos.
         module_z += z_incr;
+        ++module;
       }
       phic += phi_incr;  // Increment the phi placement of module.
       rc += rphi_dr;     // Increment the center radius according to dr parameter.
@@ -242,7 +262,6 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     }
 
     // Create the PhysicalVolume for the layer.
-    assembly.setVisAttributes(description.invisible());
     pv = assembly.placeVolume(lay_vol);  // Place layer in mother
     pv.addPhysVolID("layer", lay_id);    // Set the layer ID.
     DetElement m_elt(sdet, lay_nam, lay_id);
@@ -250,9 +269,9 @@ static Ref_t create_detector(Detector& description, xml_h e, SensitiveDetector s
     m_elt.setPlacement(pv);
   }
 
-  pv = description.pickMotherVolume(sdet).placeVolume(assembly);
-  pv.addPhysVolID("system", det_id);  // Set the subdetector system ID.
-  pv.addPhysVolID("barrel", 0);       // Flag this as a barrel subdetector.
+  pv = motherVol.placeVolume(assembly);
+  pv.addPhysVolID("system", det_id)  // Set the subdetector system ID.
+      .addPhysVolID("barrel", 0);    // Flag this as a barrel subdetector.
   sdet.setPlacement(pv);
   return sdet;
 }
