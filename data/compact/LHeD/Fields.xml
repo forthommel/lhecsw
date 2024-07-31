@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <fields>
+    <field name="GlobalSolenoid1" type="solenoid" inner_field="3.5*tesla" outer_field="-1.5*tesla" zmax="SolenoidCoilOuterZ1" outer_radius="world_side"/>
+    <field name="MachineDipole" type="DipoleMagnet" rmax="DipoleBarrelAlConductorRadius" zmin="-SolenoidCoilOuterZ1" zmax="SolenoidCoilOuterZ1">
+      <dipole_coeff>0.4*tesla</dipole_coeff>
+      <dipole_coeff>0.1*tesla/pow(cm,1)</dipole_coeff>
+      <dipole_coeff>0.01*tesla/pow(cm,2)</dipole_coeff>
+    </field>
+    <!--<field name="MachineDipole+" type="DipoleMagnet" rmax="DipoleBarrelAlConductorRadius" zmin="1*cm" zmax="SolenoidCoilOuterZ1">
+      <dipole_coeff>0.4*tesla</dipole_coeff>
+      <dipole_coeff>0.1*tesla/pow(cm,1)</dipole_coeff>
+      <dipole_coeff>0.01*tesla/pow(cm,2)</dipole_coeff>
+    </field>
+    <field name="MachineDipole-" type="DipoleMagnet" rmax="DipoleBarrelAlConductorRadius" zmin="-SolenoidCoilOuterZ1" zmax="-1*cm">
+      <dipole_coeff>-0.4*tesla</dipole_coeff>
+      <dipole_coeff>0.1*tesla/pow(cm,1)</dipole_coeff>
+      <dipole_coeff>0.01*tesla/pow(cm,2)</dipole_coeff>
+    </field>-->
+  </fields>
+</lccdd>

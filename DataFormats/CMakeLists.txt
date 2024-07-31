@@ -1,2 +1,1 @@
-add_subdirectory(Simulation)
-set(lhecswlibs ${lhecswlibs} PARENT_SCOPE)
+add_subdirectory(SimDD4hep)

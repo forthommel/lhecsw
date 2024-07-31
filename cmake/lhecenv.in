@@ -5,7 +5,7 @@
 function lhecenv {
   # DD4hep environment and paths definition
   if [ ! ${DD4hep_DIR} ]; then
-    export DD4hep_DIR=/home/laurent/work/dev/DD4hep;
+    export DD4hep_DIR=$PWD;
   fi
   source ${DD4hep_DIR}/bin/thisdd4hep.sh
 

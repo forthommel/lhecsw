@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="SiTrackerBarrelModuleVis" alpha="0.4" r="0.1" g="0.2" b="0.4" showDaughters="false" visible="true"/>
+    <vis name="SiTrackerBarrelLayerVis" alpha="0.4" r="1" g="0.2" b="0.4" showDaughters="true" visible="false"/>
+  </display>
+  <limits>
+    <limitset name="SiTrackerBarrelRegionLimitSet">
+      <limit name="step_length_max" particles="*" value="5.0" unit="mm"/>
+      <limit name="track_length_max" particles="*" value="5.0" unit="mm"/>
+      <limit name="time_max" particles="*" value="5.0" unit="ns"/>
+      <limit name="ekin_min" particles="*" value="0.01" unit="MeV"/>
+      <limit name="range_min" particles="*" value="5.0" unit="mm"/>
+    </limitset>
+  </limits>
+  <regions>
+    <region name="SiTrackerBarrelRegion" eunit="MeV" lunit="mm" cut="0.001" threshold="0.001">
+      <limitsetref name="SiTrackerBarrelRegionLimitSet"/>
+    </region>
+  </regions>
+  <detectors>
+    <!-- SiTrackerMiddleBarrel -->
+    <!--<detector id="2" name="SiTrackerBarrel"
+                         type="Lhe_SiTrackerBarrel"
+                         insideTrackingVolume="true"
+                         readout="SiTrackerBarrelHits"
+                         region="SiTrackerBarrelRegion"
+                         limits="SiTrackerBarrelRegionLimitSet">-->
+    <detector id="2" name="SiTrackerBarrel" type="DD4hep_SiTrackerBarrel" insideTrackingVolume="true" readout="SiTrackerBarrelHits" region="SiTrackerBarrelRegion" limits="SiTrackerBarrelRegionLimitSet">
+      <comment>Middle Tracker Barrel</comment>
+      <module name="SiTrackerModule_Layer0" vis="SiTrackerBarrelModuleVis">
+        <module_envelope width="SiMod_w0 + VxBar_Env" length="SiMod_l0 + VxBar_Env" thickness="1.5*VxBar_Env"/>
+        <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.02*cm" material="PEEK" sensitive="false" vis="false">
+          <position z="-0.14*cm"/>
+        </module_component>
+        <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.016*cm" material="CarbonFiber_50D" sensitive="false" vis="false">
+          <position z="-0.122*cm"/>
+        </module_component>
+        <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.18*cm" material="Rohacell31_50D" sensitive="false" vis="false">
+          <position z="-0.024*cm"/>
+        </module_component>
+        <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.0175*cm" material="Epoxy" sensitive="false" vis="false">
+          <position z="0.07475*cm"/>
+        </module_component>
+        <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.016*cm" material="CarbonFiber_50D" sensitive="false" vis="false">
+          <position z="0.0915*cm"/>
+        </module_component>
+        <module_component width="SiWafer_w" length="SiWafer_l" thickness="0.03*cm" material="Silicon" sensitive="true">
+          <position z="0.1145*cm"/>
+        </module_component>
+        <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.00048*cm" material="Silicon" sensitive="false" vis="false">
+          <position z="0.12974*cm"/>
+        </module_component>
+        <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.0038*cm" material="Kapton" sensitive="false" vis="false">
+          <position z="0.1375*cm"/>
+        </module_component>
+        <module_component width="SiMod_w0" length="SiMod_l0" thickness="0.00038*cm" material="Copper" sensitive="false" vis="false">
+          <position z="0.146*cm"/>
+        </module_component>
+      </module>
+      <module name="SiTrackerModule_Layer1" vis="SiTrackerBarrelModuleVis">
+        <module_envelope width="SiMod_w1" length="SiMod_l1" thickness="0.3*cm"/>
+        <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.02*cm" material="PEEK" sensitive="false" vis="false">
+          <position z="-0.14*cm"/>
+        </module_component>
+        <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.016*cm" material="CarbonFiber_50D" sensitive="false" vis="false">
+          <position z="-0.122*cm"/>
+        </module_component>
+        <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.18*cm" material="Rohacell31_50D" sensitive="false" vis="false">
+          <position z="-0.024*cm"/>
+        </module_component>
+        <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.0175*cm" material="Epoxy" sensitive="false" vis="false">
+          <position z="0.07475*cm"/>
+        </module_component>
+        <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.016*cm" material="CarbonFiber_50D" sensitive="false" vis="false">
+          <position z="0.0915*cm"/>
+        </module_component>
+        <module_component width="SiWafer_w" length="SiWafer_l" thickness="0.03*cm" material="Silicon" sensitive="true">
+          <position z="0.1145*cm"/>
+        </module_component>
+        <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.00048*cm" material="Silicon" sensitive="false" vis="false">
+          <position z="0.12974*cm"/>
+        </module_component>
+        <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.0051*cm" material="Kapton" sensitive="false" vis="false">
+          <position z="0.1375*cm"/>
+        </module_component>
+        <module_component width="SiMod_w1" length="SiMod_l1" thickness="0.00052*cm" material="Copper" sensitive="false" vis="false">
+          <position z="0.146*cm"/>
+        </module_component>
+      </module>
+      <module name="SiTrackerModule_Layer2" vis="SiTrackerBarrelModuleVis">
+        <module_envelope width="SiMod_w2" length="SiMod_l2" thickness="0.3*cm"/>
+        <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.02*cm" material="PEEK" sensitive="false" vis="false">
+          <position z="-0.14*cm"/>
+        </module_component>
+        <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.016*cm" material="CarbonFiber_50D" sensitive="false" vis="false">
+          <position z="-0.122*cm"/>
+        </module_component>
+        <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.18*cm" material="Rohacell31_50D" sensitive="false" vis="false">
+          <position z="-0.024*cm"/>
+        </module_component>
+        <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.0175*cm" material="Epoxy" sensitive="false" vis="false">
+          <position z="0.07475*cm"/>
+        </module_component>
+        <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.016*cm" material="CarbonFiber_50D" sensitive="false" vis="false">
+          <position z="0.0915*cm"/>
+        </module_component>
+        <module_component width="SiWafer_w" length="SiWafer_l" thickness="0.03*cm" material="Silicon" sensitive="true">
+          <position z="0.1145*cm"/>
+        </module_component>
+        <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.00048*cm" material="Silicon" sensitive="false" vis="false">
+          <position z="0.12974*cm"/>
+        </module_component>
+        <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.0064*cm" material="Kapton" sensitive="false" vis="false">
+          <position z="0.1375*cm"/>
+        </module_component>
+        <module_component width="SiMod_w2" length="SiMod_l2" thickness="0.00065*cm" material="Copper" sensitive="false" vis="false">
+          <position z="0.146*cm"/>
+        </module_component>
+      </module>
+      <module name="SiTrackerModule_Layer3" vis="SiTrackerBarrelModuleVis">
+        <module_envelope width="SiMod_w3" length="SiMod_l3" thickness="0.3*cm"/>
+        <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.02*cm" material="PEEK" sensitive="false" vis="false">
+          <position z="-0.14*cm"/>
+        </module_component>
+        <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.016*cm" material="CarbonFiber_50D" sensitive="false" vis="false">
+          <position z="-0.122*cm"/>
+        </module_component>
+        <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.18*cm" material="Rohacell31_50D" sensitive="false" vis="false">
+          <position z="-0.024*cm"/>
+        </module_component>
+        <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.0175*cm" material="Epoxy" sensitive="false" vis="false">
+          <position z="0.07475*cm"/>
+        </module_component>
+        <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.016*cm" material="CarbonFiber_50D" sensitive="false" vis="false">
+          <position z="0.0915*cm"/>
+        </module_component>
+        <module_component width="SiWafer_w" length="SiWafer_l" thickness="0.03*cm" material="Silicon" sensitive="true">
+          <position z="0.1145*cm"/>
+        </module_component>
+        <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.00048*cm" material="Silicon" sensitive="false" vis="false">
+          <position z="0.12974*cm"/>
+        </module_component>
+        <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.0064*cm" material="Kapton" sensitive="false" vis="false">
+          <position z="0.1375*cm"/>
+        </module_component>
+        <module_component width="SiMod_w3" length="SiMod_l3" thickness="0.00065*cm" material="Copper" sensitive="false" vis="false">
+          <position z="0.146*cm"/>
+        </module_component>
+      </module>
+      <layer module="SiTrackerModule_Layer0" id="1" vis="SiTrackerBarrelLayerVis">
+        <barrel_envelope inner_r="Radius_SITLayer0 + 0.5*VxBar_Env" outer_r="Radius_SITLayer0 + 8.*VxBar_Env" z_length="2.*SiMod_z2 + 2.*cm"/>
+        <rphi_layout phi_tilt="0.06*rad" nphi="10" phi0="0." rc="Radius_SITLayer0 + 4.2*mm" dr="0."/>
+        <z_layout dr="0.*mm" z0="SiMod_z2 - 4.5*cm" nz="11"/>
+      </layer>
+      <layer module="SiTrackerModule_Layer1" id="2" vis="SiTrackerBarrelLayerVis">
+        <barrel_envelope inner_r="Radius_SITLayer1 - 0.5*VxBar_Env" outer_r="Radius_SITLayer1 + 8.*VxBar_Env" z_length="2.*SiMod_z3 + 2.*cm"/>
+        <rphi_layout phi_tilt="0.06*rad" nphi="14" phi0="0.*rad" rc="Radius_SITLayer1 + 4.2*mm" dr="0."/>
+        <z_layout dr="2.5*mm" z0="SiMod_z3 - 5.*cm" nz="11"/>
+      </layer>
+      <layer module="SiTrackerModule_Layer2" id="3" vis="SiTrackerBarrelLayerVis">
+        <barrel_envelope inner_r="Radius_SITLayer2 - 0.5*VxBar_Env" outer_r="Radius_SITLayer2 + 8.*VxBar_Env" z_length="2.*SiMod_z4 + 2.*cm"/>
+        <rphi_layout phi_tilt="0.06*rad" nphi="18" phi0="0.*rad" rc="Radius_SITLayer2 + 4.2*mm" dr="0."/>
+        <z_layout dr="2.5*mm" z0="SiMod_z4 - 5.*cm" nz="11"/>
+      </layer>
+      <layer module="SiTrackerModule_Layer3" id="4" vis="SiTrackerBarrelLayerVis">
+        <barrel_envelope inner_r="Radius_SITLayer3 - 0.5*VxBar_Env" outer_r="Radius_SITLayer3 + 8.*VxBar_Env" z_length="2.*SiMod_z5 + 2.*cm"/>
+        <rphi_layout phi_tilt="0.06*rad" nphi="21" phi0="0.*rad" rc="Radius_SITLayer3 + 4.2*mm" dr="0."/>
+        <z_layout dr="2.5*mm" z0="SiMod_z4 - 5.*cm" nz="11"/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="SiTrackerBarrelHits">
+      <id>system:5,side:-2,layer:9,module:8,sensor:8,barrel:3</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_SiTrackerBarrelSurfacePlugin">
+      <argument value="SiTrackerBarrel"/>
+      <argument value="dimension=1"/>
+    </plugin>
+  </plugins>-->
+</lccdd>

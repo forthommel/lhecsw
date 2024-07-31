@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="EcalPlugVis" alpha="0.6" r="0.3" g="0.8" b="0.2" showDaughters="false" visible="true"/>
+    <vis name="EcalPlugSensitiveVis" alpha="0.6" r="0.5" g="1" b="0.5" showDaughters="true" visible="true"/>
+  </display>
+  <detectors>
+    <detector id="10" name="EcalPlug_fwd" type="Lhe_PolyhedraEndcapCalorimeter2" reflect="false" readout="EcalPlugHits0" vis="EcalPlugVis" calorimeterType="EM_ENDCAP">
+      <dimensions numsides="(int) CaloSides" zmin="EcalPlug_zmin_fwd+15*cm" rmin="EcalPlug_rmin" rmax="EcalBarrel_rmax"/>
+      <layer repeat="EcalPlug_fwd_layers1">
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="EcalPlugSensitiveVis"/>
+        <slice material="TungstenDens25" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Air" thickness="0.025*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Copper" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="EcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="EcalPlug_fwd_layers2">
+        <slice material="TungstenDens25" thickness="0.5*cm"/>
+        <slice material="Air" thickness="0.025*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="EcalPlugSensitiveVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="EcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="EcalPlug_fwd_layers3">
+        <slice material="TungstenDens25" thickness="0.25*cm"/>
+        <slice material="Air" thickness="0.025*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="EcalPlugSensitiveVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="EcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+    </detector>
+    <detector id="11" name="EcalPlug_bwd" type="Lhe_PolyhedraEndcapCalorimeter2" reflect="false" readout="EcalPlugHits1" vis="EcalPlugVis" calorimeterType="EM_ENDCAP">
+      <comment>EM Calorimeter Plugs</comment>
+      <dimensions numsides="(int) CaloSides" zmin="EcalPlug_zmin_bwd-15.*cm" rmin="EcalPlug_rmin" rmax="EcalBarrel_rmax"/>
+      <layer repeat="EcalPlug_bwd_layers3">
+        <comment>   </comment>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="EcalAbsorberVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="EcalPlugSensitiveVis"/>
+        <slice material="Air" thickness="0.025*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Pb" thickness="0.5*cm" vis="EcalAbsorberVis"/>
+      </layer>
+      <layer repeat="EcalPlug_bwd_layers2">
+        <comment>  </comment>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="EcalAbsorberVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="EcalPlugSensitiveVis"/>
+        <slice material="Air" thickness="0.025*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Pb" thickness="0.25*cm" vis="EcalAbsorberVis"/>
+      </layer>
+      <layer repeat="EcalPlug_bwd_layers1">
+        <comment>   </comment>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="EcalAbsorberVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Air" thickness="0.025*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Pb" thickness="0.1*cm" vis="EcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="EcalPlugSensitiveVis"/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="EcalPlugHits0">
+      <segmentation type="CartesianGridXY" grid_size_x="3.5*cm" grid_size_y="3.5*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="EcalPlugHits1">
+      <segmentation type="CartesianGridXY" grid_size_x="3.5*cm" grid_size_y="3.5*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="EcalPlug_fwd"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="EcalPlug_fwd"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="EcalPlug_fwd"/>
+    </plugin>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="EcalPlug_bwd"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="EcalPlug_bwd"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="EcalPlug_bwd"/>
+    </plugin>
+  </plugins>-->
+</lccdd>
