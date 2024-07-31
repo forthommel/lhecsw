@@ -59,11 +59,14 @@ public:
     hit.setCellID(cellid);
     hit.setPosition(simhit.getPosition());  //FIXME also smear the position
 
-    const auto ene = simhit.getEnergy();  //FIXME
-    const auto dene = std::hypot(resol_a_ / std::sqrt(ene), resol_b_);
-    const auto smeared_ene = std::fabs(/*FIXME*/ ene + res_gen_->shoot() * ene * dene);
-    hit.setEnergy(smeared_ene);
-    //hit.addToRawHits(simhit.getObjectID());
+    if (const auto ene = simhit.getEnergy(); ene > 0.) {
+      const auto dene = std::hypot(resol_a_ / std::sqrt(ene), resol_b_);
+      const auto smeared_ene = std::fabs(ene + res_gen_->shoot() * ene * dene);
+      hit.setEnergy(smeared_ene);
+    } else {
+      warning() << "SimHit with invalid energy: E=" << ene << " <= 0.";
+      hit.setEnergy(ene);
+    }
 
     return StatusCode::SUCCESS;
   }
