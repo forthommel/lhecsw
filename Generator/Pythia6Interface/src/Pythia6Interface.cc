@@ -16,9 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DD4hep/Printout.h>
-
 #include <chrono>
+#include <stdexcept>
 
 #include "Generator/Pythia6Interface/include/Pythia6Interface.h"
 
@@ -32,7 +31,8 @@ extern pythia6::pypars_t pypars_;
 
 /// Override the PYSTOP subrouting to allow throwing exceptions
 void pystop_(int& mcod) {
-  dd4hep::except("pythia6::PYSTOP", "Error with code %d occurred. Aborting the process execution.", mcod);
+  throw std::runtime_error("pythia6::PYSTOP: Error with code " + std::to_string(mcod) +
+                           " occurred. Aborting the process execution.");
 }
 void pytime_(std::array<int, 6>& idati) {
   const auto now = std::chrono::system_clock::now();

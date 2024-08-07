@@ -7,7 +7,7 @@
 
 set(Pythia6_DIRS $ENV{Pythia6_DIR} $ENV{PYTHIA6})
 
-find_library(Pythia6_LIBRARY NAMES pythia6
+find_library(Pythia6_LIBRARY NAMES pythia6 Pythia6
              HINTS ${Pythia6_DIRS} PATH_SUFFIXES lib lib64 build/lib)
 
 set(Pythia6_LIBRARIES ${Pythia6_LIBRARY})
