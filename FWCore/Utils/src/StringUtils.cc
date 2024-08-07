@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <sstream>
 
-#include "Common/include/StringUtils.h"
+#include "FWCore/Utils/include/StringUtils.h"
 
 namespace utils {
   std::string ltrim(const std::string& str) {
