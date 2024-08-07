@@ -23,11 +23,17 @@
 
 #include "Generator/Common/include/IHepMCProviderTool.h"
 
+using namespace std::string_literals;
+
 class SherpaEventGenerator : public GaudiTool, virtual public IHepMCProviderTool {
 public:
   explicit SherpaEventGenerator(const std::string& type, const std::string& name, const IInterface* parent)
       : GaudiTool(type, name, parent),
-        cmds_preinit_{this, "preInitCommands", {}, "Sherpa commands to be parsed before initialisation"} {}
+        sherpa_proc_{this, "process", ""},
+        sherpa_path_{this, "path", ""},
+        sherpa_path_piece_{this, "pathPiece", ""},
+        sherpa_result_dir_{this, "resultDir", ""},
+        sherpa_cmds_{this, "commands", {}, "Sherpa commands to be parsed before initialisation"} {}
   virtual ~SherpaEventGenerator() = default;
 
   inline StatusCode initialize() override {
@@ -38,7 +44,10 @@ public:
     xsec_.reset(new HepMC3::GenCrossSection);
 
     std::vector<char*> args;
-    for (const auto& cmd : cmds_preinit_)
+    for (const auto& cmd : {"./Sherpa"s,
+                            "PATH="s + sherpa_path_,
+                            "PATH_PIECE="s + sherpa_path_piece_,
+                            "RESULT_DIRECTORY="s + sherpa_result_dir_})
       args.emplace_back(const_cast<char*>(cmd.data()));
 
     sherpa_->InitializeTheRun(args.size(), args.data());
@@ -65,7 +74,10 @@ private:
   std::unique_ptr<SHERPA::Sherpa> sherpa_;
   std::shared_ptr<HepMC3::GenCrossSection> xsec_;
 
-  Gaudi::Property<std::vector<std::string> > cmds_preinit_;  ///< Sherpa commands applied before initialisation
+  Gaudi::Property<std::string> sherpa_proc_, sherpa_path_, sherpa_path_piece_, sherpa_result_dir_;
+
+  Gaudi::Property<std::vector<std::string> > sherpa_cmds_;  ///< Sherpa commands applied before initialisation
+  std::vector<std::string> sherpa_commands_;
 };
 
 DECLARE_COMPONENT(SherpaEventGenerator)
