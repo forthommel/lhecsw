@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<detectors>
+  <!-- VertexReadout  -->
+  <detector name="VertexReadout" type="Lhe_BP_DiskTracker" reflect="true" sensitive="false" vis="SiVertexBarrelROVis">
+    <comment>Readout and Cabling</comment>
+    <layer id="1" inner_r="VertexBarrel2_r0 - 4.*VxBar_Env" outer_r="VertexBarrel2_r0 - 2.*VxBar_Env " rmax="VertexBarrel2_r0 + (VertexBarrel_r1-VertexBarrel2_r0)/1.6" inner_z="SiMod_z1 + 4.5*cm">
+      <slice material="G10" thickness="G10thickness"/>
+      <slice material="Copper" thickness="0.0038*cm"/>
+    </layer>
+  </detector>
+</detectors>

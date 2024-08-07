@@ -30,6 +30,10 @@ bool HepMC3EventConverter::convert(const HepMC3::GenEvent& hepmc_evt, Vertices& 
   particles.clear();
 
   const auto normalise_id = [](int id) -> int { return id - 1; };
+  const auto momentum_units =
+      (hepmc_evt.momentum_unit() == HepMC3::Units::MomentumUnit::GEV ? dd4hep::GeV : dd4hep::MeV) / dd4hep::MeV;
+  const auto length_units =
+      (hepmc_evt.length_unit() == HepMC3::Units::LengthUnit::MM ? dd4hep::mm : dd4hep::cm) / dd4hep::mm;
 
   for (const auto& hm_part : hepmc_evt.particles()) {
     const auto id_norm = normalise_id(hm_part->id());
@@ -46,28 +50,28 @@ bool HepMC3EventConverter::convert(const HepMC3::GenEvent& hepmc_evt, Vertices& 
       status.set(dd4hep::sim::G4PARTICLE_GEN_STABLE);
     else
       status.set(dd4hep::sim::G4PARTICLE_GEN_OTHER);
-    part->genStatus = hm_part->status();
+    part->genStatus = hm_part->status() & dd4hep::sim::G4PARTICLE_GEN_STATUS_MASK;
     part->pdgID = hm_part->pid();
     if (particle_properties_getter)
       part->charge = particle_properties_getter(hm_part->pid()).charge;
     if (const auto& prod_vtx = hm_part->production_vertex(); prod_vtx) {
       const auto& prod_vtx_pos = prod_vtx->position();
-      part->vsx = part->vex = prod_vtx_pos.x() * dd4hep::mm / dd4hep::mm;
-      part->vsy = part->vey = prod_vtx_pos.y() * dd4hep::mm / dd4hep::mm;
-      part->vsz = part->vez = prod_vtx_pos.z() * dd4hep::mm / dd4hep::mm;
-      part->time = part->properTime = prod_vtx_pos.t() * dd4hep::s;
+      part->vsx = part->vex = prod_vtx_pos.x() * length_units;
+      part->vsy = part->vey = prod_vtx_pos.y() * length_units;
+      part->vsz = part->vez = prod_vtx_pos.z() * length_units;
+      part->time = part->properTime = prod_vtx_pos.t() * length_units / dd4hep::c_light;
     }
     if (const auto& end_vtx = hm_part->end_vertex(); end_vtx) {
       const auto& end_vtx_pos = end_vtx->position();
-      part->vex = end_vtx_pos.x() * dd4hep::mm / dd4hep::mm;
-      part->vey = end_vtx_pos.y() * dd4hep::mm / dd4hep::mm;
-      part->vez = end_vtx_pos.z() * dd4hep::mm / dd4hep::mm;
+      part->vex = end_vtx_pos.x() * momentum_units;
+      part->vey = end_vtx_pos.y() * momentum_units;
+      part->vez = end_vtx_pos.z() * momentum_units;
     }
     const auto& mom = hm_part->momentum();
-    part->psx = part->pex = mom.px() * dd4hep::GeV / dd4hep::MeV;
-    part->psy = part->pey = mom.py() * dd4hep::GeV / dd4hep::MeV;
-    part->psz = part->pez = mom.pz() * dd4hep::GeV / dd4hep::MeV;
-    part->mass = mom.m() * dd4hep::GeV / dd4hep::MeV;
+    part->psx = part->pex = mom.px() * momentum_units;
+    part->psy = part->pey = mom.py() * momentum_units;
+    part->psz = part->pez = mom.pz() * momentum_units;
+    part->mass = hm_part->generated_mass() * momentum_units;
     dd4hep::printout(dd4hep::INFO,
                      "HepMC3EventConverter::convert",
                      "Added particle #%d with PDG id=%d, charge=%de, colour=%d/%d, status=%d/%d, momentum=(%g, %g, "
@@ -94,10 +98,10 @@ bool HepMC3EventConverter::convert(const HepMC3::GenEvent& hepmc_evt, Vertices& 
       continue;
     auto* vtx = vertices.emplace_back(new dd4hep::sim::Geant4InputAction::Vertex);
     const auto& pos = hm_vtx->position();
-    vtx->x = pos.x() / dd4hep::cm;
-    vtx->y = pos.y() / dd4hep::cm;
-    vtx->z = pos.z() / dd4hep::cm;
-    vtx->time = pos.t() * dd4hep::s;
+    vtx->x = pos.x() * length_units;
+    vtx->y = pos.y() * length_units;
+    vtx->z = pos.z() * length_units;
+    vtx->time = pos.t() * length_units / dd4hep::c_light;
     for (const auto& pin : hm_vtx->particles_in())
       vtx->in.insert(normalise_id(pin->id()));
     for (const auto& pout : hm_vtx->particles_out())

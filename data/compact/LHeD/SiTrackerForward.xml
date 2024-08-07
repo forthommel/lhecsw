@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <detectors>
+    <detector id="4" name="SiTrackerForward" type="Lhe_SiTrackerEndcap2" readout="SiTrackerForwardHits" reflect="false" r="VertexBarrel_r0 - VxBar_Env" rmax="CentralBeamPipe_rmax + 1.*cm + 7.5*cm">
+      <comment>Forward Tracker outside Barrel Support</comment>
+      <module name="Module1" vis="SiTrackerForwardModulVis">
+        <trd x1="36.112*mm" x2="46.635*mm" z="100.114/2*mm"/>
+        <module_component thickness="0.00052*cm" material="Copper"/>
+        <module_component thickness="0.0051*cm" material="Kapton"/>
+        <module_component thickness="0.00048*cm" material="Silicon"/>
+        <module_component thickness="0.03*cm" material="Silicon" sensitive="true"/>
+        <module_component thickness="0.016*cm" material="CarbonFiber_50D"/>
+        <module_component thickness="0.18*cm" material="Rohacell31_50D"/>
+        <module_component thickness="0.016*cm" material="CarbonFiber_50D"/>
+        <module_component thickness="0.0175*cm" material="Epoxy"/>
+        <module_component thickness="0.03*cm" material="Silicon" sensitive="true"/>
+        <module_component thickness="0.00048*cm" material="Silicon"/>
+        <module_component thickness="0.0051*cm" material="Kapton"/>
+        <module_component thickness="0.00052*cm" material="Copper"/>
+      </module>
+      <module name="Module2" vis="LArCryoLayerVis">
+        <trd x1="45.245*mm" x2="54.680*mm" z="89.773/2*mm"/>
+        <module_component thickness="0.00079*cm" material="Copper"/>
+        <module_component thickness="0.0078*cm" material="Kapton"/>
+        <module_component thickness="0.00048*cm" material="Silicon"/>
+        <module_component thickness="0.03*cm" material="Silicon" sensitive="true"/>
+        <module_component thickness="0.016*cm" material="CarbonFiber_50D"/>
+        <module_component thickness="0.18*cm" material="Rohacell31_50D"/>
+        <module_component thickness="0.016*cm" material="CarbonFiber_50D"/>
+        <module_component thickness="0.0175*cm" material="Epoxy"/>
+        <module_component thickness="0.03*cm" material="Silicon" sensitive="true"/>
+        <module_component thickness="0.00048*cm" material="Silicon"/>
+        <module_component thickness="0.0078*cm" material="Kapton"/>
+        <module_component thickness="0.00079*cm" material="Copper"/>
+      </module>
+      <module name="Module3" vis="BlueVisTrans">
+        <trd x1="45.245*mm" x2="54.680*mm" z="89.773/2*mm"/>
+        <module_component thickness="0.00079*cm" material="Copper"/>
+        <module_component thickness="0.0078*cm" material="Kapton"/>
+        <module_component thickness="0.00048*cm" material="Silicon"/>
+        <module_component thickness="0.03*cm" material="Silicon" sensitive="true"/>
+        <module_component thickness="0.016*cm" material="CarbonFiber_50D"/>
+        <module_component thickness="0.18*cm" material="Rohacell31_50D"/>
+        <module_component thickness="0.016*cm" material="CarbonFiber_50D"/>
+        <module_component thickness="0.0175*cm" material="Epoxy"/>
+        <module_component thickness="0.03*cm" material="Silicon" sensitive="true"/>
+        <module_component thickness="0.00048*cm" material="Silicon"/>
+        <module_component thickness="0.0078*cm" material="Kapton"/>
+        <module_component thickness="0.00079*cm" material="Copper"/>
+      </module>
+      <layer id="1">
+        <ring r="Ftd_sdisk_ri0" zstart="Ftd_disk_z0 + 32*mm+5*mm" nmodules="8" dz="2.5*mm" module="Module1" phi0="pi/10"/>
+        <ring r="Ftd_sdisk_ri1" zstart="Ftd_disk_z0 + 24*mm+4*mm" nmodules="14" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri2" zstart="Ftd_disk_z0 + 16*mm+4*mm" nmodules="20" dz="2*mm" module="Module2"/>
+      </layer>
+      <layer id="2">
+        <ring r="Ftd_sdisk_ri0" zstart="Ftd_disk_z1 + 32*mm+5*mm" nmodules="8" dz="2.5*mm" module="Module1" phi0="pi/10"/>
+        <ring r="Ftd_sdisk_ri1" zstart="Ftd_disk_z1 + 24*mm+4*mm" nmodules="14" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri2" zstart="Ftd_disk_z1 + 16*mm+4*mm" nmodules="20" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri3" zstart="Ftd_disk_z1 + 8*mm+4*mm" nmodules="22" dz="2*mm" module="Module2" phi0="pi/22"/>
+        <ring r="Ftd_sdisk_ri4" zstart="Ftd_disk_z1 + 4*mm" nmodules="28" dz="2*mm" module="Module2" phi0="pi/28"/>
+      </layer>
+      <layer id="3">
+        <ring r="Ftd_sdisk_ri0" zstart="Ftd_disk_z2 + 32*mm+5*mm" nmodules="8" dz="2.5*mm" module="Module1" phi0="pi/10"/>
+        <ring r="Ftd_sdisk_ri1" zstart="Ftd_disk_z2 + 24*mm+4*mm" nmodules="14" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri2" zstart="Ftd_disk_z2 + 16*mm+4*mm" nmodules="20" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri3" zstart="Ftd_disk_z2 + 8*mm+4*mm" nmodules="22" dz="2*mm" module="Module2" phi0="pi/22"/>
+        <ring r="Ftd_sdisk_ri4" zstart="Ftd_disk_z2 + 4*mm+4*mm " nmodules="28" dz="2*mm" module="Module2" phi0="pi/28"/>
+        <ring r="Ftd_sdisk_ri5" zstart="Ftd_disk_z2 - 4*mm+4*mm" nmodules="34" dz="2*mm" module="Module3" phi0="pi/34"/>
+        <ring r="Ftd_sdisk_ri6" zstart="Ftd_disk_z2 - 8*mm+4*mm" nmodules="40" dz="2*mm" module="Module3" phi0="pi/40"/>
+        <ring r="Ftd_sdisk_ri7" zstart="Ftd_disk_z2 - 16*mm+4*mm" nmodules="44" dz="2*mm" module="Module3" phi0="pi/44"/>
+      </layer>
+      <layer id="4">
+        <ring r="Ftd_sdisk_ri0" zstart="Ftd_disk_z3 + 32*mm+5*mm" nmodules="8" dz="2.5*mm" module="Module1"/>
+        <ring r="Ftd_sdisk_ri1" zstart="Ftd_disk_z3 + 24*mm+4*mm" nmodules="14" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri2" zstart="Ftd_disk_z3 + 16*mm+4*mm" nmodules="20" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri3" zstart="Ftd_disk_z3 + 8*mm+4*mm" nmodules="22" dz="2*mm" module="Module2" phi0="pi/22"/>
+        <ring r="Ftd_sdisk_ri4" zstart="Ftd_disk_z3 + 4*mm+4*mm" nmodules="28" dz="2*mm" module="Module2" phi0="pi/28"/>
+        <ring r="Ftd_sdisk_ri5" zstart="Ftd_disk_z3 - 4*mm+4*mm" nmodules="34" dz="2*mm" module="Module3" phi0="pi/34"/>
+        <ring r="Ftd_sdisk_ri6" zstart="Ftd_disk_z3 - 8*mm+4*mm" nmodules="40" dz="2*mm" module="Module3" phi0="pi/40"/>
+        <ring r="Ftd_sdisk_ri7" zstart="Ftd_disk_z3 - 16*mm+4*mm" nmodules="44" dz="2*mm" module="Module3" phi0="pi/44"/>
+        <ring r="Ftd_sdisk_ri8" zstart="Ftd_disk_z3 - 24*mm+4*mm" nmodules="48" dz="2*mm" module="Module3" phi0="pi/48"/>
+      </layer>
+      <layer id="5">
+        <ring r="Ftd_sdisk_ri0" zstart="Ftd_disk_z4 + 32*mm+5*mm" nmodules="8" dz="2.5*mm" module="Module1"/>
+        <ring r="Ftd_sdisk_ri1" zstart="Ftd_disk_z4 + 24*mm+4*mm" nmodules="14" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri2" zstart="Ftd_disk_z4 + 16*mm+4*mm" nmodules="20" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri3" zstart="Ftd_disk_z4 + 8*mm+4*mm" nmodules="22" dz="2*mm" module="Module2" phi0="pi/22"/>
+        <ring r="Ftd_sdisk_ri4" zstart="Ftd_disk_z4 + 4*mm+4*mm" nmodules="28" dz="2*mm" module="Module2" phi0="pi/28"/>
+        <ring r="Ftd_sdisk_ri5" zstart="Ftd_disk_z4 - 4*mm+4*mm" nmodules="34" dz="2*mm" module="Module3" phi0="pi/34"/>
+        <ring r="Ftd_sdisk_ri6" zstart="Ftd_disk_z4 - 8*mm+4*mm" nmodules="40" dz="2*mm" module="Module3" phi0="pi/40"/>
+        <ring r="Ftd_sdisk_ri7" zstart="Ftd_disk_z4 + 16*mm+4*mm" nmodules="44" dz="2*mm" module="Module3" phi0="pi/44"/>
+        <ring r="Ftd_sdisk_ri8" zstart="Ftd_disk_z4 + 24*mm+4*mm" nmodules="48" dz="2*mm" module="Module3" phi0="pi/48"/>
+      </layer>
+      <layer id="6">
+        <ring r="Ftd_sdisk_ri0" zstart="Ftd_disk_z5 + 32*mm+5*mm" nmodules="8" dz="2.5*mm" module="Module1"/>
+        <ring r="Ftd_sdisk_ri1" zstart="Ftd_disk_z5 + 24*mm+4*mm" nmodules="14" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri2" zstart="Ftd_disk_z5 + 16*mm+4*mm" nmodules="20" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri3" zstart="Ftd_disk_z5 + 8*mm+4*mm" nmodules="22" dz="2*mm" module="Module2" phi0="pi/22"/>
+        <ring r="Ftd_sdisk_ri4" zstart="Ftd_disk_z5 + 4*mm+4*mm" nmodules="28" dz="2*mm" module="Module2" phi0="pi/28"/>
+        <ring r="Ftd_sdisk_ri5" zstart="Ftd_disk_z5 - 4*mm+4*mm" nmodules="34" dz="2*mm" module="Module3" phi0="pi/34"/>
+        <ring r="Ftd_sdisk_ri6" zstart="Ftd_disk_z5 - 8*mm+4*mm" nmodules="40" dz="2*mm" module="Module3" phi0="pi/40"/>
+        <ring r="Ftd_sdisk_ri7" zstart="Ftd_disk_z5 - 16*mm+4*mm" nmodules="44" dz="2*mm" module="Module3" phi0="pi/44"/>
+        <ring r="Ftd_sdisk_ri8" zstart="Ftd_disk_z5 - 24*mm+4*mm" nmodules="48" dz="2*mm" module="Module3" phi0="pi/48"/>
+      </layer>
+      <layer id="7">
+        <ring r="Ftd_sdisk_ri0" zstart="Ftd_disk_z6 + 32*mm+5*mm" nmodules="8" dz="2.5*mm" module="Module1"/>
+        <ring r="Ftd_sdisk_ri1" zstart="Ftd_disk_z6 + 24*mm+4*mm" nmodules="14" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri2" zstart="Ftd_disk_z6 + 16*mm+4*mm" nmodules="20" dz="2*mm" module="Module2"/>
+        <ring r="Ftd_sdisk_ri3" zstart="Ftd_disk_z6 + 8*mm+4*mm" nmodules="22" dz="2*mm" module="Module2" phi0="pi/22"/>
+        <ring r="Ftd_sdisk_ri4" zstart="Ftd_disk_z6 + 4*mm+4*mm" nmodules="28" dz="2*mm" module="Module2" phi0="pi/28"/>
+        <ring r="Ftd_sdisk_ri5" zstart="Ftd_disk_z6 - 4*mm+4*mm" nmodules="34" dz="2*mm" module="Module3" phi0="pi/34"/>
+        <ring r="Ftd_sdisk_ri6" zstart="Ftd_disk_z6 - 8*mm+4*mm" nmodules="40" dz="2*mm" module="Module3" phi0="pi/40"/>
+        <ring r="Ftd_sdisk_ri7" zstart="Ftd_disk_z6 - 16*mm+4*mm" nmodules="44" dz="2*mm" module="Module3" phi0="pi/44"/>
+        <ring r="Ftd_sdisk_ri8" zstart="Ftd_disk_z6 - 24*mm+4*mm" nmodules="48" dz="2*mm" module="Module3" phi0="pi/48"/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="SiTrackerForwardHits">
+      <id>system:5,side:-2,layer:7,module:12,sensor:2,barrel:3</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="SiTrackerForward"/>
+    </plugin>
+    <plugin name="Lhe_SiTrackerEndcapSurfacePlugin">
+      <argument value="SiTrackerForward"/>
+    </plugin>
+  </plugins>-->
+</lccdd>

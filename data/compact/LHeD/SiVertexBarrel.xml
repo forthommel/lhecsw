@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="SiVertexBarrelModuleVis" alpha="1" r="0.9" g="0" b="0" showDaughters="false" visible="true"/>
+    <vis name="SiVertexBarrelModule2Vis" alpha="1." r="0.4" g="0.5" b="0" showDaughters="false" visible="true"/>
+    <vis name="SiVertexBarrelLayerVis" alpha="0.6" r="0.1" g="0.1" b="0.6" showDaughters="true" visible="false"/>
+    <vis name="SiVertexBarrel2LayerVis" alpha="0.6" r="0.0" g="0.5" b="0" showDaughters="true" visible="false"/>
+    <vis name="SiVertexSensitiveVis" alpha="0.9" r="1" g="0" b="0" showDaughters="true" visible="true"/>
+    <vis name="SiVertexSensitive2Vis" alpha="0.9" r="0." g="0.9" b="0.1" showDaughters="true" visible="true"/>
+    <vis name="SiVertex2SensitiveVis" alpha="0.9" r="0.2" g="0.5" b="0" showDaughters="true" visible="true"/>
+    <vis name="SiVertexPassiveVis" alpha="0.6" r="0.2" g="0" b="0.62" showDaughters="true" visible="false"/>
+    <vis name="SiVertexCarbonVis" alpha="0.6" r="0.1" g="0.1" b="0.42" showDaughters="true" visible="false"/>
+  </display>
+  <detectors>
+    <detector id="1" name="SiVertexBarrel" type="Lhe_BP_SiVertexBarrel" insideTrackingVolume="true" reflect="true" readout="SiVertexBarrelHits" region="SiVertexBarrelRegion" limits="SiVertexBarrelRegionLimitSet">
+      <comment>Vertex Detector Barrel inner pix</comment>
+      <comment>type="Lhe_ell_BP_SiVertexBarrel" </comment>
+      <module name="VtxBarrelModuleInner" vis="SiVertexBarrelModuleVis">
+        <module_envelope width="5.0*mm" length="(SiMod_z0 + 0.35*cm)*2" thickness="VxBar_Env"/>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.0130*cm" material="CarbonFiber_50D" sensitive="false" vis="SiVertexCarbonVis">
+          <position z="-0.12*mm"/>
+        </module_component>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.0038*cm" material="Kapton" sensitive="false" vis="SiVertexPassiveVis">
+          <position z="-0.12*mm"/>
+        </module_component>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.005*cm" material="Silicon" sensitive="true" vis="SiVertexSensitiveVis">
+          <position z="0.225*mm"/>
+        </module_component>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.0038*cm" material="Kapton" sensitive="false" vis="SiVertexPassiveVis">
+          <position z="-0.12*cm"/>
+        </module_component>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.00038*cm" material="Copper" sensitive="false" vis="SiVertexPassiveVis">
+          <position z="0.1*cm"/>
+        </module_component>
+      </module>
+      <!--
+        inner_r="CentralEllBeamPipe_rmax + CentralBeamPipe_thickness + 0.5*cm"
+        outer_r="CentralEllBeamPipe_rmax + CentralBeamPipe_thickness + 8.*cm"
+      -->
+      <layer module="VtxBarrelModuleInner" id="1" vis="SiVertexBarrelLayerVis">
+        <barrel_envelope inner_r="VertexBarrel_r0 + 4.7*VxBar_Env" outer_r="VertexBarrel_r0 + 7.6*VxBar_Env" z_length="SiMod_z0 + 0.4*cm"/>
+        <rphi_layout phi_tilt="0.*rad" nphi="1" phi0="4.71238898038468967e+00*rad" rc="VertexBarrel_r0 + 17.*mm" dr="0.0*mm"/>
+        <z_layout dr="0.*mm" z0="0.0*mm" nz="1."/>
+      </layer>
+    </detector>
+    <!-- SiVertexBarrel2  -->
+    <detector id="23" name="SiVertexBarrel2" type="Lhe_BP_SiVertexBarrel" insideTrackingVolume="true" reflect="true" readout="SiVertexBarrel2Hits" region="SiVertexBarrel2Region" limits="SiVertexBarrel2RegionLimitSet">
+      <comment>Vertex Detector Barrel outer pix</comment>
+      <comment>type="Lhe_ell_BP_SiVertexBarrel"</comment>
+      <module name="VtxBarrelModule2Inner" vis="SiVertexBarrelModule2Vis">
+        <module_envelope width="5.0*mm" length="(SiMod_z0 + 0.35*cm)*2" thickness="VxBar_Env"/>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.0130*cm" material="CarbonFiber_50D" sensitive="false" vis="SiVertexCarbonVis">
+          <position z="-0.12*mm"/>
+        </module_component>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.0038*cm" material="Kapton" sensitive="false" vis="SiVertexPassiveVis">
+          <position z="-0.12*mm"/>
+        </module_component>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.005*cm" material="Silicon" sensitive="true" vis="SiVertexSensitive2Vis">
+          <position z="0.225*mm"/>
+        </module_component>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.0038*cm" material="Kapton" sensitive="false" vis="SiVertexPassiveVis">
+          <position z="-0.12*cm"/>
+        </module_component>
+        <module_component width="4.7*mm" length="(SiMod_z0 - 0.15*cm)*2" thickness="0.00038*cm" material="Copper" sensitive="false" vis="SiVertexPassiveVis">
+          <position z="0.1*cm"/>
+        </module_component>
+      </module>
+      <layer module="VtxBarrelModule2Inner" id="2" vis="SiVertexBarrel2LayerVis">
+        <barrel_envelope inner_r="VertexBarrel2_r0 - 1.3*VxBar_Env" outer_r="VertexBarrel2_r0 + 1.3*VxBar_Env" z_length="SiMod_z0 + 0.4*cm"/>
+        <rphi_layout phi_tilt="0.0*rad" nphi="1" phi0="4.71238898038468967e+00*rad" rc="VertexBarrel2_r0 + 0.0*mm" dr="0.0*mm"/>
+        <z_layout dr="0.0*mm" z0="0.0*mm" nz="1."/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="SiVertexBarrelHits">
+      <id>system:5,side:-2,layer:4,module:14,sensor:4,barrel:3</id>
+    </readout>
+    <readout name="SiVertexBarrel2Hits">
+      <id>system:5,side:-2,layer:4,module:14,sensor:4,barrel:3</id>
+    </readout>
+  </readouts>
+  <limits>
+    <limitset name="SiVertexBarrelRegionLimitSet">
+      <limit name="step_length_max" particles="*" value="5.0" unit="mm"/>
+      <limit name="track_length_max" particles="*" value="5.0" unit="mm"/>
+      <limit name="time_max" particles="*" value="5.0" unit="ns"/>
+      <limit name="ekin_min" particles="*" value="0.01" unit="MeV"/>
+      <limit name="range_min" particles="*" value="5.0" unit="mm"/>
+    </limitset>
+    <limitset name="SiVertexBarrel2RegionLimitSet">
+      <limit name="step_length_max" particles="*" value="5.0" unit="mm"/>
+      <limit name="track_length_max" particles="*" value="5.0" unit="mm"/>
+      <limit name="time_max" particles="*" value="5.0" unit="ns"/>
+      <limit name="ekin_min" particles="*" value="0.01" unit="MeV"/>
+      <limit name="range_min" particles="*" value="5.0" unit="mm"/>
+    </limitset>
+  </limits>
+  <regions>
+    <region name="SiVertexBarrelRegion" eunit="MeV" lunit="mm" cut="0.001" threshold="0.001">
+      <limitsetref name="SiVertexBarrelRegionLimitSet"/>
+    </region>
+    <region name="SiVertexBarrel2Region" eunit="MeV" lunit="mm" cut="0.001" threshold="0.001">
+      <limitsetref name="SiVertexBarrel2RegionLimitSet"/>
+    </region>
+  </regions>
+  <!--<plugins>
+    <plugin name="Lhe_SiTrackerBarrelSurfacePlugin">
+      <argument value="SiVertexBarrel"/>
+      <argument value="dimension=1"/>
+    </plugin>
+    <plugin name="Lhe_SurfaceExamplePlugin">
+      <argument value="SiVertexBarrel"/>
+      <argument value="aa=1*mm"/>
+      <argument value="bb=2*cm"/>
+      <argument value="cc=3*m"/>
+    </plugin>
+  </plugins>-->
+</lccdd>

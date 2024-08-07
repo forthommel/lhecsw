@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="SolenoidBarrelLayerVis" alpha="0.8" r="0.5" g="0.6" b="0.6" showDaughters="false" visible="true"/>
+    <vis name="SolenoidDipoleBarrelLayerVis" alpha="0.8" r="0.2" g="0.9" b="0.9" showDaughters="false" visible="true"/>
+    <vis name="SolenoidBarrelSupportLayerVis" alpha="0.8" r="0.4" g="0.4" b="0.4" showDaughters="false" visible="false"/>
+  </display>
+  <detectors>
+    <detector id="22" name="SolenoidCoilBarrel1" type="Lhe_MultiLayerTracker" insideTrackingVolume="false">
+      <layer id="1" z_offset="OffsetZ" inner_r="SolenoidBarrelInnerRadius1" outer_z="SolenoidCoilOuterZ1" vis="SolenoidBarrelSupportLayerVis">
+        <slice material="Aluminum" thickness="SolenoidBarrelInnerCryostatThickness1"/>
+        <slice material="Vacuum" thickness="SolenoidBarrelInnerAirgapThickness1"/>
+        <slice material="Aluminum" thickness="SolenoidBarrelInnerCryostatThickness1"/>
+      </layer>
+      <layer id="2" z_offset="OffsetZ" inner_r="SolenoidBarrelConductorInnerRadius1+2*cm" outer_z="SolenoidCoilOuterZ1" vis="SolenoidBarrelLayerVis">
+        <slice material="Aluminum" thickness="SolenoidBarrelAlConductorThickness1"/>
+        <slice material="Aluminum" thickness="SolenoidBarrelQuenchbackThickness1"/>
+      </layer>
+      <layer id="3" z_offset="OffsetZ*1.2" inner_r="SolenoidBarrelOuterCryostatInnerRadius1" outer_z="HcalEndcap_zmax_fwd*0.67" vis="SolenoidDipoleBarrelLayerVis">
+        <slice material="Aluminum" thickness="DipoleBarrelAlConductorThickness"/>
+        <slice material="Aluminum" thickness="SolenoidBarrelInnerCryostatThickness1"/>
+        <slice material="Vacuum" thickness="SolenoidBarrelOuterAirgapThickness1"/>
+        <slice material="Aluminum" thickness="SolenoidBarrelOuterCryostatThickness1"/>
+      </layer>
+    </detector>
+  </detectors>
+</lccdd>

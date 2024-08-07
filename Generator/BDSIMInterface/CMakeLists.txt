@@ -3,7 +3,7 @@ set(BDSIM_DIRS $ENV{BDSIM_DIR} ${BDSIM_DIR} /usr /usr/local)
 find_library(BDSIM_LIBRARY bdsim
              HINTS ${BDSIM_DIRS}
              PATH_SUFFIXES lib lib64)
-if(NOT BDSIM_LIBRARY)
+if(NOT BDSIM_LIBRARY OR NOT HepMC3_FOUND)
   return()
 endif()
 # look for BDSIM headers
@@ -15,6 +15,6 @@ if(NOT BDSIM_INCLUDE_DIR)
 endif()
 
 lhecsw_build(Generator_BDSIMInterface
-    SOURCES src/BDSIMParticleGun.cc
-    LIBRARIES DD4hep::DDG4 ${Boost_LIBRARIES} ${BDSIM_LIBRARY}
-    HEADERS ${Geant4_INCLUDE_DIRS} ${BDSIM_INCLUDE_DIR})
+    PLUGINS_SOURCES plugins/BDSIMParticleGun.cc
+    LIBRARIES Gaudi::GaudiAlgLib ${Boost_LIBRARIES} ${BDSIM_LIBRARY} ${HEPMC3_LIBRARY}
+    HEADERS ${Geant4_INCLUDE_DIRS} ${BDSIM_INCLUDE_DIR} ${HEPMC3_INCLUDE_DIR})

@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<detectors>
+  <detector name="TrackerBarrelSupports" type="Lhe_MultiLayerTracker" reflect="true" vis="SupportVis">
+    <comment>Barrels</comment>
+    <layer id="1" inner_r="Radius_SITLayer0 - 3.4*VxBar_Env" outer_z="SiMod_z2 + 2.*VxBar_Env">
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+      <slice material="Rohacell31_15percent" thickness="0.8075*cm"/>
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+    </layer>
+    <layer id="2" inner_r="Radius_SITLayer1 - 6.*VxBar_Env" outer_z="SiMod_z3 + 5.*VxBar_Env">
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+      <slice material="Rohacell31_15percent" thickness="0.8075*cm"/>
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+    </layer>
+    <layer id="3" inner_r="Radius_SITLayer2 - 6.*VxBar_Env" outer_z="SiMod_z3 + 5.*VxBar_Env">&gt;
+                <slice material="CarbonFiber" thickness="0.05*cm"/>
+                <slice material="Rohacell31_15percent" thickness="0.8075*cm"/>
+                <slice material="CarbonFiber" thickness="0.05*cm"/>
+            </layer>
+    <layer id="4" inner_r="Radius_SITLayer3 - 6.*VxBar_Env" outer_z="SiMod_z3 + 5.*VxBar_Env">&gt;
+                <slice material="CarbonFiber" thickness="0.05*cm"/>
+                <slice material="Rohacell31_15percent" thickness="0.8075*cm"/>
+                <slice material="CarbonFiber" thickness="0.05*cm"/>
+            </layer>
+  </detector>
+  <comment>   Outer Barrel Tracker Supports   </comment>
+  <detector name="TrackerOuterBarrelSupports" type="Lhe_MultiLayerTracker" reflect="true" vis="SupportVis">
+    <comment>Barrels</comment>
+    <layer id="1" inner_r="Radius_SOTLayer0 - 4.5*VxBar_Env" outer_z="SiModO_z0  + 2.*VxBar_Env">
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+      <slice material="Rohacell31_15percent" thickness="0.8075*cm"/>
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+    </layer>
+    <layer id="2" inner_r="Radius_SOTLayer1 - 4.5*VxBar_Env" outer_z="SiModO_z1  + 2.*VxBar_Env">
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+      <slice material="Rohacell31_15percent" thickness="0.8075*cm"/>
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+    </layer>
+    <layer id="3" inner_r="Radius_SOTLayer2 - 4.5*VxBar_Env" outer_z="SiModO_z2  + 5.*VxBar_Env">
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+      <slice material="Rohacell31_15percent" thickness="0.8075*cm"/>
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+    </layer>
+    <layer id="4" inner_r="Radius_SOTLayer3 - 4.5*VxBar_Env" outer_z="SiModO_z3  + 5.*VxBar_Env">
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+      <slice material="Rohacell31_15percent" thickness="0.8075*cm"/>
+      <slice material="CarbonFiber" thickness="0.05*cm"/>
+    </layer>
+  </detector>
+</detectors>

@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="MuonEndcapVis" alpha="0.4" r="0.8" g="0.9" b="1" showDaughters="false" visible="true"/>
+    <vis name="MuonEndcapLayerVis" alpha="0.4" r="0.8" g="0.9" b="1" showDaughters="false" visible="true"/>
+    <vis name="MuonEndcapSensorVis" alpha="0.4" r="0.8" g="0.9" b="1" showDaughters="true" visible="true"/>
+    <vis name="MuonEndcapAbsorberVis" alpha="0.4" r="0.8" g="0.9" b="1" visible="false"/>
+  </display>
+  <detectors>
+    <detector id="18" name="MuonEndcap_fwd1" type="Lhe_PolyhedraEndcapCalorimeter2" readout="MuonEndcapHits01" reflect="false" vis="MuonEndcapVis" calorimeterType="MUON_ENDCAP">
+      <dimensions numsides="(int) MuonSides" zmin="MuonEndcap_zmin_fwd+30.*cm" rmin="VertexBarrel_r3+5*cm" rmax="MuonEndcap_rmax0"/>
+      <layer repeat="(int) MuonEndcap_layers" vis="MuonEndcapLayerVis">
+        <slice material="Iron" thickness="10.0*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonEndcapSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonEndcapSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="1.0*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <comment> layer thickness = 10+4cm </comment>
+    </detector>
+    <detector id="19" name="MuonEndcap_fwd2" type="Lhe_PolyhedraEndcapCalorimeter2" readout="MuonEndcapHits02" reflect="false" vis="MuonEndcapVis" calorimeterType="MUON_ENDCAP">
+      <comment>Muon Calorimeter Endcaps</comment>
+      <dimensions numsides="(int) MuonSides" zmin="MuonEndcap_zmin_fwd+30.*cm" rmin="HcalBarrel_rmin" rmax="MuonEndcap_rmax1"/>
+      <layer repeat="(int) MuonEndcap_layers" vis="MuonEndcapLayerVis"><slice material="Iron" thickness="10.0*cm" vis="MuonEndcapAbsorberVis"/><slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/><slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/><slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/><slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonEndcapSensorVis"/><slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/><slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/><slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/><slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/><slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/><slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/><slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonEndcapSensorVis"/><slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/><slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/><slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/><slice material="Air" thickness="1.0*cm" vis="InvisibleNoDaughters"/>&gt;
+            </layer>
+    </detector>
+    <detector id="20" name="MuonEndcap_bwd1" type="Lhe_PolyhedraEndcapCalorimeter2" readout="MuonEndcapHits11" reflect="false" vis="MuonEndcapVis" calorimeterType="MUON_ENDCAP">
+      <comment>Muon Calorimeter Endcaps</comment>
+      <dimensions numsides="(int) MuonSides" zmin="MuonEndcap_zmin_bwd-20.*cm" rmin="VertexBarrel_r3+5*cm" rmax="MuonEndcap_rmax0"/>
+      <layer repeat="(int) MuonEndcap_layers" vis="MuonEndcapLayerVis">
+        <slice material="Air" thickness="1.0*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonEndcapSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonEndcapSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Iron" thickness="10.0*cm" vis="MuonEndcapAbsorberVis"/>
+      </layer>
+    </detector>
+    <detector id="21" name="MuonEndcap_bwd2" type="Lhe_PolyhedraEndcapCalorimeter2" readout="MuonEndcapHits12" reflect="false" vis="MuonEndcapVis" calorimeterType="MUON_ENDCAP">
+      <comment>Muon Calorimeter Endcaps</comment>
+      <dimensions numsides="(int) MuonSides" zmin="MuonEndcap_zmin_bwd-20.*cm" rmin="HcalBarrel_rmin" rmax="MuonEndcap_rmax1"/>
+      <layer repeat="(int) MuonEndcap_layers" vis="MuonEndcapLayerVis">
+        <slice material="Air" thickness="1.0*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonEndcapSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="RPCGasDefault" thickness="0.2*cm" sensitive="true" vis="MuonEndcapSensorVis"/>
+        <slice material="PyrexGlass" thickness="0.2*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Air" thickness="0.35*cm" vis="InvisibleNoDaughters"/>
+        <slice material="Aluminum" thickness="0.1*cm" vis="MuonEndcapAbsorberVis"/>
+        <slice material="Iron" thickness="10.0*cm" vis="MuonEndcapAbsorberVis"/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="MuonEndcapHits01">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="MuonEndcapHits02">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="MuonEndcapHits11">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="MuonEndcapHits12">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="MuonEndcap_fwd1"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="MuonEndcap_fwd1"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="MuonEndcap_fwd1"/>
+    </plugin>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="MuonEndcap_fwd2"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="MuonEndcap_fwd2"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="MuonEndcap_fwd2"/>
+    </plugin>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="MuonEndcap_bwd1"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="MuonEndcap_bwd1"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="MuonEndcap_bwd1"/>
+    </plugin>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="MuonEndcap_bwd2"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="MuonEndcap_bwd2"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="MuonEndcap_bwd2"/>
+    </plugin>
+  </plugins>-->
+</lccdd>

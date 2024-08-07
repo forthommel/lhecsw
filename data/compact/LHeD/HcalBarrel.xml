@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="HcalBarrelVis" alpha="1" r="1" g="0.8" b="0.6" showDaughters="false" visible="true"/>
+    <vis name="HcalSensorVis" alpha="0.1" r="1" g="0.8" b="0.6" showDaughters="true" visible="true"/>
+    <vis name="HcalAbsorberVis" alpha="0.1" r="1" g="0.8" b="0.6" showDaughters="false" visible="false"/>
+    <vis name="HcalBarrelStavesVis" alpha="0.1" r="1" g="0.8" b="0.6" showDaughters="false" visible="false"/>
+    <vis name="HcalBarrelLayerVis" alpha="0.1" r="1" g="0.8" b="0.6" showDaughters="false" visible="false"/>
+    <vis name="HcalBarrelSensorVis" alpha="0.1" r="1" g="0.8" b="0.6" showDaughters="fasle" visible="true"/>
+  </display>
+  <detectors>
+    <detector id="12" name="HcalBarrel" type="Lhe_PolyhedraBarrelCalorimeter2" readout="HcalBarrelHits" vis="HcalBarrelVis" calorimeterType="HAD_BARREL" gap="0.*cm" material="Steel235">
+      <comment>Hadron Calorimeter Barrel</comment>
+      <dimensions numsides="(int) CaloSides" rmin="HcalBarrel_rmin" z="HcalBarrel_length" z_offset="OffsetZ"/>
+      <staves vis="HcalBarrelStavesVis"/>
+      <layer repeat="(int) HcalBarrel_layers1">
+        <slice material="Steel235" thickness="2.20*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="yes" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalBarrel_layers2">
+        <slice material="Steel235" thickness="2.50*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="yes" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalBarrel_layers3">
+        <slice material="Steel235" thickness="3.00*cm" vis="HcalAbsorberVis"/>
+        <slice material="Polystyrene" thickness="0.50*cm" sensitive="yes" limits="cal_limits" vis="HcalBarrelSensorVis"/>
+        <slice material="Air" thickness="0.15*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="HcalBarrelHits">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:6,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_SiTrackerBarrelSurfacePlugin">
+      <argument value="HcalBarrel"/>
+      <argument value="dimension=1"/>
+    </plugin>
+  </plugins>-->
+</lccdd>

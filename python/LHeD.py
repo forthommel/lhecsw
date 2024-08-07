@@ -20,7 +20,7 @@ class LHeD:
         from os import environ
         install_dir = environ.get('lhecsw', '..')
         if file is None:
-            self.kernel.loadGeometry(f"file:{install_dir}/Geometry/data/compact/{path}")
+            self.kernel.loadGeometry(f"file:{install_dir}/Geometry/DD4hep/data/compact/{path}")
         else:
             ui = DDG4.DD4hepUI(self.description)
             ui.importROOT(file)

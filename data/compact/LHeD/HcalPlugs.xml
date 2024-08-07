@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <detectors>
+    <detector id="15" name="HcalPlug_fwd" type="Lhe_PolyhedraEndcapCalorimeter2" readout="HcalPlugHits01" reflect="false" vis="HcalPlugVis">
+      <comment>Hadron Calorimeter Plug</comment>
+      <dimensions numsides="(int) CaloSides" zmin="EcalPlug_zmax_fwd+17.*cm" rmin="EcalPlug_rmin" rmax="SolenoidBarrelConductorInnerRadius1-10.*cm"/>
+      <layer repeat="(int) HcalPlug_fwd_layers1">
+        <slice material="TungstenDens24" thickness="0.05*cm" vis="HcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="HcalSensorVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="HcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="HcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalPlug_fwd_layers2">
+        <slice material="TungstenDens24" thickness="0.5*cm" vis="HcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="HcalSensorVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="HcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="HcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalPlug_fwd_layers3">
+        <slice material="TungstenDens24" thickness="0.75*cm" vis="HcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="HcalSensorVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="HcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="HcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+    </detector>
+    <detector id="16" name="HcalPlug_bwd" type="Lhe_PolyhedraEndcapCalorimeter2" readout="HcalPlugHits11" reflect="false" vis="HcalPlugVis">
+      <comment>Hadron Calorimeter Plug</comment>
+      <dimensions numsides="(int) CaloSides" zmin="HcalPlug_zmin_bwd-19.*cm" rmin="EcalPlug_rmin" rmax="SolenoidBarrelConductorInnerRadius1-10.*cm"/>
+      <layer repeat="(int) HcalPlug_bwd_layers1">
+        <slice material="Cu" thickness="0.5*cm" vis="HcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="HcalSensorVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="HcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="HcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalPlug_bwd_layers2">
+        <slice material="Cu" thickness="0.75*cm" vis="HcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="HcalSensorVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="HcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="HcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+      <layer repeat="(int) HcalPlug_bwd_layers3">
+        <slice material="Cu" thickness="1.0*cm" vis="HcalAbsorberVis"/>
+        <slice material="Silicon" thickness="0.032*cm" sensitive="true" limits="cal_limits" vis="HcalSensorVis"/>
+        <slice material="Copper" thickness="0.005*cm" vis="HcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.030*cm" vis="HcalAbsorberVis"/>
+        <slice material="Air" thickness="0.033*cm" vis="InvisibleNoDaughters"/>
+      </layer>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="HcalPlugHits01">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:6,layer:10,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="HcalPlugHits02">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:6,layer:10,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="HcalPlugHits11">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="HcalPlugHits12">
+      <segmentation type="CartesianGridXY" grid_size_x="3.0*cm" grid_size_y="3.0*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="HcalPlug_fwd"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="HcalPlug_fwd"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="HcalPlug_fwd"/>
+    </plugin>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="HcalPlug_bwd"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="HcalPlug_bwd"/>
+    </plugin>
+    <plugin name="Lhe_PolyhedraEndcapCalorimeterSurfacePlugin">
+      <argument value="HcalPlug_bwd"/>
+    </plugin>
+  </plugins>-->
+</lccdd>

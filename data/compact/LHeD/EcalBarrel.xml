@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the complete LHeC detector                       -->
+<!--    a detector for a new LHC option using a ERL e-source                -->
+<!--                                                                        -->
+<!--    Contained are the required                                          -->
+<!--      ++ global constants used uniquely by this detector                -->
+<!--      ++ visualization attributes                                       -->
+<!--      ++ the definition of the readout structure and the                -->
+<!--         readout segmentation (if necessary)                            -->
+<!--      ++ [the include statements for the sensitive detectors and        -->
+<!--         the corresponding support structure(s)]                        -->
+<!--      ++ SurfacePlugin not active                                       -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @date    old version 20.10.2017                                      -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <!--<vis name="EcalBarrelVis" alpha="0.1" r="0.1" g="0.4" b="1" showDaughters="true" visible="true"/>-->
+    <vis name="EcalBarrelVis1" alpha="0.2" r="0.1" g="0.4" b="0.6" showDaughters="true" visible="true"/>
+    <vis name="EcalBarrelVis2" alpha="0.2" r="0.1" g="0.4" b="0.7" showDaughters="true" visible="true"/>
+    <vis name="EcalBarrelVis3" alpha="0.3" r="0.1" g="0.4" b="0.8" showDaughters="true" visible="true"/>
+    <vis name="EcalBarrelStaveVis" alpha="0.1" r="0.01" g="0.1" b="0.1" showDaughters="true" visible="true"/>
+    <vis name="EcalLayerVis1" alpha="0.3" r="0.3" g="0.3" b="0.6" showDaughters="true" visible="true"/>
+    <vis name="EcalLayerVis2" alpha="0.2" r="0.35" g="0.35" b="0.7" showDaughters="true" visible="true"/>
+    <vis name="EcalLayerVis3" alpha="0.2" r="0.5" g="0.5" b="0.8" showDaughters="true" visible="true"/>
+    <vis name="EcalSensitiveVis" alpha="0.2" r="0.3" g="0.2" b="1" showDaughters="true" visible="true"/>
+  </display>
+  <detectors>
+    <detector id="7" name="EcalBarreli" type="Lhe_PolyhedraBarrelCalorimeter2" readout="EcalBarrelHits1" vis="EcalBarrelVis1" reflect="false" gap="0.*cm" calorimeterType="EM_BARREL">
+      <comment>EM Calorimeter Barrel inner</comment>
+      <dimensions numsides="(int) CaloSides" rmin="EcalBarrel_rmin1" z_offset="OffsetZ" z="EcalBarrel_zmax"/>
+      <staves vis="EcalBarrelStaveVis"/>
+      <layer repeat="EcalBarrel_layers1" vis="EcalLayerVis1">
+        <slice material="Steel235" thickness="0.3*cm" vis="EcalAbsorberVis"/>
+        <slice material="Epoxy" thickness="0.0175*cm" vis="EcalAbsorberVis"/>
+        <slice material="Pb" thickness="0.22*cm" vis="EcalAbsorberVis"/>
+        <slice material="Epoxy" thickness="0.0175*cm" vis="EcalAbsorberVis"/>
+        <slice material="Steel235" thickness="0.3*cm" vis="EcalAbsorberVis"/>
+        <slice material="LAr" thickness="0.21*cm" sensitive="true" limits="cal_limits" vis="EcalSensitiveVis"/>
+        <slice material="Cu" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.03*cm" vis="EcalAbsorberVis"/>
+        <slice material="Cu" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="LAr" thickness="0.21*cm" sensitive="true" limits="cal_limits" vis="EcalSensitiveVis"/>
+      </layer>
+      <comment> 0.3+0.0175+0.22+0.0175+0.3+0.21+0.005+0.03+0.005+0.21=1.315cm </comment>
+    </detector>
+    <detector id="8" name="EcalBarrelm" type="Lhe_PolyhedraBarrelCalorimeter2" readout="EcalBarrelHits2" vis="EcalBarrelVis2" reflect="false" gap="0.*cm" calorimeterType="EM_BARREL">
+      <comment>EM Calorimeter Barrel middle</comment>
+      <dimensions numsides="(int) CaloSides" rmin="EcalBarrel_rmin2" z_offset="OffsetZ" z="EcalBarrel_zmax"/>
+      <staves vis="EcalBarrelStaveVis"/>
+      <layer repeat="EcalBarrel_layers2" vis="EcalLayerVis2">
+        <slice material="Steel235" thickness="0.3*cm" vis="EcalAbsorberVis"/>
+        <slice material="Epoxy" thickness="0.0175*cm" vis="EcalAbsorberVis"/>
+        <slice material="Pb" thickness="0.22*cm" vis="EcalAbsorberVis"/>
+        <slice material="Epoxy" thickness="0.0175*cm" vis="EcalAbsorberVis"/>
+        <slice material="Steel235" thickness="0.3*cm" vis="EcalAbsorberVis"/>
+        <slice material="LAr" thickness="0.21*cm" sensitive="true" limits="cal_limits" vis="EcalSensitiveVis"/>
+        <slice material="Cu" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.03*cm" vis="EcalAbsorberVis"/>
+        <slice material="Cu" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="LAr" thickness="0.21*cm" sensitive="true" limits="cal_limits" vis="EcalSensitiveVis"/>
+      </layer>
+      <comment> 0.3+0.0175+0.22+0.0175+0.3+0.21+0.005+0.03+0.005+0.21=1.315cm </comment>
+    </detector>
+    <detector id="9" name="EcalBarrelo" type="Lhe_PolyhedraBarrelCalorimeter2" readout="EcalBarrelHits3" vis="EcalBarrelVis3" reflect="false" gap="0.*cm" calorimeterType="EM_BARREL">
+      <comment>EM Calorimeter Barrel outer</comment>
+      <dimensions numsides="(int) CaloSides" rmin="EcalBarrel_rmin3" z_offset="OffsetZ" z="EcalBarrel_zmax"/>
+      <staves vis="EcalBarrelStaveVis"/>
+      <layer repeat="EcalBarrel_layers3" vis="EcalLayerVis3">
+        <slice material="Steel235" thickness="0.3*cm" vis="EcalAbsorberVis"/>
+        <slice material="Epoxy" thickness="0.0175*cm" vis="EcalAbsorberVis"/>
+        <slice material="Pb" thickness="0.22*cm" vis="EcalAbsorberVis"/>
+        <slice material="Epoxy" thickness="0.0175*cm" vis="EcalAbsorberVis"/>
+        <slice material="Steel235" thickness="0.3*cm" vis="EcalAbsorberVis"/>
+        <slice material="LAr" thickness="0.21*cm" sensitive="true" limits="cal_limits" vis="EcalSensitiveVis"/>
+        <slice material="Cu" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="Kapton" thickness="0.03*cm" vis="EcalAbsorberVis"/>
+        <slice material="Cu" thickness="0.005*cm" vis="EcalAbsorberVis"/>
+        <slice material="LAr" thickness="0.21*cm" sensitive="true" limits="cal_limits" vis="EcalSensitiveVis"/>
+      </layer>
+      <comment> 0.3+0.0175+0.22+0.0175+0.3+0.21+0.005+0.03+0.005+0.21=1.315cm </comment>
+    </detector>
+  </detectors>
+  <readouts>
+    <readout name="EcalBarrelHits1">
+      <segmentation type="CartesianGridXY" grid_size_x="3.5*cm" grid_size_y="3.5*cm"/>
+      <id>system:0,barrel:3,module:6,layer:10,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="EcalBarrelHits2">
+      <segmentation type="CartesianGridXY" grid_size_x="3.5*cm" grid_size_y="3.5*cm"/>
+      <id>system:0,barrel:3,module:4,layer:8,slice:5,x:32:-16,y:-16</id>
+    </readout>
+    <readout name="EcalBarrelHits3">
+      <segmentation type="CartesianGridXY" grid_size_x="3.5*cm" grid_size_y="3.5*cm"/>
+      <id>system:0,barrel:3,module:4,layer:6,slice:5,x:32:-16,y:-16</id>
+    </readout>
+  </readouts>
+  <!--<plugins>
+    <plugin name="Lhe_SubdetectorExtensionPlugin">
+      <argument value="EcalBarrel"/>
+    </plugin>
+    <plugin name="Lhe_LayeringExtensionPlugin">
+      <argument value="EcalBarrel"/>
+    </plugin>
+    <plugin name="Lhe_SiTrackerBarrelSurfacePlugin">
+      <argument value="EcalBarrel"/>
+      <argument value="dimension=1"/>
+    </plugin>
+  </plugins>-->
+</lccdd>
