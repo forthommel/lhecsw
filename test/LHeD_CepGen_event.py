@@ -9,14 +9,15 @@ from SimG4.sim_cff import geantservice, geantsim
 from SimAlgos.digi_cff import digis
 
 
-cepgen.process = [
-    'name:lpair',
-    'kinematics/beam1id:2212',
-    'kinematics/beam2id:11',
-    'kinematics/beam1pz:7000.0',
-    'kinematics/beam2pz:50.0',
-    'kinematics/ptmin:10.0',
-]
+cepgen.process = str(CepGenModule('lpair',
+    kinematics = CepGenParameters(
+        beam1id = 2212,
+        beam2id = 11,
+        beam1pz = 7000.,
+        beam2pz = 50.,
+        ptmin = 20.,
+    ))
+)
 
 genalg = GenAlg("CepGen",
     SignalProvider = cepgen,

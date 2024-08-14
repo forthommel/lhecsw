@@ -30,6 +30,7 @@
 #include <CepGenAddOns/HepMC3Wrapper/HepMC3EventInterface.h>
 #include <GaudiAlg/GaudiTool.h>
 
+#include "Generator/CepGenInterface/include/ParametersListConverter.h"
 #include "Generator/Common/include/IHepMCProviderTool.h"
 
 class CepGenEventGenerator : public GaudiTool, virtual public IHepMCProviderTool {
@@ -37,7 +38,9 @@ public:
   explicit CepGenEventGenerator(const std::string& type, const std::string& name, const IInterface* parent)
       : GaudiTool(type, name, parent),
         verbosity_{this, "verbosity", static_cast<int>(cepgen::utils::Logger::get().level()), "CepGen verbosity"},
-        process_cmds_{this, "process", {}, "CepGen commands to define process"},
+        process_str_{this, "process", "{}", "CepGen commands to define process"},
+        extra_process_str_{
+            this, "extraProcessCommands", {}, "Additional CepGen string-type commands to define process"},
         modifiers_seq_{this, "modifiersSequence", {}, "Sequential list of CepGen modifier modules defining the chain"},
         outputs_seq_{this, "outputsSequence", {}, "Sequential list of CepGen output modules defining the chain"},
         modifiers_cmds_{this, "modifiers", {}, "CepGen modifier->commands to define modifiers chain"},
@@ -62,8 +65,9 @@ private:
   std::unique_ptr<cepgen::Generator> cepgen_;
   std::shared_ptr<HepMC3::GenCrossSection> xsec_;
 
-  Gaudi::Property<int> verbosity_;                           ///< CepGen module verbosity
-  Gaudi::Property<std::vector<std::string> > process_cmds_;  ///< CepGen commands to define process
+  Gaudi::Property<int> verbosity_;                                ///< CepGen module verbosity
+  Gaudi::Property<std::string> process_str_;                      ///< JSON dump of CepGen commands to define process
+  Gaudi::Property<std::vector<std::string> > extra_process_str_;  ///< Extra string CepGen commands to define process
   Gaudi::Property<std::vector<std::string> > modifiers_seq_, outputs_seq_;
   Gaudi::Property<std::map<std::string, std::vector<std::string> > > modifiers_cmds_;  ///< Modifiers chain
   Gaudi::Property<std::map<std::string, std::vector<std::string> > > outputs_cmds_;    ///< Outputs chain
@@ -78,8 +82,8 @@ StatusCode CepGenEventGenerator::initialize() {
   cepgen_.reset(new cepgen::Generator);
   xsec_.reset(new HepMC3::GenCrossSection);
 
-  cepgen::ParametersList plist_proc;
-  for (const auto& cmd : process_cmds_)
+  auto plist_proc = (cepgen::ParametersList)cepgen::ParametersListConverter(process_str_);
+  for (const auto& cmd : extra_process_str_)
     plist_proc.feed(cmd);
   info() << "CepGen process parameters:\n" << plist_proc;
   cepgen_->runParameters().setProcess(cepgen::ProcessFactory::get().build(plist_proc));
