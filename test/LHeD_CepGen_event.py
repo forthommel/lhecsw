@@ -16,8 +16,16 @@ cepgen.process = str(CepGenModule('lpair',
         beam1pz = 7000.,
         beam2pz = 50.,
         ptmin = 20.,
-    ))
-)
+    )
+))
+#cepgen.modifiers = str(CepGenParameters(
+#    pythia6 = CepGenParameters(),
+#))
+#cepgen.outputs = str(CepGenParameters(
+#    dump = CepGenParameters(
+#        printEvery = 10,
+#    ),
+#))
 
 genalg = GenAlg("CepGen",
     SignalProvider = cepgen,

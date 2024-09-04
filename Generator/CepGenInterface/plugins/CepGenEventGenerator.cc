@@ -41,10 +41,8 @@ public:
         process_str_{this, "process", "{}", "CepGen commands to define process"},
         extra_process_str_{
             this, "extraProcessCommands", {}, "Additional CepGen string-type commands to define process"},
-        modifiers_seq_{this, "modifiersSequence", {}, "Sequential list of CepGen modifier modules defining the chain"},
-        outputs_seq_{this, "outputsSequence", {}, "Sequential list of CepGen output modules defining the chain"},
-        modifiers_cmds_{this, "modifiers", {}, "CepGen modifier->commands to define modifiers chain"},
-        outputs_cmds_{this, "outputs", {}, "CepGen output->commands to define outputs chain"} {
+        modifiers_str_{this, "modifiers", "{}", "Sequential list of CepGen modifier modules defining the chain"},
+        outputs_str_{this, "outputs", "{}", "Sequential list of CepGen output modules defining the chain"} {
     cepgen::utils::Logger::get().setLevel(static_cast<cepgen::utils::Logger::Level>(verbosity_.value()));
   }
   virtual ~CepGenEventGenerator() = default;
@@ -68,9 +66,8 @@ private:
   Gaudi::Property<int> verbosity_;                                ///< CepGen module verbosity
   Gaudi::Property<std::string> process_str_;                      ///< JSON dump of CepGen commands to define process
   Gaudi::Property<std::vector<std::string> > extra_process_str_;  ///< Extra string CepGen commands to define process
-  Gaudi::Property<std::vector<std::string> > modifiers_seq_, outputs_seq_;
-  Gaudi::Property<std::map<std::string, std::vector<std::string> > > modifiers_cmds_;  ///< Modifiers chain
-  Gaudi::Property<std::map<std::string, std::vector<std::string> > > outputs_cmds_;    ///< Outputs chain
+  Gaudi::Property<std::string> modifiers_str_;
+  Gaudi::Property<std::string> outputs_str_;
 };
 
 DECLARE_COMPONENT(CepGenEventGenerator)
@@ -82,31 +79,21 @@ StatusCode CepGenEventGenerator::initialize() {
   cepgen_.reset(new cepgen::Generator);
   xsec_.reset(new HepMC3::GenCrossSection);
 
-  auto plist_proc = (cepgen::ParametersList)cepgen::ParametersListConverter(process_str_);
+  auto plist_proc = static_cast<cepgen::ParametersList>(cepgen::ParametersListConverter(process_str_));
   for (const auto& cmd : extra_process_str_)
     plist_proc.feed(cmd);
   info() << "CepGen process parameters:\n" << plist_proc;
   cepgen_->runParameters().setProcess(cepgen::ProcessFactory::get().build(plist_proc));
 
-  for (const auto& mod : modifiers_seq_)          // browse the sequential list of event modifier modules requested
-    if (modifiers_cmds_.value().count(mod) == 0)  // use default parameters for the module
-      cepgen_->runParameters().addModifier(cepgen::EventModifierFactory::get().build(mod));
-    else {  // parse the list of parameters fed by the user
-      cepgen::ParametersList plist_mod;
-      for (const auto& cmd : modifiers_cmds_.value().at(mod))
-        plist_mod.feed(cmd);
-      cepgen_->runParameters().addModifier(cepgen::EventModifierFactory::get().build(mod, plist_mod));
-    }
+  const auto plist_mods = static_cast<cepgen::ParametersList>(cepgen::ParametersListConverter(modifiers_str_));
+  for (const auto& mod : plist_mods.keysOf<cepgen::ParametersList>())  // browse the sequence of event modifier modules
+    cepgen_->runParameters().addModifier(
+        cepgen::EventModifierFactory::get().build(mod, plist_mods.get<cepgen::ParametersList>(mod)));
 
-  for (const auto& mod : outputs_seq_)          // browse the sequential list of output modules requested
-    if (outputs_cmds_.value().count(mod) == 0)  // use default parameters for the module
-      cepgen_->runParameters().addEventExporter(cepgen::EventExporterFactory::get().build(mod));
-    else {  // parse the list of parameters fed by the user
-      cepgen::ParametersList plist_out;
-      for (const auto& cmd : outputs_cmds_.value().at(mod))
-        plist_out.feed(cmd);
-      cepgen_->runParameters().addEventExporter(cepgen::EventExporterFactory::get().build(mod, plist_out));
-    }
+  const auto plist_outputs = static_cast<cepgen::ParametersList>(cepgen::ParametersListConverter(outputs_str_));
+  for (const auto& mod : plist_outputs.keysOf<cepgen::ParametersList>())  // browse the sequence of output modules
+    cepgen_->runParameters().addEventExporter(
+        cepgen::EventExporterFactory::get().build(mod, plist_outputs.get<cepgen::ParametersList>(mod)));
 
   info() << "CepGen parameters:\n" << cepgen_->runParameters();
   const auto xsec = cepgen_->computeXsection();
