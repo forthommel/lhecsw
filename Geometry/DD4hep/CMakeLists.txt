@@ -7,7 +7,7 @@
 
 file(GLOB sources src/*.cc)
 file(GLOB plugins_sources plugins/*.cc)
-gaudi_add_module(Geometry_DD4hep SOURCES ${sources} ${plugins_sources}
-  LINK DD4hep::DDAlign DD4hep::DDCond DD4hep::DDCore DD4hep::DDG4 DD4hep::DDParsers DD4hep::DDRec
+add_library(Geometry_DD4hep ${sources} ${plugins_sources})
+target_link_libraries(Geometry_DD4hep DD4hep::DDAlign DD4hep::DDCond DD4hep::DDCore DD4hep::DDG4 DD4hep::DDParsers DD4hep::DDRec
        ROOT::Core ROOT::GenVector ROOT::Geom ROOT::MathCore)
 dd4hep_generate_rootmap(Geometry_DD4hep)

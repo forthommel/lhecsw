@@ -16,10 +16,7 @@ endif()
 include(lhecswEnvironmentCheck)
 include(lhecswBuildUtils)
 
-find_package(podio REQUIRED)
-find_package(Gaudi REQUIRED)
-find_package(EDM4HEP REQUIRED)
-find_package(k4FWCore REQUIRED)
+find_package(art REQUIRED)
 find_package(DD4hep REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR})
@@ -36,6 +33,6 @@ install(EXPORT ${PROJECT_NAME}Targets
         NAMESPACE ${PROJECT_NAME}::
         FILE "${PROJECT_NAME}Targets.cmake"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/")
-gaudi_install(PYTHON)
+#gaudi_install(PYTHON)
 
 #gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)

@@ -6,5 +6,5 @@ endif()
 
 lhecsw_build(Generator_Pythia8Interface
     PLUGINS_SOURCES plugins/Pythia8*.cc
-    LIBRARIES k4FWCore::k4FWCore Gaudi::GaudiAlgLib ${Pythia8_LIBRARIES} ${HEPMC3_LIBRARIES}
+    LIBRARIES ${Pythia8_LIBRARIES} ${HEPMC3_LIBRARIES}
     HEADERS ${Pythia8_INCLUDE_DIRS} ${HEPMC3_INCLUDE_DIRS} ${HEPMC3_INCLUDE_DIR})
