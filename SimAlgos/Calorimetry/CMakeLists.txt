@@ -1,3 +1,3 @@
 lhecsw_build(SimAlgos_Calorimetry
     PLUGINS_SOURCES plugins/*.cc
-    LIBRARIES DD4hep::DDCore)
+    LIBRARIES DD4hep::DDCore EDM4HEP::edm4hep)

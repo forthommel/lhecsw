@@ -19,16 +19,14 @@
 #ifndef SimAlgos_Calorimetry_ICaloHitDigitisationAlgo_h
 #define SimAlgos_Calorimetry_ICaloHitDigitisationAlgo_h
 
-#include <GaudiKernel/IAlgTool.h>
-
 namespace edm4hep {
   class SimCalorimeterHit;
   class MutableCalorimeterHit;
 }  // namespace edm4hep
 
-class ICaloHitDigitisationAlgo : virtual public IAlgTool {
+class ICaloHitDigitisationAlgo {
 public:
-  DeclareInterfaceID(ICaloHitDigitisationAlgo, 1, 0);
+  explicit ICaloHitDigitisationAlgo() = default;
 
   virtual StatusCode run(const edm4hep::SimCalorimeterHit&, edm4hep::MutableCalorimeterHit&) const = 0;
 };

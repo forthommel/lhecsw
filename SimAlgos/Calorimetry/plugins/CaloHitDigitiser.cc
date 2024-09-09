@@ -27,10 +27,10 @@
 
 #include "SimAlgos/Calorimetry/include/ICaloHitDigitisationAlgo.h"
 
-class CaloHitDigitiser : public Gaudi::Algorithm {
+class CaloHitDigitiser : public art::EDProducer {
 public:
-  explicit CaloHitDigitiser(const std::string& name, ISvcLocator* service_locator)
-      : Gaudi::Algorithm(name, service_locator),
+  explicit CaloHitDigitiser(const fhicl::ParameterSet& iConfig)
+      : art::EDProducer(iConfig),
         simhits_coll_{"simhits", Gaudi::DataHandle::Reader, this},
         hits_coll_{name, Gaudi::DataHandle::Writer, this},
         simhits_hits_assoc_{name + "HitsAssociation", Gaudi::DataHandle::Writer, this} {

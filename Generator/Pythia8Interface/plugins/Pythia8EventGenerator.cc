@@ -16,28 +16,30 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <GaudiAlg/GaudiTool.h>
+// art
+#include <art/Framework/Core/EDProducer.h>
+
+// Pythia
 #include <Pythia8/Pythia.h>
 #include <Pythia8Plugins/HepMC3.h>
 
 #include "Generator/Common/include/IHepMCProviderTool.h"
 
-class Pythia8EventGenerator : public GaudiTool, virtual public IHepMCProviderTool {
+class Pythia8EventGenerator : public art::EDProducer {
 public:
-  explicit Pythia8EventGenerator(const std::string& type, const std::string& name, const IInterface* parent)
-      : GaudiTool(type, name, parent),
-        cmds_file_{this, "fileCommands", "", "Pythia8 commands file to be parsed"},
-        cmds_preinit_{this, "preInitCommands", {}, "Pythia8 commands to be parsed before initialisation"},
-        cmds_postinit_{this, "postInitCommands", {}, "Pythia8 commands to be parsed after initialisation"} {}
+  explicit Pythia8EventGenerator(const fhicl::ParameterSet& iConfig)
+      : art::EDProducer(iConfig),
+        cmds_file_{iConfig.get<std::string>("fileCommands")},
+        cmds_preinit_{iConfig.get<std::vector<std::string> >("preInitCommands")},
+        cmds_postinit_{iConfig.get<std::vector<std::string> >("postInitCommands")},
+        pythia_(new Pythia8::Pythia),
+        hepmc_(new HepMC3::Pythia8ToHepMC3) {}
   virtual ~Pythia8EventGenerator() = default;
+  // "fileCommands", "Pythia8 commands file to be parsed"
+  // "preInitCommands", "Pythia8 commands to be parsed before initialisation"
+  // "postInitCommands", "Pythia8 commands to be parsed after initialisation"
 
-  inline StatusCode initialize() override {
-    if (const auto status = GaudiTool::initialize(); !status.isSuccess())
-      return status;
-
-    pythia_.reset(new Pythia8::Pythia);
-    hepmc_.reset(new HepMC3::Pythia8ToHepMC3);
-
+  void beginRun(const art::Event&) override {
     for (const auto& cmd : cmds_preinit_)
       if (!pythia_->readString(cmd))
         return Error("Failed to parse input Pythia command '" + cmd + "'.");
@@ -51,29 +53,23 @@ public:
     for (const auto& cmd : cmds_postinit_)
       if (!pythia_->readString(cmd))
         return Error("Failed to parse input Pythia command '" + cmd + "'.");
-
-    return StatusCode::SUCCESS;
   }
-  inline StatusCode finalize() override {
-    pythia_.release();
-    hepmc_.release();
-    return GaudiTool::finalize();
-  }
-  inline StatusCode getNextEvent(HepMC3::GenEvent& hepmc_evt) override {
+  void produce(art::Event& iEvent) override {
     if (!pythia_->next())
       return Error("Error occurred when running Pythia::next.");
-    if (!hepmc_->fill_next_event(*pythia_, hepmc_evt))
+    std::unique_ptr<HepMC3::GenEvent> evt;
+    if (!hepmc_->fill_next_event(*pythia_, evt.get()))
       return Error("Failed to convert Pythia 8 event into an HepMC3 event.");
-    return StatusCode::SUCCESS;
+    iEvent.put(std::move(evt), "genParticles");
   }
 
 private:
+  const std::string cmds_file_;                   ///< Pythia8 commands file to be applied
+  const std::vector<std::string> cmds_preinit_;   ///< Pythia8 commands applied before initialisation
+  const std::vector<std::string> cmds_postinit_;  ///< Pythia8 commands applied after initialisation
+
   std::unique_ptr<Pythia8::Pythia> pythia_;
   std::unique_ptr<HepMC3::Pythia8ToHepMC3> hepmc_;
-
-  Gaudi::Property<std::string> cmds_file_;                    ///< Pythia8 commands file to be applied
-  Gaudi::Property<std::vector<std::string> > cmds_preinit_;   ///< Pythia8 commands applied before initialisation
-  Gaudi::Property<std::vector<std::string> > cmds_postinit_;  ///< Pythia8 commands applied after initialisation
 };
 
 DECLARE_COMPONENT(Pythia8EventGenerator)

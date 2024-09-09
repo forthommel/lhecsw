@@ -18,6 +18,7 @@ include(lhecswBuildUtils)
 
 find_package(art REQUIRED)
 find_package(DD4hep REQUIRED)
+find_package(EDM4HEP REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(DataFormats)

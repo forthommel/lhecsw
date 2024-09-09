@@ -18,66 +18,73 @@
 
 #include <DD4hep/Detector.h>
 #include <DD4hep/VolumeManager.h>
-#include <GaudiAlg/GaudiTool.h>
-#include <GaudiKernel/IRndmGenSvc.h>
-#include <GaudiKernel/RndmGenerators.h>
 #include <edm4hep/MutableCalorimeterHit.h>
 #include <edm4hep/SimCalorimeterHit.h>
-#include <k4Interface/IGeoSvc.h>
+
+// art
+#include <art/Framework/Core/EDProducer.h>
+#include <art/Framework/Principal/Handle.h>
+#include <art/Framework/Services/Optional/RandomNumberGenerator.h>
+#include <art/Framework/Services/Registry/ServiceHandle.h>
 
 #include "SimAlgos/Calorimetry/include/ICaloHitDigitisationAlgo.h"
 
-class GaussianResolutionCaloHitDigitiser : public GaudiTool, virtual public ICaloHitDigitisationAlgo {
+class GaussianResolutionCaloHitDigitiser : public art::EDProducer {
 public:
-  explicit GaussianResolutionCaloHitDigitiser(const std::string& type,
-                                              const std::string& name,
-                                              const IInterface* parent)
-      : GaudiTool(type, name, parent),
-        geom_("GeoSvc", name),
-        readout_name_{this, "readoutName", ""},
-        is_barrel_{this, "isBarrel", false},
-        resol_a_{this, "aTerm", 0., "stochastic term for relative resolution"},
-        resol_b_{this, "bTerm", 0., "constant term for relative resolution"} {}
+  explicit GaussianResolutionCaloHitDigitiser(const fhicl::ParameterSet& iConfig)
+      : art::EDProducer(iConfig),
+        calo_hits_token_{consumes<std::vector<edm4hep::SimCalorimeterHit> >()},
+        readout_name_{iConfig.get<std::string>("readoutName")},
+        is_barrel_{iConfig.get<bool>("isBarrel")},
+        resol_a_{iConfig.get<double>("aTerm")},
+        resol_b_{iConfig.get<double>("bTerm")} {
+    produces<std::vector<dd4hep::MutableCalorimeterHit> >();
+    art::ServiceHandle<art::RandomNumberGenerator> rng;
+    random_engine_ = &rng->getEngine();
+  }
   virtual ~GaussianResolutionCaloHitDigitiser() = default;
 
-  inline StatusCode initialize() override {
-    if (auto sc = GaudiTool::initialize(); sc.isFailure())
-      return sc;
+  inline void beginRun(art::Run&) override {
     auto rand_svc = svc<IRndmGenSvc>("RndmGenSvc", true);
     if (!rand_svc)
       return Error("Failed to retrieve the RndmGenSvc.");
     res_gen_ = rand_svc->generator(Rndm::Gauss(0., 1.));
-    if (detector_ = geom_->getDetector(); !detector_)
+    if (detector_ = geom_handle_->getDetector(); !detector_)
       return Error("Failed to retrieve a detector from the geometry service.");
     volume_manager_ = detector_->volumeManager();
     decoder_ = detector_->readout(readout_name_).idSpec().decoder();
-    return StatusCode::SUCCESS;
   }
 
-  inline StatusCode run(const edm4hep::SimCalorimeterHit& simhit, edm4hep::MutableCalorimeterHit& hit) const override {
-    const dd4hep::DDSegmentation::CellID cellid = simhit.getCellID();
-    hit.setCellID(cellid);
-    hit.setPosition(simhit.getPosition());  //FIXME also smear the position
+  inline void produce(art::Event& iEvent) override {
+    auto hits = std::make_unique<std::vectror<dd4hep::MutableCalorimeterHit> >();
+    for (const auto& simhit : iEvent.get(calo_hits_token_)) {
+      const dd4hep::DDSegmentation::CellID cellid = simhit.getCellID();
+      dd4hep::MutableCalorimeterHit hit;
+      hit.setCellID(cellid);
+      hit.setPosition(simhit.getPosition());  //FIXME also smear the position
 
-    if (const auto ene = simhit.getEnergy(); ene > 0.) {
-      const auto dene = std::hypot(resol_a_ / std::sqrt(ene), resol_b_);
-      const auto smeared_ene = std::fabs(ene + res_gen_->shoot() * ene * dene);
-      hit.setEnergy(smeared_ene);
-    } else {
-      warning() << "SimHit with invalid energy: E=" << ene << " <= 0.";
-      hit.setEnergy(ene);
+      if (const auto ene = simhit.getEnergy(); ene > 0.) {
+        const auto dene = std::hypot(resol_a_ / std::sqrt(ene), resol_b_);
+        const auto smeared_ene = std::fabs(ene + res_gen_->shoot() * ene * dene);
+        hit.setEnergy(smeared_ene);
+      } else {
+        warning() << "SimHit with invalid energy: E=" << ene << " <= 0.";
+        hit.setEnergy(ene);
+      }
+      hits->emplace_back(hit);
     }
-
-    return StatusCode::SUCCESS;
+    iEvent.put(std::move(hits));
   }
 
 private:
-  ServiceHandle<IGeoSvc> geom_;
-  SmartIF<IRndmGen> res_gen_;
+  art::ServiceHandle<IGeoSvc> geom_handle_;
+  art::ProductToken<std::vector<edm4hep::SimCalorimeterHit> > calo_hits_token_;
 
-  Gaudi::Property<std::string> readout_name_;
-  Gaudi::Property<bool> is_barrel_;
-  Gaudi::Property<double> resol_a_, resol_b_;
+  const std::string readout_name_;
+  const bool is_barrel_;
+  const double resol_a_, resol_b_;
+
+  CLHEP::HepRandomEngine* random_engine_{nullptr};
 
   dd4hep::Detector* detector_{nullptr};
   dd4hep::DDSegmentation::BitFieldCoder* decoder_{nullptr};
