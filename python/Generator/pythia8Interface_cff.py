@@ -1,5 +1,8 @@
 from Gaudi.Configuration import *
-from Configurables import Pythia8EventGenerator
+try:
+    from Configurables import Pythia8EventGenerator
+except ImportError:
+    raise ImportError('Pythia 8 interface was not found in search path. Was Pythia linked to this installation?')
 from Configurables import HepMCToEDMConverter, SimG4PrimariesFromEdmTool
 
 

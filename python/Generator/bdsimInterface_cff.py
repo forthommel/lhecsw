@@ -1,5 +1,8 @@
 from Gaudi.Configuration import *
-from Configurables import BDSIMParticleGun
+try:
+    from Configurables import BDSIMParticleGun
+except ImportError:
+    raise ImportError('BDSIM interface was not found in search path. Was BDSIM linked to this installation?')
 from Configurables import HepMCToEDMConverter, SimG4PrimariesFromEdmTool
 
 

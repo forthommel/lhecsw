@@ -1,5 +1,8 @@
 from Gaudi.Configuration import *
-from Configurables import CepGenEventGenerator
+try:
+    from Configurables import CepGenEventGenerator
+except ImportError:
+    raise ImportError('CepGen interface was not found in search path. Was CepGen linked to this installation?')
 from Configurables import HepMCToEDMConverter, SimG4PrimariesFromEdmTool
 
 
