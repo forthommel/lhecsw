@@ -35,9 +35,7 @@ public:
       : GaudiTool(type, name, parent),
         geom_("GeoSvc", name),
         readout_name_{this, "readoutName", ""},
-        is_barrel_{this, "isBarrel", false},
-        resol_a_{this, "aTerm", 0., "stochastic term for relative resolution"},
-        resol_b_{this, "bTerm", 0., "constant term for relative resolution"} {}
+        resol_energy_{this, "energyResolution", 0., "energy relative resolution on readout"} {}
   virtual ~GaussianResolutionCaloHitDigitiser() = default;
 
   inline StatusCode initialize() override {
@@ -59,11 +57,9 @@ public:
     hit.setCellID(cellid);
     hit.setPosition(simhit.getPosition());  //FIXME also smear the position
 
-    if (const auto ene = simhit.getEnergy(); ene > 0.) {
-      const auto dene = std::hypot(resol_a_ / std::sqrt(ene), resol_b_);
-      const auto smeared_ene = std::fabs(ene + res_gen_->shoot() * ene * dene);
-      hit.setEnergy(smeared_ene);
-    } else {
+    if (const auto ene = simhit.getEnergy(); ene > 0.)
+      hit.setEnergy(std::fabs(ene + res_gen_->shoot() * resol_energy_));
+    else {
       warning() << "SimHit with invalid energy: E=" << ene << " <= 0.";
       hit.setEnergy(ene);
     }
@@ -76,8 +72,7 @@ private:
   SmartIF<IRndmGen> res_gen_;
 
   Gaudi::Property<std::string> readout_name_;
-  Gaudi::Property<bool> is_barrel_;
-  Gaudi::Property<double> resol_a_, resol_b_;
+  Gaudi::Property<double> resol_energy_;
 
   dd4hep::Detector* detector_{nullptr};
   dd4hep::DDSegmentation::BitFieldCoder* decoder_{nullptr};
