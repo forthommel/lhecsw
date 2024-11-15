@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the LHeC beampipe                                -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @author  L.Forthomme                                                 -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="BeamPipeVis" alpha="1" r="0.9" g="0.9" b="0.9" showDaughters="true" visible="true"/>
+  </display>
+  <detectors>
+    <!-- Beampipe circ-elliptical / elliptical- SR fan -->
+    <comment>Beampipe - circular-elliptical</comment>
+    <detector name="Beampipe" type="Lhe_CircElliptic_BeamPipe" insideTrackingVolume="true" z_offset="OffsetZ" vis="BeamPipeVis">
+      <comment>Central Be Beampipe</comment>
+      <material name="Beryllium"/>
+      <shape rmin1="CentralBeamPipe_rmin" rmax1="CentralBeamPipe_rmax" rmin2="2.*CentralBeamPipe_rmin" rmax2="2.*CentralBeamPipe_rmax" z="CentralBeamPipe_zmax" coefficient="1.01"/>
+    </detector>
+    <detector name="ForwardVacuum" type="Lhe_CircElliptic_BeamPipe" insideTrackingVolume="false" vis="InvisibleNoDaughters">
+      <material name="Vacuum"/>
+      <shape rmin1="0.*cm" rmin2="0.*cm" rmax1="CentralBeamPipe_rmin" rmax2="2.*CentralBeamPipe_rmin" z="EcalPlug_zmin_fwd + 4.*cm" coefficient="1.01"/>
+    </detector>
+  </detectors>
+</lccdd>
