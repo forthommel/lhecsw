@@ -379,7 +379,8 @@
   <include ref="LHeD/Magnets.xml"/>
   <!-- circular beam pipe for optimal acceptance simulation -->
   <comment>Beampipe - has to be modified - circular-elliptical</comment>
-  <include ref="LHeD/Beampipe.xml"/>
+  <!--<include ref="LHeD/Beampipe.xml"/>-->
+  <include ref="LHeD/CircEllipticBeampipe.xml"/>
   <comment> *** Magnetic fields *** </comment>
   <include ref="LHeD/Fields.xml"/>
 </lccdd>

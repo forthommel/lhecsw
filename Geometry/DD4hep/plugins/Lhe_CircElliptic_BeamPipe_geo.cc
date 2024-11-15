@@ -28,14 +28,15 @@ static dd4hep::Ref_t create_detector(dd4hep::Detector& description, xml_h e, dd4
   if (!c)
     throw std::runtime_error("CircEllipticBeamPipe[" + name + "]> Did not find a proper element!");
   xml_comp_t dim(c);
+  const auto z_scaling_for_extrusion = dim.coefficient(1.);
 
   // circular part definition
   dd4hep::Tube circular_part(dim.rmin1(), dim.rmax1(), dim.z(), 0.5 * M_PI, -0.5 * M_PI);
   // elliptical part definition
-  dd4hep::EllipticalTube elliptical_inner_part(dim.rmin2(), dim.rmin1(), dim.z() * 1.01),
+  dd4hep::EllipticalTube elliptical_inner_part(dim.rmin2(), dim.rmin1(), dim.z() * z_scaling_for_extrusion),
       elliptical_outer_part(dim.rmax2(), dim.rmax1(), dim.z());
   dd4hep::SubtractionSolid elliptical_full_part(elliptical_outer_part, elliptical_inner_part);
-  dd4hep::Box elliptical_subtraction_part(dim.rmax2(), dim.rmax1(), dim.z() * 1.01);
+  dd4hep::Box elliptical_subtraction_part(dim.rmax2(), dim.rmax1(), dim.z() * z_scaling_for_extrusion);
   dd4hep::SubtractionSolid elliptical_part(
       elliptical_full_part, elliptical_subtraction_part, dd4hep::Position(-dim.rmax2(), 0., 0.));
   // merging of the two volumes
