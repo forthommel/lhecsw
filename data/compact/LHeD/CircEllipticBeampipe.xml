@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== -->
+<!--                                                                        -->
+<!--    XML description of the LHeC beampipe                                -->
+<!--                                                                        -->
+<!--   @author  P.Kostka                                                    -->
+<!--   @author  L.Forthomme                                                 -->
+<!--                                                                        -->
+<!-- ====================================================================== -->
+<lccdd>
+  <display>
+    <vis name="BeamPipeVis" alpha="1" r="0.9" g="0.9" b="0.9" showDaughters="true" visible="true"/>
+  </display>
+  <detectors>
+    <!-- Beampipe circ-elliptical / elliptical- SR fan
+    <comment> Beampipe </comment>
+    <comment> Central Be Beampipe</comment>
+    <comment> type="Lhe_ell_BeamPipe_Central" insideTrackingVolume="true" &gt; </comment>
+    <detector name="Beampipe" type="Lhe_BeamPipe_Central" insideTrackingVolume="true" vis="BeamPipeVis" z_offset="OffsetZ*2.">
+      <material name="Beryllium"/>
+      <zplane rmin="CentralBeamPipe_rmin" rmax="CentralEllBeamPipe_rmax" thickness="CentralBeamPipe_thickness" z="SolenoidCoilOuterZ1/1.44"/>
+    </detector>
+    <comment> Vacuum inside beampipe</comment>
+    <comment> type="Lhe_ell_BeamPipe_Central"  </comment>
+    <detector name="BeamPipeVacuum" type="Lhe_BeamPipe_Central" insideTrackingVolume="true" vis="InvisibleNoDaughters" z_offset="OffsetZ*2.">
+      <material name="Vacuum"/>
+      <zplane rmin="0.000000001*mm" rmax="CentralEllBeamPipe_rmax-21.98*mm" thickness="CentralBeamPipe_rmin-0.02*mm" z="SolenoidCoilOuterZ1"/>
+    </detector>
+    -->
+    <!-- circular beam pipe  for optimal acceptance simulation  -->
+    <comment>Beampipe - has to be modified - circular-elliptical</comment>
+    <detector name="Beampipe" type="Lhe_CircElliptic_BeamPipe" insideTrackingVolume="true" z_offset="OffsetZ" vis="BeamPipeVis">
+      <comment>Central Be Beampipe</comment>
+      <material name="Beryllium"/>
+      <shape rmin1="CentralBeamPipe_rmin" rmax1="CentralBeamPipe_rmax" rmin2="2.*CentralBeamPipe_rmin" rmax2="2.*CentralBeamPipe_rmax" z="CentralBeamPipe_zmax"/>
+    </detector>
+    <detector name="ForwardVacuum" type="Lhe_CircElliptic_BeamPipe" insideTrackingVolume="false" vis="InvisibleNoDaughters">
+      <material name="Vacuum"/>
+      <shape rmin1="0.*cm" rmin2="0.*cm" rmax1="CentralBeamPipe_rmin" rmax2="2.*CentralBeamPipe_rmin" z="EcalPlug_zmin_fwd + 4.*cm"/>
+    </detector>
+    <!--<detector name="BackwardVacuum" type="Lhe_PolyconeSupport" insideTrackingVolume="false" vis="InvisibleNoDaughters">
+      <material name="Vacuum"/>
+      <zplane rmin="0.*cm" rmax="CentralBeamPipe_rmax - BeamPipe_thickness" z="- (tracking_region_zmax + 0.01*cm)"/>
+      <zplane rmin="0.*cm" rmax="CentralBeamPipe_rmax - BeamPipe_thickness" z="- BeamPipe_zmax"/>
+      <zplane rmin="0.*cm" rmax="LumiCal_rmin - 2*BeamPipe_endThickness" z="- (LumiCal_zmin - 2*BeamPipe_endThickness)"/>
+      <zplane rmin="0.*cm" rmax="LumiCal_rmin - 2*BeamPipe_endThickness" z="- (LumiCal_zmin - BeamPipe_endThickness)"/>
+      <zplane rmin="0.*cm" rmax="LumiCal_rmin - 2*BeamPipe_endThickness" z="- (ForwardMask_zmin - BeamPipe_endThickness)"/>
+    </detector>-->
+  </detectors>
+</lccdd>
