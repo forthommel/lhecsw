@@ -1,6 +1,6 @@
 /*
  *  LHeC offline simulation and reconstruction software
- *  Copyright (C) 2024  Laurent Forthomme
+ *  Copyright (C) 2024-2025  Laurent Forthomme
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <GaudiAlg/GaudiTool.h>
+#include <GaudiKernel/AlgTool.h>
 #include <HepMC3/FourVector.h>
 #include <HepMC3/GenEvent.h>
 #include <HepMC3/GenParticle.h>
@@ -28,20 +28,22 @@
 
 #include "Generator/Common/include/IHepMCProviderTool.h"
 
-class BDSIMParticleGun : public GaudiTool, virtual public IHepMCProviderTool {
+class BDSIMParticleGun : public AlgTool, virtual public IHepMCProviderTool {
 public:
   explicit BDSIMParticleGun(const std::string& type, const std::string& name, const IInterface* parent)
-      : GaudiTool(type, name, parent),
+      : AlgTool(type, name, parent),
         filename_{this, "filename", "", "BDSIM event filename"},
         tree_name_{this, "treeName", "Event", "BDSIM event tree name"},
         scorer_name_{this, "scorerName", "", "BDSIM scorer name"} {}
   virtual ~BDSIMParticleGun() = default;
 
   inline StatusCode initialize() override {
-    if (const auto status = GaudiTool::initialize(); !status.isSuccess())
+    if (const auto status = AlgTool::initialize(); !status.isSuccess())
       return status;
-    if (file_.reset(new TFile(filename_.value().data())); !file_)
-      return Error("Failed to open file '" + filename_ + "'!");
+    if (file_.reset(new TFile(filename_.value().data())); !file_) {
+      error() << "Failed to open file '" << filename_ << "'!";
+      return StatusCode::FAILURE;
+    }
 
     const auto patch_scorer_name = [](const std::string& scorer_name) -> std::string {
       if (scorer_name[scorer_name.size() - 1] == '.')
@@ -53,8 +55,10 @@ public:
       warning() << "Replacing an already existing TTree handle by a new initialisation call.";
     tree_ = file_->Get<TTree>(tree_name_.value().data());
     if (const auto ret = tree_->SetBranchAddress(patch_scorer_name(scorer_name_).data(), &sampler_);
-        ret < TTree::kMatch)
-      return Error("Failed to load '" + scorer_name_ + "' scorer branch! Return value: " + std::to_string(ret) + ".");
+        ret < TTree::kMatch) {
+      error() << "Failed to load '" << scorer_name_ << "' scorer branch! Return value: " << ret << ".";
+      return StatusCode::FAILURE;
+    }
 
     debug() << "Loaded '" << scorer_name_ << "' scorer in '" << tree_name_ << "' tree from '" << filename_ << "' file.";
     max_events_ = tree_->GetEntriesFast();
@@ -66,17 +70,23 @@ public:
     return StatusCode::SUCCESS;
   }
   inline StatusCode getNextEvent(HepMC3::GenEvent& hepmc_evt) override {
-    if (!tree_)
-      return Error("No BDSIM event tree defined!");
+    if (!tree_) {
+      error() << "No BDSIM event tree defined!";
+      return StatusCode::FAILURE;
+    }
     if (event_number_ >= max_events_) {
       warning() << "End of file reached. Now starting over.";
       event_number_ = 0ull;
     }
     switch (tree_->GetEntry(event_number_)) {
-      case -1:  // ROOT I/O error
-        return Error("ROOT I/O error encountered.");
-      case 0:  // empty event loaded
-        return Error("An empty event content was loaded.");
+      case -1: {  // ROOT I/O error
+        error() << "ROOT I/O error encountered.";
+        return StatusCode::FAILURE;
+      }
+      case 0: {  // empty event loaded
+        error() << "An empty event content was loaded.";
+        return StatusCode::FAILURE;
+      }
       default: {  // successful readout of event
         debug() << "Successfully moved to event number " << event_number_ << ".";
         return readEvent(hepmc_evt);

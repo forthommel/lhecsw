@@ -16,5 +16,5 @@ endif()
 
 lhecsw_build(Generator_BDSIMInterface
     PLUGINS_SOURCES plugins/BDSIMParticleGun.cc
-    LIBRARIES Gaudi::GaudiAlgLib ${Boost_LIBRARIES} ${BDSIM_LIBRARY} ${HEPMC3_LIBRARY}
+    LIBRARIES Gaudi::GaudiKernel ${Boost_LIBRARIES} ${BDSIM_LIBRARY} ${HEPMC3_LIBRARY}
     HEADERS ${Geant4_INCLUDE_DIRS} ${BDSIM_INCLUDE_DIR} ${HEPMC3_INCLUDE_DIR})

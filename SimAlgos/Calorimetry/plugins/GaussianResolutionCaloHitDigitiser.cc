@@ -1,6 +1,6 @@
 /*
  *  LHeC offline simulation and reconstruction software
- *  Copyright (C) 2024  Laurent Forthomme
+ *  Copyright (C) 2024-2025  Laurent Forthomme
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include <DD4hep/Detector.h>
 #include <DD4hep/VolumeManager.h>
-#include <GaudiAlg/GaudiTool.h>
+#include <GaudiKernel/AlgTool.h>
 #include <GaudiKernel/IRndmGenSvc.h>
 #include <GaudiKernel/RndmGenerators.h>
 #include <edm4hep/MutableCalorimeterHit.h>
@@ -27,26 +27,30 @@
 
 #include "SimAlgos/Calorimetry/include/ICaloHitDigitisationAlgo.h"
 
-class GaussianResolutionCaloHitDigitiser : public GaudiTool, virtual public ICaloHitDigitisationAlgo {
+class GaussianResolutionCaloHitDigitiser : public AlgTool, virtual public ICaloHitDigitisationAlgo {
 public:
   explicit GaussianResolutionCaloHitDigitiser(const std::string& type,
                                               const std::string& name,
                                               const IInterface* parent)
-      : GaudiTool(type, name, parent),
+      : AlgTool(type, name, parent),
         geom_("GeoSvc", name),
         readout_name_{this, "readoutName", ""},
         resol_energy_{this, "energyResolution", 0., "energy relative resolution on readout"} {}
   virtual ~GaussianResolutionCaloHitDigitiser() = default;
 
   inline StatusCode initialize() override {
-    if (auto sc = GaudiTool::initialize(); sc.isFailure())
+    if (auto sc = AlgTool::initialize(); sc.isFailure())
       return sc;
-    auto rand_svc = svc<IRndmGenSvc>("RndmGenSvc", true);
-    if (!rand_svc)
-      return Error("Failed to retrieve the RndmGenSvc.");
+    auto rand_svc = service<IRndmGenSvc>("RndmGenSvc", true);
+    if (!rand_svc) {
+      error() << "Failed to retrieve the RndmGenSvc.";
+      return StatusCode::FAILURE;
+    }
     res_gen_ = rand_svc->generator(Rndm::Gauss(0., 1.));
-    if (detector_ = geom_->getDetector(); !detector_)
-      return Error("Failed to retrieve a detector from the geometry service.");
+    if (detector_ = geom_->getDetector(); !detector_) {
+      error() << "Failed to retrieve a detector from the geometry service.";
+      return StatusCode::FAILURE;
+    }
     volume_manager_ = detector_->volumeManager();
     decoder_ = detector_->readout(readout_name_).idSpec().decoder();
     return StatusCode::SUCCESS;

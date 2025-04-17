@@ -1,6 +1,6 @@
 /*
  *  LHeC offline simulation and reconstruction software
- *  Copyright (C) 2024  Laurent Forthomme
+ *  Copyright (C) 2024-2025  Laurent Forthomme
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 #include <edm4hep/MCRecoTrackerAssociationCollection.h>
 #include <edm4hep/SimTrackerHit.h>
 #include <edm4hep/SimTrackerHitCollection.h>
-#include <edm4hep/TrackerHit.h>
-#include <edm4hep/TrackerHitCollection.h>
+#include <edm4hep/TrackerHit3D.h>
+#include <edm4hep/TrackerHit3DCollection.h>
 #include <k4FWCore/DataHandle.h>
 
 #include "SimAlgos/Tracker/include/ITrackHitDigitisationAlgo.h"
@@ -68,7 +68,7 @@ private:
   // Inputs
   mutable DataHandle<edm4hep::SimTrackerHitCollection> simhits_coll_;
   // Outputs
-  mutable DataHandle<edm4hep::TrackerHitCollection> hits_coll_;
+  mutable DataHandle<edm4hep::TrackerHit3DCollection> hits_coll_;
   mutable DataHandle<edm4hep::MCRecoTrackerAssociationCollection> simhits_hits_assoc_;
 
   ToolHandle<ITrackHitDigitisationAlgo> algo_;  ///< user-steered hit digitiser flavour

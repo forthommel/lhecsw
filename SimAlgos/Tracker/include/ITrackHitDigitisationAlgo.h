@@ -1,6 +1,6 @@
 /*
  *  LHeC offline simulation and reconstruction software
- *  Copyright (C) 2024  Laurent Forthomme
+ *  Copyright (C) 2024-2025  Laurent Forthomme
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
 
 namespace edm4hep {
   class SimTrackerHit;
-  class MutableTrackerHit;
+  class MutableTrackerHit3D;
 }  // namespace edm4hep
 
 class ITrackHitDigitisationAlgo : virtual public IAlgTool {
 public:
   DeclareInterfaceID(ITrackHitDigitisationAlgo, 1, 0);
 
-  virtual StatusCode run(const edm4hep::SimTrackerHit&, edm4hep::MutableTrackerHit&) const = 0;
+  virtual StatusCode run(const edm4hep::SimTrackerHit&, edm4hep::MutableTrackerHit3D&) const = 0;
 };
 
 #endif

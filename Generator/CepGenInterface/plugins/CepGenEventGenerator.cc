@@ -1,6 +1,6 @@
 /*
  *  LHeC offline simulation and reconstruction software
- *  Copyright (C) 2024  Laurent Forthomme
+ *  Copyright (C) 2024-2025  Laurent Forthomme
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,15 +28,15 @@
 #include <CepGen/Physics/PDG.h>
 #include <CepGen/Process/Process.h>
 #include <CepGenAddOns/HepMC3Wrapper/HepMC3EventInterface.h>
-#include <GaudiAlg/GaudiTool.h>
+#include <GaudiKernel/AlgTool.h>
 
 #include "Generator/CepGenInterface/include/ParametersListConverter.h"
 #include "Generator/Common/include/IHepMCProviderTool.h"
 
-class CepGenEventGenerator : public GaudiTool, virtual public IHepMCProviderTool {
+class CepGenEventGenerator : public AlgTool, virtual public IHepMCProviderTool {
 public:
   explicit CepGenEventGenerator(const std::string& type, const std::string& name, const IInterface* parent)
-      : GaudiTool(type, name, parent),
+      : AlgTool(type, name, parent),
         verbosity_{this, "verbosity", static_cast<int>(cepgen::utils::Logger::get().level()), "CepGen verbosity"},
         process_str_{this, "process", "{}", "CepGen commands to define process"},
         extra_process_str_{
@@ -73,7 +73,7 @@ private:
 DECLARE_COMPONENT(CepGenEventGenerator)
 
 StatusCode CepGenEventGenerator::initialize() {
-  if (const auto status = GaudiTool::initialize(); !status.isSuccess())
+  if (const auto status = AlgTool::initialize(); !status.isSuccess())
     return status;
 
   cepgen_.reset(new cepgen::Generator);

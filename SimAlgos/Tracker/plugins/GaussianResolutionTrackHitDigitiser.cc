@@ -1,6 +1,6 @@
 /*
  *  LHeC offline simulation and reconstruction software
- *  Copyright (C) 2024  Laurent Forthomme
+ *  Copyright (C) 2024-2025  Laurent Forthomme
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
 
 #include <DD4hep/Detector.h>
 #include <DD4hep/VolumeManager.h>
-#include <GaudiAlg/GaudiTool.h>
+#include <GaudiKernel/AlgTool.h>
 #include <GaudiKernel/IRndmGenSvc.h>
 #include <GaudiKernel/RndmGenerators.h>
-#include <edm4hep/MutableTrackerHit.h>
+#include <edm4hep/MutableTrackerHit3D.h>
 #include <edm4hep/SimTrackerHit.h>
 #include <k4Interface/IGeoSvc.h>
 
 #include "SimAlgos/Tracker/include/ITrackHitDigitisationAlgo.h"
 
-class GaussianResolutionTrackHitDigitiser : public GaudiTool, virtual public ITrackHitDigitisationAlgo {
+class GaussianResolutionTrackHitDigitiser : public AlgTool, virtual public ITrackHitDigitisationAlgo {
 public:
   explicit GaussianResolutionTrackHitDigitiser(const std::string& type,
                                                const std::string& name,
                                                const IInterface* parent)
-      : GaudiTool(type, name, parent),
+      : AlgTool(type, name, parent),
         geom_("GeoSvc", name),
         readout_name_{this, "readoutName", ""},
         is_barrel_{this, "isBarrel", false},
@@ -42,22 +42,26 @@ public:
   virtual ~GaussianResolutionTrackHitDigitiser() = default;
 
   inline StatusCode initialize() override {
-    if (auto sc = GaudiTool::initialize(); sc.isFailure())
+    if (auto sc = AlgTool::initialize(); sc.isFailure())
       return sc;
-    auto rand_svc = svc<IRndmGenSvc>("RndmGenSvc", true);
-    if (!rand_svc)
-      return Error("Failed to retrieve the RndmGenSvc.");
+    auto rand_svc = service<IRndmGenSvc>("RndmGenSvc", true);
+    if (!rand_svc) {
+      error() << "Failed to retrieve the RndmGenSvc.";
+      return StatusCode::FAILURE;
+    }
     res_gen_u_ = rand_svc->generator(Rndm::Gauss(0., resol_u_));
     res_gen_v_ = rand_svc->generator(Rndm::Gauss(0., resol_v_));
     res_gen_time_ = rand_svc->generator(Rndm::Gauss(0., resol_time_));
-    if (detector_ = geom_->getDetector(); !detector_)
-      return Error("Failed to retrieve a detector from the geometry service.");
+    if (detector_ = geom_->getDetector(); !detector_) {
+      error() << "Failed to retrieve a detector from the geometry service.";
+      return StatusCode::FAILURE;
+    }
     volume_manager_ = detector_->volumeManager();
     decoder_ = detector_->readout(readout_name_).idSpec().decoder();
     return StatusCode::SUCCESS;
   }
 
-  inline StatusCode run(const edm4hep::SimTrackerHit& simhit, edm4hep::MutableTrackerHit& hit) const override {
+  inline StatusCode run(const edm4hep::SimTrackerHit& simhit, edm4hep::MutableTrackerHit3D& hit) const override {
     const dd4hep::DDSegmentation::CellID cellid = simhit.getCellID();
     hit.setCellID(cellid);
     hit.setTime(simhit.getTime() + res_gen_time_->shoot());
@@ -83,7 +87,7 @@ public:
     hit.setPosition(hit_pos);
 
     //hit.setCovMatrix(std::array<float, 6>{});  //FIXME
-    hit.addToRawHits(simhit.getObjectID());
+    //hit.addToRawHits(simhit.getObjectID()); //FIXME: matching to be done elsewhere
 
     return StatusCode::SUCCESS;
   }
