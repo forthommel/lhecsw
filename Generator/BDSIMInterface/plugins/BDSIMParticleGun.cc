@@ -40,7 +40,7 @@ public:
   inline StatusCode initialize() override {
     if (const auto status = AlgTool::initialize(); !status.isSuccess())
       return status;
-    if (file_.reset(new TFile(filename_.value().data())); !file_) {
+    if (file_ = std::make_unique<TFile>(filename_.value().data()); !file_) {
       error() << "Failed to open file '" << filename_ << "'!";
       return StatusCode::FAILURE;
     }

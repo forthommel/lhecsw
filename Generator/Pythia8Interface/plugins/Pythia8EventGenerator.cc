@@ -35,8 +35,8 @@ public:
     if (const auto status = AlgTool::initialize(); !status.isSuccess())
       return status;
 
-    pythia_.reset(new Pythia8::Pythia);
-    hepmc_.reset(new HepMC3::Pythia8ToHepMC3);
+    pythia_ = std::make_unique<Pythia8::Pythia>();
+    hepmc_ = std::make_unique<HepMC3::Pythia8ToHepMC3>();
 
     for (const auto& cmd : cmds_preinit_)
       if (!pythia_->readString(cmd)) {

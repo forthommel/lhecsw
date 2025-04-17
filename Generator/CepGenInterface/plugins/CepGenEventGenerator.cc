@@ -76,8 +76,8 @@ StatusCode CepGenEventGenerator::initialize() {
   if (const auto status = AlgTool::initialize(); !status.isSuccess())
     return status;
 
-  cepgen_.reset(new cepgen::Generator);
-  xsec_.reset(new HepMC3::GenCrossSection);
+  cepgen_ = std::make_unique<cepgen::Generator>();
+  xsec_ = std::make_unique<HepMC3::GenCrossSection>();
 
   auto plist_proc = static_cast<cepgen::ParametersList>(cepgen::ParametersListConverter(process_str_));
   for (const auto& cmd : extra_process_str_)
