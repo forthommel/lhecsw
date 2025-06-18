@@ -18,11 +18,11 @@
 
 #include <Gaudi/Algorithm.h>
 #include <GaudiKernel/ToolHandle.h>
-#include <edm4hep/MCRecoTrackerAssociationCollection.h>
 #include <edm4hep/SimTrackerHit.h>
 #include <edm4hep/SimTrackerHitCollection.h>
 #include <edm4hep/TrackerHit3D.h>
 #include <edm4hep/TrackerHit3DCollection.h>
+#include <edm4hep/TrackerHitSimTrackerHitLinkCollection.h>
 #include <k4FWCore/DataHandle.h>
 
 #include "SimAlgos/Tracker/include/ITrackHitDigitisationAlgo.h"
@@ -57,8 +57,8 @@ public:
         return sc;
 
       auto assoc = assocs->create();  // simhit -> hit association
-      assoc.setSim(simhit);
-      assoc.setRec(hit);
+      assoc.setTo(simhit);
+      assoc.setFrom(hit);
       assoc.setWeight(1.);
     }
     return StatusCode::SUCCESS;
@@ -69,7 +69,7 @@ private:
   mutable DataHandle<edm4hep::SimTrackerHitCollection> simhits_coll_;
   // Outputs
   mutable DataHandle<edm4hep::TrackerHit3DCollection> hits_coll_;
-  mutable DataHandle<edm4hep::MCRecoTrackerAssociationCollection> simhits_hits_assoc_;
+  mutable DataHandle<edm4hep::TrackerHitSimTrackerHitLinkCollection> simhits_hits_assoc_;
 
   ToolHandle<ITrackHitDigitisationAlgo> algo_;  ///< user-steered hit digitiser flavour
 };

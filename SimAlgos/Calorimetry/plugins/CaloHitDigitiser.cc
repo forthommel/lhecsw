@@ -18,9 +18,9 @@
 
 #include <Gaudi/Algorithm.h>
 #include <GaudiKernel/ToolHandle.h>
+#include <edm4hep/CaloHitSimCaloHitLinkCollection.h>
 #include <edm4hep/CalorimeterHit.h>
 #include <edm4hep/CalorimeterHitCollection.h>
-#include <edm4hep/MCRecoCaloAssociationCollection.h>
 #include <edm4hep/SimCalorimeterHit.h>
 #include <edm4hep/SimCalorimeterHitCollection.h>
 #include <k4FWCore/DataHandle.h>
@@ -57,8 +57,8 @@ public:
         return sc;
 
       auto assoc = assocs->create();  // simhit -> hit association
-      assoc.setSim(simhit);
-      assoc.setRec(hit);
+      assoc.setTo(simhit);
+      assoc.setFrom(hit);
       assoc.setWeight(1.);
     }
     return StatusCode::SUCCESS;
@@ -69,7 +69,7 @@ private:
   mutable DataHandle<edm4hep::SimCalorimeterHitCollection> simhits_coll_;
   // Outputs
   mutable DataHandle<edm4hep::CalorimeterHitCollection> hits_coll_;
-  mutable DataHandle<edm4hep::MCRecoCaloAssociationCollection> simhits_hits_assoc_;
+  mutable DataHandle<edm4hep::CaloHitSimCaloHitLinkCollection> simhits_hits_assoc_;
 
   ToolHandle<ICaloHitDigitisationAlgo> algo_;  ///< user-steered hit digitiser flavour
 };
