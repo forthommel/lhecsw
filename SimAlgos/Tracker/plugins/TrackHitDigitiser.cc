@@ -66,10 +66,10 @@ public:
 
 private:
   // Inputs
-  mutable DataHandle<edm4hep::SimTrackerHitCollection> simhits_coll_;
+  mutable k4FWCore::DataHandle<edm4hep::SimTrackerHitCollection> simhits_coll_;
   // Outputs
-  mutable DataHandle<edm4hep::TrackerHit3DCollection> hits_coll_;
-  mutable DataHandle<edm4hep::TrackerHitSimTrackerHitLinkCollection> simhits_hits_assoc_;
+  mutable k4FWCore::DataHandle<edm4hep::TrackerHit3DCollection> hits_coll_;
+  mutable k4FWCore::DataHandle<edm4hep::TrackerHitSimTrackerHitLinkCollection> simhits_hits_assoc_;
 
   ToolHandle<ITrackHitDigitisationAlgo> algo_;  ///< user-steered hit digitiser flavour
 };
