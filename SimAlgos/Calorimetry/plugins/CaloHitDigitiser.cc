@@ -66,10 +66,10 @@ public:
 
 private:
   // Inputs
-  mutable DataHandle<edm4hep::SimCalorimeterHitCollection> simhits_coll_;
+  mutable k4FWCore::DataHandle<edm4hep::SimCalorimeterHitCollection> simhits_coll_;
   // Outputs
-  mutable DataHandle<edm4hep::CalorimeterHitCollection> hits_coll_;
-  mutable DataHandle<edm4hep::CaloHitSimCaloHitLinkCollection> simhits_hits_assoc_;
+  mutable k4FWCore::DataHandle<edm4hep::CalorimeterHitCollection> hits_coll_;
+  mutable k4FWCore::DataHandle<edm4hep::CaloHitSimCaloHitLinkCollection> simhits_hits_assoc_;
 
   ToolHandle<ICaloHitDigitisationAlgo> algo_;  ///< user-steered hit digitiser flavour
 };
